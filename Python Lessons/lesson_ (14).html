@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="styles.css" rel="stylesheet">
+<style>
+/* slice explorer */
+.slice-explorer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.se-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.se-body{padding:14px}
+.se-list{display:flex;gap:0;margin-bottom:14px;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary)}
+.se-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:8px 4px;border-right:0.5px solid var(--color-border-tertiary);transition:background .12s}
+.se-cell:last-child{border-right:none}
+.se-cell.highlighted{background:var(--color-background-info)}
+.se-cell.dimmed{background:var(--color-background-secondary);opacity:.4}
+.se-val{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.se-idx{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.se-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.se-field{display:flex;flex-direction:column;gap:4px}
+.se-label{font-size:12px;color:var(--color-text-secondary)}
+.se-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);text-align:center}
+.se-result{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:13px;border:0.5px solid var(--color-border-tertiary);min-height:38px;margin-top:4px}
+/* comprehension builder */
+.comp-builder{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.cb-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.cb-body{padding:14px}
+.cb-anatomy{display:flex;gap:0;flex-wrap:wrap;margin-bottom:12px;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary)}
+.cb-part{padding:10px 14px;flex:1;min-width:120px;font-family:var(--font-mono);font-size:13px;border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;gap:4px}
+.cb-part:last-child{border-right:none}
+.cb-part-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-sans)}
+.cb-part-input{font-family:var(--font-mono);font-size:13px;padding:4px 8px;border-radius:4px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);width:100%}
+.cb-preview{font-family:var(--font-mono);font-size:13px;background:var(--color-background-secondary);padding:10px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:8px}
+.cb-result{font-family:var(--font-mono);font-size:13px;padding:10px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);min-height:38px;color:var(--color-text-success)}
+.cb-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans);margin-bottom:8px}
+/* refactor compare */
+.refactor{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.ref-col{border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.ref-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ref-verbose .ref-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.ref-concise .ref-head{background:var(--color-background-success);color:var(--color-text-success)}
+/* slice reference */
+.slice-table{width:100%;border-collapse:collapse;font-size:13px}
+.slice-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.slice-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.slice-table tr:last-child td{border-bottom:none}
+.slice-table td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info)}
+.slice-table td:nth-child(3){font-family:var(--font-mono);font-size:11px;color:var(--color-text-success)}
+/* slice riddles */
+.riddle-grid{display:flex;flex-direction:column;gap:8px}
+.riddle-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s}
+.riddle-row:hover{background:var(--color-background-primary)}
+.riddle-expr{font-family:var(--font-mono);font-size:13px;flex:1}
+.riddle-hint{font-size:12px;color:var(--color-text-tertiary)}
+.riddle-answer{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-success);display:none}
+.riddle-row.revealed .riddle-answer{display:block}
+.riddle-row.revealed .riddle-hint{display:none}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 14: List slicing &amp; list comprehensions - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 14: List slicing &amp; list comprehensions</p>
+      <p class="hero-sub">Week 3 — Loops &amp; Lists · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">Lists, iteration</div></div>
+    <div class="meta-item"><div class="meta-label">New syntax</div><div class="meta-val">list[a:b:c]</div></div>
+    <div class="meta-item"><div class="meta-label">New concept</div><div class="meta-val">List comprehension</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Extract a portion of a list using slice syntax <code>list[start:stop:step]</code></li>
+    <li>Use shorthand slices: <code>[:n]</code>, <code>[n:]</code>, <code>[::-1]</code></li>
+    <li>Understand that slicing returns a new list — the original is not modified</li>
+    <li>Write a basic list comprehension to transform a list in one line</li>
+    <li>Write a filtered list comprehension with an <code>if</code> condition</li>
+    <li>Decide when to use a comprehension vs a regular for loop</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The newspaper analogy (4 min)</div>
+        <div class="tl-desc">Say: "Imagine you have a full newspaper. A slice is like tearing out pages 3 to 7 — you get a section of the paper, but the original newspaper still exists unchanged. And a comprehension is like a photocopier with a filter — it goes through every page, keeps the ones you want, and produces a new copy automatically." Write on the board: <strong>slice = extract a portion · comprehension = transform or filter in one line</strong>. Both return a brand new list.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Slicing syntax: [start:stop:step] (10 min)</div>
+        <div class="tl-desc">Type Examples 1–2. Use the interactive slice explorer to demonstrate each variant. Emphasise: stop is always excluded (same rule as range()). Show the shorthand forms — <code>[:3]</code>, <code>[2:]</code>, <code>[:]</code>, <code>[::-1]</code>. The reverse shortcut <code>[::-1]</code> always gets a reaction — save it for a "reveal" moment after covering the basics.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Slicing returns a copy — original unchanged (3 min)</div>
+        <div class="tl-desc">This one point prevents a class of bugs. Show Example 3 live: slice, modify the slice, prove the original is untouched. Connect to the Lesson 13 point about <code>sorted()</code> returning a new list — same philosophy.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:17</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">List comprehensions — transform in one line (10 min)</div>
+        <div class="tl-desc">Show the refactor comparison side by side: the 4-line filter loop from Lesson 13 next to its 1-line comprehension equivalent. Walk through the anatomy: expression → for variable → in iterable → optional if condition. Use the interactive comprehension builder below. Build up from the simplest form to the filtered form step by step.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Slice explorer challenge (10 min)</div>
+        <div class="tl-desc">Students predict the output of 8 slicing riddles before running them — covering all shorthand forms and negative steps.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Squares list comprehension (12 min)</div>
+        <div class="tl-desc">Students rewrite a series of increasingly complex filter loops as comprehensions — building from a simple transform to a filtered transform to a nested transform.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:49</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Comprehension builder + exit ticket (6–8 min)</div>
+        <div class="tl-desc">Students use the interactive builder to construct comprehensions from components. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slice reference table -->
+<div class="section">
+  <div class="sec-head">Slicing reference — display on projector</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Given <code>nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</code></p>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="slice-table">
+      <thead><tr><th>Slice</th><th>What it means</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>nums[2:5]</td><td>Index 2 up to (not including) 5</td><td>[2, 3, 4]</td></tr>
+        <tr><td>nums[:4]</td><td>From start up to index 4</td><td>[0, 1, 2, 3]</td></tr>
+        <tr><td>nums[6:]</td><td>From index 6 to the end</td><td>[6, 7, 8, 9]</td></tr>
+        <tr><td>nums[:]</td><td>Full copy of the list</td><td>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</td></tr>
+        <tr><td>nums[::2]</td><td>Every other element (step 2)</td><td>[0, 2, 4, 6, 8]</td></tr>
+        <tr><td>nums[1::2]</td><td>Every other, starting at index 1</td><td>[1, 3, 5, 7, 9]</td></tr>
+        <tr><td>nums[-3:]</td><td>Last 3 elements</td><td>[7, 8, 9]</td></tr>
+        <tr><td>nums[::-1]</td><td>Reversed copy of the entire list</td><td>[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]</td></tr>
+        <tr><td>nums[2:8:2]</td><td>Index 2 to 8, step 2</td><td>[2, 4, 6]</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>The same stop-excluded rule as range():</strong> <code>nums[2:5]</code> gives indices 2, 3, 4 — just like <code>range(2, 5)</code>. Students who remember range() learn slicing in seconds. Say this connection out loud.</span></div>
+</div>
+
+<!-- Slice explorer -->
+<div class="section">
+  <div class="sec-head">Interactive slice explorer — see exactly which elements are selected</div>
+  <div class="slice-explorer">
+    <div class="se-head">nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] — adjust start, stop, step</div>
+    <div class="se-body">
+      <div class="se-list" id="se-list"></div>
+      <div class="se-controls">
+        <div class="se-field"><span class="se-label">start (leave blank = 0)</span><input class="se-input" id="se-start" placeholder="0 or blank" oninput="updateSlice()"></div>
+        <div class="se-field"><span class="se-label">stop (leave blank = end)</span><input class="se-input" id="se-stop" placeholder="10 or blank" oninput="updateSlice()"></div>
+        <div class="se-field"><span class="se-label">step (leave blank = 1)</span><input class="se-input" id="se-step" placeholder="1 or blank" oninput="updateSlice()"></div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Python expression:</div>
+      <div class="se-result" id="se-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Basic slicing</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">fruits</span> = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>, <span class="str">"date"</span>, <span class="str">"elderberry"</span>]
+
+<span class="cm"># Basic slice — [start:stop]</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">1</span>:<span class="num">4</span>])    <span class="cm"># ['banana', 'cherry', 'date']</span>
+
+<span class="cm"># Omit start — from beginning</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[:<span class="num">3</span>])     <span class="cm"># ['apple', 'banana', 'cherry']</span>
+
+<span class="cm"># Omit stop — to end</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">2</span>:])     <span class="cm"># ['cherry', 'date', 'elderberry']</span>
+
+<span class="cm"># Full copy</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[:])      <span class="cm"># entire list — all 5 items</span>
+
+<span class="cm"># Last N items</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="op">-</span><span class="num">2</span>:])    <span class="cm"># ['date', 'elderberry']</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">['banana', 'cherry', 'date']<br>['apple', 'banana', 'cherry']<br>['cherry', 'date', 'elderberry']<br>['apple', 'banana', 'cherry', 'date', 'elderberry']<br>['date', 'elderberry']</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Step and the reverse trick</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">nums</span> = [<span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>]
+
+<span class="cm"># Every other element</span>
+<span class="fn">print</span>(<span class="var">nums</span>[::<span class="num">2</span>])       <span class="cm"># [0, 2, 4, 6, 8]</span>
+
+<span class="cm"># Every third, starting at 1</span>
+<span class="fn">print</span>(<span class="var">nums</span>[<span class="num">1</span>::<span class="num">3</span>])      <span class="cm"># [1, 4, 7]</span>
+
+<span class="cm"># Reverse — the magic trick!</span>
+<span class="fn">print</span>(<span class="var">nums</span>[::<span class="op">-</span><span class="num">1</span>])      <span class="cm"># [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]</span>
+
+<span class="cm"># Reverse a string — slicing works on strings too!</span>
+<span class="var">name</span> = <span class="str">"Python"</span>
+<span class="fn">print</span>(<span class="var">name</span>[::<span class="op">-</span><span class="num">1</span>])      <span class="cm"># "nohtyP"</span></pre>
+  </div>
+  <div class="out-lbl">Output — predict [::-1] before running</div>
+  <div class="out">[0, 2, 4, 6, 8]<br>[1, 4, 7]<br>[9, 8, 7, 6, 5, 4, 3, 2, 1, 0]<br>nohtyP</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>The [::-1] moment:</strong> Before running it, ask students to predict what <code>"Python"[::-1]</code> produces. Most will say something wrong. Run it. Let the reaction happen. Then ask: "Can you use this to check if a word is a palindrome?" The answer is yes — and it's one line: <code>word == word[::-1]</code>.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Slices return a copy</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">original</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="var">copy</span>     = <span class="var">original</span>[<span class="num">1</span>:<span class="num">4</span>]     <span class="cm"># [2, 3, 4]</span>
+
+<span class="var">copy</span>[<span class="num">0</span>] = <span class="num">99</span>                 <span class="cm"># modify the copy</span>
+
+<span class="fn">print</span>(<span class="var">copy</span>)                  <span class="cm"># [99, 3, 4]  — changed</span>
+<span class="fn">print</span>(<span class="var">original</span>)              <span class="cm"># [1, 2, 3, 4, 5] — UNCHANGED</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">[99, 3, 4]<br>[1, 2, 3, 4, 5]</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — List comprehension anatomy</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Structure: [expression  for variable  in iterable]</span>
+
+<span class="cm"># Squares of 1–10</span>
+<span class="var">squares</span> = [<span class="var">x</span> <span class="op">**</span> <span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)]
+<span class="fn">print</span>(<span class="var">squares</span>)
+
+<span class="cm"># Uppercase version of each word</span>
+<span class="var">words</span>  = [<span class="str">"hello"</span>, <span class="str">"world"</span>, <span class="str">"python"</span>]
+<span class="var">upper</span>  = [<span class="var">w</span><span class="op">.</span><span class="fn">upper</span>() <span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span>]
+<span class="fn">print</span>(<span class="var">upper</span>)
+
+<span class="cm"># Double every number</span>
+<span class="var">nums</span>    = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="var">doubled</span> = [<span class="var">n</span> <span class="op">*</span> <span class="num">2</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span>]
+<span class="fn">print</span>(<span class="var">doubled</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]<br>['HELLO', 'WORLD', 'PYTHON']<br>[2, 4, 6, 8, 10]</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — Filtered comprehension with if</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Structure: [expression  for var  in iterable  if condition]</span>
+<span class="var">scores</span> = [<span class="num">85</span>, <span class="num">42</span>, <span class="num">92</span>, <span class="num">38</span>, <span class="num">67</span>, <span class="num">51</span>, <span class="num">74</span>]
+
+<span class="cm"># Passing scores only</span>
+<span class="var">passing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span> <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span>]
+<span class="fn">print</span>(<span class="var">passing</span>)                 <span class="cm"># [85, 92, 67, 51, 74]</span>
+
+<span class="cm"># Even numbers from 1–20</span>
+<span class="var">evens</span> = [<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">21</span>) <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>]
+<span class="fn">print</span>(<span class="var">evens</span>)
+
+<span class="cm"># Words longer than 3 characters</span>
+<span class="var">words</span> = [<span class="str">"hi"</span>, <span class="str">"hello"</span>, <span class="str">"yo"</span>, <span class="str">"python"</span>, <span class="str">"ok"</span>]
+<span class="var">long_words</span> = [<span class="var">w</span> <span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span> <span class="kw">if</span> <span class="fn">len</span>(<span class="var">w</span>) <span class="op">&gt;</span> <span class="num">3</span>]
+<span class="fn">print</span>(<span class="var">long_words</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">[85, 92, 67, 51, 74]<br>[2, 4, 6, 8, 10, 12, 14, 16, 18, 20]<br>['hello', 'python']</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 6 — Side-by-side: filter loop vs comprehension</div>
+  <div class="refactor">
+    <div class="ref-col ref-verbose">
+      <div class="ref-head">Verbose — 4 lines (Lesson 13)</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px;padding:10px"><span class="var">passing</span> = []
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+        <span class="var">passing</span><span class="op">.</span><span class="fn">append</span>(<span class="var">s</span>)</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-warning)">More readable for beginners. Use when logic is complex.</div>
+    </div>
+    <div class="ref-col ref-concise">
+      <div class="ref-head">Concise — 1 line (today)</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px;padding:10px"><span class="var">passing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span>
+           <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span>]
+
+
+
+</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success)">Pythonic. Same logic, less code. Use when the expression is simple.</div>
+    </div>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Comprehensions are not always better.</strong> If the expression or condition is complex, a regular loop is clearer. The rule: if you can read it aloud in one breath, a comprehension is fine. If you need to pause and think, use a loop.</span></div>
+</div>
+
+<!-- Comprehension builder -->
+<div class="section">
+  <div class="sec-head">Interactive comprehension builder</div>
+  <div class="comp-builder">
+    <div class="cb-head">Fill in the parts — see the comprehension expression and result live</div>
+    <div class="cb-body">
+      <div class="cb-anatomy">
+        <div class="cb-part" style="background:var(--color-background-info)">
+          <span class="cb-part-label" style="color:var(--color-text-info)">① expression</span>
+          <input class="cb-part-input" id="cb-expr" value="x ** 2" oninput="updateComp()">
+          <span style="font-size:11px;color:var(--color-text-secondary)">What to compute per item</span>
+        </div>
+        <div class="cb-part" style="background:var(--color-background-secondary)">
+          <span class="cb-part-label">② for variable</span>
+          <input class="cb-part-input" id="cb-var" value="x" oninput="updateComp()">
+          <span style="font-size:11px;color:var(--color-text-secondary)">Loop variable name</span>
+        </div>
+        <div class="cb-part" style="background:var(--color-background-secondary)">
+          <span class="cb-part-label">③ in iterable</span>
+          <input class="cb-part-input" id="cb-iter" value="range(1, 11)" oninput="updateComp()">
+          <span style="font-size:11px;color:var(--color-text-secondary)">List or range to loop over</span>
+        </div>
+        <div class="cb-part" style="background:var(--color-background-secondary)">
+          <span class="cb-part-label">④ if condition (optional)</span>
+          <input class="cb-part-input" id="cb-cond" value="" placeholder="leave blank for no filter" oninput="updateComp()">
+          <span style="font-size:11px;color:var(--color-text-secondary)">Filter condition</span>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Python expression:</div>
+      <div class="cb-preview" id="cb-preview"></div>
+      <button class="cb-btn" onclick="runComp()">Run →</button>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Result:</div>
+      <div class="cb-result" id="cb-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 — Slice riddles -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Slice explorer challenge</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Pairs</div>
+    <div class="activity-title">Predict every slice output — then verify in Python</div>
+    <div class="activity-desc">Given <code>data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]</code>, students write predictions in their notebooks first, then click to reveal and run in Python to confirm. The last two are designed to surprise.</div>
+    <div class="riddle-grid" id="riddle-grid"></div>
+    <div class="code-block" style="margin-top:12px">
+      <div class="code-header"><span>Verify all at once — copy and run</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">data</span> = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>, <span class="num">60</span>, <span class="num">70</span>, <span class="num">80</span>, <span class="num">90</span>, <span class="num">100</span>]
+<span class="fn">print</span>(<span class="var">data</span>[<span class="num">2</span>:<span class="num">6</span>])
+<span class="fn">print</span>(<span class="var">data</span>[:<span class="num">4</span>])
+<span class="fn">print</span>(<span class="var">data</span>[<span class="num">7</span>:])
+<span class="fn">print</span>(<span class="var">data</span>[<span class="op">-</span><span class="num">3</span>:])
+<span class="fn">print</span>(<span class="var">data</span>[::<span class="num">3</span>])
+<span class="fn">print</span>(<span class="var">data</span>[<span class="num">1</span>:<span class="num">8</span>:<span class="num">2</span>])
+<span class="fn">print</span>(<span class="var">data</span>[::<span class="op">-</span><span class="num">1</span>])
+<span class="fn">print</span>(<span class="var">data</span>[<span class="num">8</span>:<span class="num">2</span>:<span class="op">-</span><span class="num">1</span>])</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Rewrite loops as comprehensions</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 12 minutes · Individual</div>
+    <div class="activity-title">Convert four filter loops into list comprehensions — one line each</div>
+    <div class="activity-desc">Students are given four working for-loop programs from Lessons 12–13. They rewrite each one as a single list comprehension, verify the outputs match, and then answer: when would you still prefer the loop version?</div>
+    <ol class="steps-list">
+      <li>Squares of 1–10 — basic transform comprehension</li>
+      <li>Even numbers from 1–30 — filtered comprehension with <code>%</code></li>
+      <li>Words longer than 4 characters from a given list — filtered with <code>len()</code></li>
+      <li>Temperatures converted from Celsius to Fahrenheit — transform with formula</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code — four loops to rewrite</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — rewrite each block as one comprehension line</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># 1. Squares — rewrite as a comprehension</span>
+<span class="var">squares</span> = []
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)<span class="op">:</span>
+    <span class="var">squares</span><span class="op">.</span><span class="fn">append</span>(<span class="var">x</span> <span class="op">**</span> <span class="num">2</span>)
+<span class="cm"># Your 1-line version: squares = [???]</span>
+
+<span class="cm"># 2. Even numbers from 1–30</span>
+<span class="var">evens</span> = []
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">31</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="var">evens</span><span class="op">.</span><span class="fn">append</span>(<span class="var">n</span>)
+<span class="cm"># Your 1-line version: evens = [???]</span>
+
+<span class="cm"># 3. Words longer than 4 characters</span>
+<span class="var">words</span>  = [<span class="str">"cat"</span>, <span class="str">"elephant"</span>, <span class="str">"ox"</span>, <span class="str">"giraffe"</span>, <span class="str">"bee"</span>, <span class="str">"python"</span>]
+<span class="var">long_w</span> = []
+<span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="fn">len</span>(<span class="var">w</span>) <span class="op">&gt;</span> <span class="num">4</span><span class="op">:</span>
+        <span class="var">long_w</span><span class="op">.</span><span class="fn">append</span>(<span class="var">w</span>)
+<span class="cm"># Your 1-line version: long_w = [???]</span>
+
+<span class="cm"># 4. Celsius to Fahrenheit</span>
+<span class="var">celsius</span> = [<span class="num">0</span>, <span class="num">20</span>, <span class="num">37</span>, <span class="num">100</span>]
+<span class="var">fahrenheit</span> = []
+<span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">celsius</span><span class="op">:</span>
+    <span class="var">fahrenheit</span><span class="op">.</span><span class="fn">append</span>(<span class="var">c</span> <span class="op">*</span> <span class="num">9</span> <span class="op">/</span> <span class="num">5</span> <span class="op">+</span> <span class="num">32</span>)
+<span class="cm"># Your 1-line version: fahrenheit = [???]</span></pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Solutions (reveal after students attempt)</div>
+    <div class="code-block">
+      <div class="code-header"><span>solutions.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">squares</span>    = [<span class="var">x</span> <span class="op">**</span> <span class="num">2</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)]
+<span class="var">evens</span>      = [<span class="var">n</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">31</span>) <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>]
+<span class="var">long_w</span>     = [<span class="var">w</span> <span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span> <span class="kw">if</span> <span class="fn">len</span>(<span class="var">w</span>) <span class="op">&gt;</span> <span class="num">4</span>]
+<span class="var">fahrenheit</span> = [<span class="var">c</span> <span class="op">*</span> <span class="num">9</span> <span class="op">/</span> <span class="num">5</span> <span class="op">+</span> <span class="num">32</span> <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">celsius</span>]</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What does <code>[x * 2 for x in range(5) if x % 2 == 0]</code> produce?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>[0, 2, 4, 6, 8]</code> — doubles all numbers 0–4</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span><code>[0, 4, 8]</code> — keeps only even x (0, 2, 4) then doubles them</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span><code>[2, 4, 6, 8, 10]</code> — doubles 1 through 5</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span><code>[0, 2, 4]</code> — returns just the even numbers, no doubling</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Write a list comprehension that produces the first letter of every word in <code>["apple", "banana", "cherry"]</code> — result should be <code>["a", "b", "c"]</code>. Then write one that only keeps words starting with a vowel.
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Slice</strong>A portion of a list (or string) extracted using <code>[start:stop:step]</code>. Always returns a new list — the original is unchanged.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">List comprehension</strong>A concise one-line syntax for building a new list: <code>[expression for var in iterable if condition]</code>.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">[::-1]</strong>The reverse-slice shorthand. Step of -1 means "go backwards through the entire list (or string)".</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Transform</strong>Applying an expression to every item to produce a new value — e.g. squaring, uppercasing, converting units.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Filter</strong>Keeping only items that satisfy a condition — the <code>if</code> part of a comprehension or filter loop.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Pythonic</strong>Code that follows Python's idiomatic style — concise, readable, and using built-in features. Comprehensions are considered Pythonic; verbose filter loops are not.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 15 — Week 3 Project)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a palindrome checker using slicing: ask for a word, use <code>[::-1]</code> to reverse it, check if the reverse equals the original. Test with "racecar", "level", "python".</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Given <code>nums = list(range(1, 21))</code>, write three one-line comprehensions: (1) squares of odd numbers only, (2) numbers divisible by both 3 and 4, (3) each number mapped to the string "even" or "odd" using a ternary expression <code>"even" if n%2==0 else "odd"</code>.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: what does <code>"abcdefgh"[1:7:2]</code> produce? What about <code>[1,2,3,4,5][10:]</code>? Does Python raise an error if the slice goes beyond the list length? Write your findings.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Comprehension overload risk:</strong> List comprehensions look elegant but confuse beginners who aren't yet fluent with for loops. If students are still struggling with basic iteration, have them keep using filter loops — comprehensions are a style improvement, not a requirement. Don't pressure every student to adopt them today.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common slicing mistake:</strong> Students who confuse <code>data[8:2:-1]</code> (going backwards from index 8 to 3) with <code>data[2:8]</code>. Use the slice explorer on the projector — visually dimming non-selected elements makes this concrete immediately.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common comprehension mistake:</strong> Writing <code>[x for x in range(10) if x % 2 == 0 x * 2]</code> — putting the expression after the condition instead of before the <code>for</code>. The anatomy is always: <em>expression first</em>, then <code>for</code>, then optional <code>if</code>.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">The palindrome hook works every time:</strong> After showing <code>[::-1]</code>, ask "what is 'racecar' backwards?" Let them predict, run <code>"racecar"[::-1]</code>, show it equals the original. Then say "write a one-line palindrome checker." Students who get it in one line feel like Python wizards.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Week 3 project preview:</strong> Tomorrow is the to-do list app — the most complete project yet. It uses everything from Weeks 1–3: while loops, if/elif, lists, append/remove, slicing for display, and optionally comprehensions for filtering. Students who master today's lesson will build a noticeably cleaner project.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (15).html'">Next: Lesson 15 - Week 3 Project</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Slice explorer
+const seNums = [0,1,2,3,4,5,6,7,8,9];
+function buildSeList(){
+  const row = document.getElementById('se-list');
+  row.innerHTML='';
+  seNums.forEach((v,i)=>{
+    const cell=document.createElement('div');
+    cell.className='se-cell';
+    cell.id=`se-cell-${i}`;
+    cell.innerHTML=`<div class="se-val">${v}</div><div class="se-idx">[${i}]</div>`;
+    row.appendChild(cell);
+  });
+}
+function updateSlice(){
+  const startRaw=document.getElementById('se-start').value.trim();
+  const stopRaw=document.getElementById('se-stop').value.trim();
+  const stepRaw=document.getElementById('se-step').value.trim();
+  const start=startRaw===''?undefined:parseInt(startRaw);
+  const stop=stopRaw===''?undefined:parseInt(stopRaw);
+  const step=stepRaw===''?undefined:parseInt(stepRaw);
+  const s=start===undefined?'':start;
+  const e=stop===undefined?'':stop;
+  const st=step===undefined?'':step;
+  const expr=`nums[${s}:${e}${st!==''?':'+st:''}]`;
+  // compute slice
+  const indices=[];
+  const len=seNums.length;
+  const stepVal=step===undefined?1:step;
+  if(stepVal===0){document.getElementById('se-result').textContent='Error: step cannot be zero';return;}
+  let startIdx,stopIdx;
+  if(stepVal>0){
+    startIdx=start===undefined?0:(start<0?Math.max(0,len+start):Math.min(len,start));
+    stopIdx=stop===undefined?len:(stop<0?Math.max(0,len+stop):Math.min(len,stop));
+    for(let i=startIdx;i<stopIdx;i+=stepVal)indices.push(i);
+  } else {
+    startIdx=start===undefined?len-1:(start<0?Math.max(-1,len+start):Math.min(len-1,start));
+    stopIdx=stop===undefined?-1:(stop<0?Math.max(-1,len+stop):Math.min(len-1,stop));
+    for(let i=startIdx;i>stopIdx;i+=stepVal)indices.push(i);
+  }
+  const idxSet=new Set(indices);
+  seNums.forEach((_,i)=>{
+    const cell=document.getElementById(`se-cell-${i}`);
+    cell.className='se-cell '+(idxSet.has(i)?'highlighted':'dimmed');
+  });
+  const result=indices.map(i=>seNums[i]);
+  document.getElementById('se-result').textContent=`${expr}  →  [${result.join(', ')}]`;
+}
+buildSeList();
+updateSlice();
+
+// Comprehension builder
+function updateComp(){
+  const expr=document.getElementById('cb-expr').value.trim();
+  const varN=document.getElementById('cb-var').value.trim();
+  const iter=document.getElementById('cb-iter').value.trim();
+  const cond=document.getElementById('cb-cond').value.trim();
+  const preview=cond?`[${expr} for ${varN} in ${iter} if ${cond}]`:`[${expr} for ${varN} in ${iter}]`;
+  document.getElementById('cb-preview').textContent=preview;
+}
+function runComp(){
+  const expr=document.getElementById('cb-expr').value.trim();
+  const varN=document.getElementById('cb-var').value.trim()||'x';
+  const iter=document.getElementById('cb-iter').value.trim();
+  const cond=document.getElementById('cb-cond').value.trim();
+  const res=document.getElementById('cb-result');
+  try{
+    let iterable;
+    if(iter.startsWith('range(')){
+      const args=iter.slice(6,-1).split(',').map(s=>parseInt(s.trim()));
+      if(args.length===1)iterable=Array.from({length:args[0]},(_,i)=>i);
+      else if(args.length===2)iterable=Array.from({length:args[1]-args[0]},(_,i)=>i+args[0]);
+      else{const[s,e,st]=args;iterable=[];for(let i=s;st>0?i<e:i>e;i+=st)iterable.push(i);}
+    } else if(iter.startsWith('[')){
+      iterable=JSON.parse(iter.replace(/'/g,'"'));
+    } else {
+      res.textContent='Supported iterables: range(...) or a list like [1,2,3]';return;
+    }
+    const results=[];
+    for(const item of iterable){
+      const scope={[varN]:item};
+      const condOk=cond?Function(...Object.keys(scope),'return '+cond)(...Object.values(scope)):true;
+      if(condOk){
+        const val=Function(...Object.keys(scope),'return '+expr)(...Object.values(scope));
+        results.push(val);
+      }
+    }
+    res.textContent=JSON.stringify(results).replace(/"/g,"'");
+  } catch(e){
+    res.textContent='Error: '+e.message;
+  }
+}
+updateComp();
+runComp();
+
+// Slice riddles
+const sliceData=[10,20,30,40,50,60,70,80,90,100];
+const riddles=[
+  {expr:'data[2:6]', answer:'[30, 40, 50, 60]', hint:'index 2 up to (not including) 6'},
+  {expr:'data[:4]', answer:'[10, 20, 30, 40]', hint:'from start up to index 4'},
+  {expr:'data[7:]', answer:'[80, 90, 100]', hint:'from index 7 to the end'},
+  {expr:'data[-3:]', answer:'[80, 90, 100]', hint:'last 3 elements'},
+  {expr:'data[::3]', answer:'[10, 40, 70, 100]', hint:'every 3rd element'},
+  {expr:'data[1:8:2]', answer:'[20, 40, 60, 80]', hint:'index 1 to 8, step 2'},
+  {expr:'data[::-1]', answer:'[100, 90, 80, 70, 60, 50, 40, 30, 20, 10]', hint:'the reverse trick!'},
+  {expr:'data[8:2:-1]', answer:'[90, 80, 70, 60, 50, 40]', hint:'backwards from index 8 down to (not including) 2'},
+];
+function buildRiddles(){
+  const grid=document.getElementById('riddle-grid');
+  grid.innerHTML='';
+  riddles.forEach((r,i)=>{
+    const row=document.createElement('div');
+    row.className='riddle-row';
+    row.innerHTML=`<div class="riddle-expr">${r.expr}</div><div class="riddle-hint">tap to reveal · ${r.hint}</div><div class="riddle-answer">→ ${r.answer}</div>`;
+    row.onclick=()=>row.classList.toggle('revealed');
+    grid.appendChild(row);
+  });
+}
+buildRiddles();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! range(5) produces 0,1,2,3,4. The if condition keeps only even x: 0, 2, 4. The expression x*2 then doubles each: 0→0, 2→4, 4→8. Result: [0, 4, 8].';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is B. Step through it: range(5) = [0,1,2,3,4]. Filter: keep only x where x%2==0 → [0,2,4]. Expression x*2: 0*2=0, 2*2=4, 4*2=8. Final result: [0,4,8].';
+  }
+}
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* list visualiser */
+.list-vis{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.lv-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.lv-body{padding:14px}
+.lv-list-row{display:flex;gap:0;align-items:stretch;margin-bottom:10px;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary)}
+.lv-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;border-right:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s;padding:8px 4px;min-width:0}
+.lv-cell:last-child{border-right:none}
+.lv-cell:hover{background:var(--color-background-secondary)}
+.lv-cell.selected{background:var(--color-background-info)}
+.lv-val{font-family:var(--font-mono);font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60px;text-align:center}
+.lv-idx{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.lv-neg{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
+.lv-info{font-size:13px;min-height:24px;color:var(--color-text-info);font-family:var(--font-mono)}
+/* methods reference */
+.methods-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.method-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.method-sig{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-info);margin-bottom:4px}
+.method-desc{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.method-ex{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:4px 8px;border-radius:4px}
+/* interactive list explorer */
+.explorer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.exp-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.exp-body{padding:14px}
+.exp-list-display{display:flex;gap:0;flex-wrap:wrap;margin-bottom:12px;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary)}
+.exp-cell{display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-right:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.exp-cell:last-child{border-right:none}
+.exp-val{font-family:var(--font-mono);font-size:14px;font-weight:500}
+.exp-idx{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.exp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.exp-field{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--color-text-secondary)}
+.exp-input{font-size:13px;padding:5px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:80px}
+.exp-btn{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.exp-btn:hover{background:var(--color-background-primary)}
+.exp-btn.danger{border-color:var(--color-border-danger);color:var(--color-text-danger);background:var(--color-background-danger)}
+.exp-btn.success{border-color:var(--color-border-success);color:var(--color-text-success);background:var(--color-background-success)}
+.exp-log{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12px;border:0.5px solid var(--color-border-tertiary);min-height:36px;max-height:140px;overflow-y:auto;line-height:1.9}
+/* index quiz */
+.idx-quiz{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.iq-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.iq-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.iq-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+.iq-expr{font-family:var(--font-mono);font-size:13px;flex:1;min-width:180px;background:var(--color-background-secondary);padding:7px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)}
+.iq-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:100px}
+.iq-check{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.iq-result{font-size:12px;font-weight:500;min-width:60px}
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2>Lesson 12: Lists — create, access, modify - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 12: Lists — create, access, modify</p>
+      <p class="hero-sub">Week 3 — Loops &amp; Lists · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">for loops, range()</div></div>
+    <div class="meta-item"><div class="meta-label">New syntax</div><div class="meta-val">[ ] · indexing</div></div>
+    <div class="meta-item"><div class="meta-label">New methods</div><div class="meta-val">append · remove · pop</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Create a list with mixed or same-type values using square bracket syntax</li>
+    <li>Access individual elements using positive and negative indexing</li>
+    <li>Modify a list in-place: change an element by index, append, remove, and pop</li>
+    <li>Use <code>len()</code>, <code>in</code>, and <code>not in</code> to query a list</li>
+    <li>Recognise and fix an <code>IndexError</code></li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The problem with separate variables (4 min)</div>
+        <div class="tl-desc">Show five separate variables: <code>score1 = 85</code>, <code>score2 = 92</code> … <code>score5 = 78</code>. Ask: "What if there are 30 students? 300? Would you write 300 variables?" Then show a single list: <code>scores = [85, 92, 67, 74, 78]</code>. Ask: "What changed?" A list lets one name hold multiple values — and a loop can process all of them in seconds. Land the key insight: <strong>a list is a single variable that holds an ordered collection of values</strong>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Creating lists and indexing (10 min)</div>
+        <div class="tl-desc">Type Examples 1–2. Use the visual list diagram on the projector — each element sits in a numbered slot starting at 0. Emphasise: <strong>index starts at 0, not 1</strong> — the same surprise as range(). Show both positive and negative indexing. Walk through the index quiz below during this segment.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Modifying lists: append, remove, pop, reassign (8 min)</div>
+        <div class="tl-desc">Show Examples 3–4. Key point: lists are <em>mutable</em> — unlike strings or integers, you can change them after creation. Use the interactive list explorer below — show operations live and let students see the list update in real time. Cover the IndexError and how to prevent it with <code>len()</code>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:22</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Querying lists: len(), in, not in (5 min)</div>
+        <div class="tl-desc">Show Example 5. Connect <code>in</code> to the logical operators from Lesson 7 — students already know <code>and</code>, <code>or</code>, <code>not</code>; now <code>in</code> extends that toolkit. Show how to use <code>len()</code> to safely guard index access.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Shopping list manager (13 min)</div>
+        <div class="tl-desc">Students build a menu-driven shopping list app using a while loop, if/elif/else, and list methods. Every concept from Weeks 1–3 comes together.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:40</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Index detective (8 min)</div>
+        <div class="tl-desc">Students predict outputs of various indexing expressions before running — using the interactive quiz below. Cements positive and negative indexing.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">List explorer + exit ticket (7–10 min)</div>
+        <div class="tl-desc">Students use the interactive list explorer to test their own operations. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- List visual -->
+<div class="section">
+  <div class="sec-head">Visual: list indexing diagram — show on projector</div>
+  <div class="list-vis">
+    <div class="lv-head">fruits = ["apple", "banana", "cherry", "date", "elderberry"] — click any element</div>
+    <div class="lv-body">
+      <div class="lv-list-row" id="lv-row"></div>
+      <div class="lv-info" id="lv-info">Click an element to see its positive and negative index</div>
+    </div>
+  </div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>Lists are zero-indexed.</strong> The first element is at index 0, not 1. The last element is at index <code>len(list) - 1</code>. Accessing index <code>len(list)</code> or beyond raises an <code>IndexError</code>. This is the #1 list mistake — address it with live examples before Activity 1.</span></div>
+</div>
+
+<!-- Methods reference -->
+<div class="section">
+  <div class="sec-head">Essential list methods — display on projector</div>
+  <div class="methods-grid">
+    <div class="method-card">
+      <div class="method-sig">.append(item)</div>
+      <div class="method-desc">Adds item to the END of the list. Modifies in place, returns None.</div>
+      <div class="method-ex">fruits.append("fig") → ["apple","banana","cherry","fig"]</div>
+    </div>
+    <div class="method-card">
+      <div class="method-sig">.remove(item)</div>
+      <div class="method-desc">Removes the FIRST occurrence of item. Raises ValueError if not found.</div>
+      <div class="method-ex">fruits.remove("banana") → ["apple","cherry","fig"]</div>
+    </div>
+    <div class="method-card">
+      <div class="method-sig">.pop(index)</div>
+      <div class="method-desc">Removes and RETURNS the item at index. Default index is -1 (last item).</div>
+      <div class="method-ex">last = fruits.pop() → removes and returns "fig"</div>
+    </div>
+    <div class="method-card">
+      <div class="method-sig">.insert(i, item)</div>
+      <div class="method-desc">Inserts item AT position i, shifting everything after it right.</div>
+      <div class="method-ex">fruits.insert(1, "blueberry") → at index 1</div>
+    </div>
+    <div class="method-card">
+      <div class="method-sig">list[i] = value</div>
+      <div class="method-desc">Replaces the element at index i with a new value. Directly mutates the list.</div>
+      <div class="method-ex">fruits[0] = "avocado" → first item changes</div>
+    </div>
+    <div class="method-card">
+      <div class="method-sig">len(list) · item in list</div>
+      <div class="method-desc"><code>len()</code> returns the count of items. <code>in</code> returns True/False for membership.</div>
+      <div class="method-ex">len(fruits) → 3 &nbsp; "apple" in fruits → True</div>
+    </div>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>append vs insert:</strong> <code>append()</code> is faster and more common — use it when order doesn't matter. <code>insert()</code> is for when position matters. Today focus on <code>append</code>, <code>remove</code>, and <code>pop</code> — the three students will use 90% of the time.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Creating lists and basic indexing</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Create a list — square brackets, comma-separated</span>
+<span class="var">fruits</span> = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>, <span class="str">"date"</span>]
+
+<span class="cm"># Positive indexing — starts at 0</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">0</span>])    <span class="cm"># "apple"   ← first</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">1</span>])    <span class="cm"># "banana"</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="num">3</span>])    <span class="cm"># "date"    ← last (index 3 = len-1)</span>
+
+<span class="cm"># Negative indexing — counts from the end</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="op">-</span><span class="num">1</span>])   <span class="cm"># "date"    ← last</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="op">-</span><span class="num">2</span>])   <span class="cm"># "cherry"</span>
+<span class="fn">print</span>(<span class="var">fruits</span>[<span class="op">-</span><span class="num">4</span>])   <span class="cm"># "apple"   ← same as [0]</span>
+
+<span class="cm"># len() — number of items</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">fruits</span>))  <span class="cm"># 4</span></pre>
+  </div>
+  <div class="output-label">Output — predict before running</div>
+  <div class="output-block">apple<br>banana<br>date<br>date<br>cherry<br>apple<br>4</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Mixed types and the IndexError</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Lists can hold any type — even mixed</span>
+<span class="var">profile</span> = [<span class="str">"Aisha"</span>, <span class="num">15</span>, <span class="num">1.65</span>, <span class="kw">True</span>]
+<span class="fn">print</span>(<span class="var">profile</span>[<span class="num">0</span>])   <span class="cm"># "Aisha"</span>
+<span class="fn">print</span>(<span class="var">profile</span>[<span class="num">1</span>])   <span class="cm"># 15</span>
+
+<span class="cm"># ✗ IndexError — index out of range</span>
+<span class="var">nums</span> = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+<span class="fn">print</span>(<span class="var">nums</span>[<span class="num">3</span>])      <span class="cm"># IndexError! valid: 0,1,2 only</span>
+
+<span class="cm"># ✓ Safe access — check length first</span>
+<span class="var">i</span> = <span class="num">3</span>
+<span class="kw">if</span> <span class="var">i</span> <span class="op">&lt;</span> <span class="fn">len</span>(<span class="var">nums</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">nums</span>[<span class="var">i</span>])
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Index out of range."</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">Aisha<br>15<br>IndexError: list index out of range<br>(safe version) → Index out of range.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Modifying a list</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">colours</span> = [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"blue"</span>]
+<span class="fn">print</span>(<span class="var">colours</span>)         <span class="cm"># ['red', 'green', 'blue']</span>
+
+<span class="cm"># Reassign by index</span>
+<span class="var">colours</span>[<span class="num">1</span>] = <span class="str">"yellow"</span>
+<span class="fn">print</span>(<span class="var">colours</span>)         <span class="cm"># ['red', 'yellow', 'blue']</span>
+
+<span class="cm"># append — add to end</span>
+<span class="var">colours</span><span class="op">.</span><span class="fn">append</span>(<span class="str">"purple"</span>)
+<span class="fn">print</span>(<span class="var">colours</span>)         <span class="cm"># ['red', 'yellow', 'blue', 'purple']</span>
+
+<span class="cm"># remove — delete by value</span>
+<span class="var">colours</span><span class="op">.</span><span class="fn">remove</span>(<span class="str">"red"</span>)
+<span class="fn">print</span>(<span class="var">colours</span>)         <span class="cm"># ['yellow', 'blue', 'purple']</span>
+
+<span class="cm"># pop — remove and return last item</span>
+<span class="var">removed</span> = <span class="var">colours</span><span class="op">.</span><span class="fn">pop</span>()
+<span class="fn">print</span>(<span class="var">removed</span>)         <span class="cm"># "purple"</span>
+<span class="fn">print</span>(<span class="var">colours</span>)         <span class="cm"># ['yellow', 'blue']</span></pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">['red', 'green', 'blue']<br>['red', 'yellow', 'blue']<br>['red', 'yellow', 'blue', 'purple']<br>['yellow', 'blue', 'purple']<br>purple<br>['yellow', 'blue']</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — Iterating a list with for</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">67</span>, <span class="num">74</span>, <span class="num">90</span>]
+
+<span class="cm"># Iterate directly — loop variable takes each value</span>
+<span class="kw">for</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Score: {score}"</span>)
+
+<span class="cm"># Iterate with index using range(len())</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">scores</span>))<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  scores[{i}] = {scores[i]}"</span>)
+
+<span class="cm"># Find total and average</span>
+<span class="var">total</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">s</span>
+<span class="fn">print</span>(<span class="str">f"Average: {total / len(scores):.1f}"</span>)</pre>
+  </div>
+  <div class="output-label">Output (partial)</div>
+  <div class="output-block">Score: 85 &nbsp; Score: 92 &nbsp; Score: 67 &nbsp; Score: 74 &nbsp; Score: 90<br>  scores[0] = 85 &nbsp; scores[1] = 92 &nbsp; ... scores[4] = 90<br>Average: 81.6</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Direct iteration vs range(len()):</strong> Show both patterns side by side. Direct iteration (<code>for item in list</code>) is cleaner when you just need the values. <code>range(len())</code> is needed when you also need the index. Students should know both — they'll use both constantly.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — in, not in, and list queries</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">shopping</span> = [<span class="str">"milk"</span>, <span class="str">"eggs"</span>, <span class="str">"bread"</span>, <span class="str">"butter"</span>]
+
+<span class="cm"># Check membership</span>
+<span class="fn">print</span>(<span class="str">"eggs"</span> <span class="kw">in</span> <span class="var">shopping</span>)          <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="str">"cheese"</span> <span class="kw">in</span> <span class="var">shopping</span>)        <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="str">"cheese"</span> <span class="kw">not in</span> <span class="var">shopping</span>)    <span class="cm"># True</span>
+
+<span class="cm"># Use in inside a condition</span>
+<span class="var">item</span> = <span class="fn">input</span>(<span class="str">"Check for item: "</span>)
+<span class="kw">if</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">shopping</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"✓ {item} is on the list."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"✗ {item} is NOT on the list."</span>)</pre>
+  </div>
+</div>
+
+<!-- Interactive list explorer -->
+<div class="section">
+  <div class="sec-head">Interactive list explorer — build and modify a live list</div>
+  <div class="explorer">
+    <div class="exp-head">Modify the list below — every operation updates the display instantly</div>
+    <div class="exp-body">
+      <div class="exp-list-display" id="exp-display"></div>
+      <div class="exp-actions">
+        <div class="exp-field">
+          <span>append:</span>
+          <input class="exp-input" id="exp-append-val" placeholder="value">
+          <button class="exp-btn success" onclick="expAppend()">append()</button>
+        </div>
+        <div class="exp-field">
+          <span>remove:</span>
+          <input class="exp-input" id="exp-remove-val" placeholder="value">
+          <button class="exp-btn danger" onclick="expRemove()">remove()</button>
+        </div>
+        <div class="exp-field">
+          <span>pop index:</span>
+          <input class="exp-input" id="exp-pop-idx" placeholder="-1" type="number">
+          <button class="exp-btn danger" onclick="expPop()">pop()</button>
+        </div>
+        <div class="exp-field">
+          <span>set [<input class="exp-input" id="exp-set-idx" type="number" placeholder="i" style="width:50px">]:</span>
+          <input class="exp-input" id="exp-set-val" placeholder="value">
+          <button class="exp-btn" onclick="expSet()">set</button>
+        </div>
+        <button class="exp-btn" onclick="expReset()" style="margin-left:auto">reset</button>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Operation log:</div>
+      <div class="exp-log" id="exp-log"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Index quiz -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Index detective quiz</div>
+  <div class="idx-quiz">
+    <div class="iq-head">Given: cities = ["Karachi", "Lahore", "Islamabad", "Peshawar", "Quetta"] — predict each output then click Check</div>
+    <div class="iq-body" id="iq-body"></div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Shopping list manager</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 13 minutes · Individual</div>
+    <div class="activity-title">Build a menu-driven shopping list app using a while loop and list methods</div>
+    <div class="activity-desc">Students write a complete command-line app: a while True loop drives a menu, and each option calls a list method. This is the most complete program students have built — it uses every major concept from Weeks 1 through 3.</div>
+    <ol class="steps-list">
+      <li>Create an empty list: <code>shopping = []</code></li>
+      <li>Write a <code>while True</code> loop that prints a menu: (1) View list (2) Add item (3) Remove item (4) Quit</li>
+      <li>Use <code>if/elif/else</code> to handle each menu choice</li>
+      <li>View: print all items with their index using a for loop and f-strings</li>
+      <li>Add: <code>input()</code> an item name, <code>append()</code> it, confirm with a message</li>
+      <li>Remove: <code>input()</code> the item, check it's <code>in</code> the list before removing, give an error if not found</li>
+      <li>Quit: <code>break</code> out of the while loop and print a farewell message</li>
+      <li>Extension: add option (5) to clear the entire list and option (6) to count items</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">shopping</span> = []
+
+<span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"\n=== Shopping List ==="</span>)
+    <span class="fn">print</span>(<span class="str">"1. View list"</span>)
+    <span class="fn">print</span>(<span class="str">"2. Add item"</span>)
+    <span class="fn">print</span>(<span class="str">"3. Remove item"</span>)
+    <span class="fn">print</span>(<span class="str">"4. Quit"</span>)
+
+    <span class="var">choice</span> = <span class="fn">input</span>(<span class="str">"Choose (1-4): "</span>)
+
+    <span class="kw">if</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"1"</span><span class="op">:</span>
+        <span class="kw">if</span> <span class="fn">len</span>(<span class="var">shopping</span>) <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  (empty)"</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="kw">for</span> <span class="var">i</span>, <span class="var">item</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">shopping</span>)<span class="op">:</span>
+                <span class="fn">print</span>(<span class="str">f"  {i+1}. {item}"</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"2"</span><span class="op">:</span>
+        <span class="var">item</span> = <span class="fn">input</span>(<span class="str">"  Item to add: "</span>)
+        <span class="var">shopping</span><span class="op">.</span><span class="fn">append</span>(<span class="var">item</span>)
+        <span class="fn">print</span>(<span class="str">f"  ✓ '{item}' added."</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"3"</span><span class="op">:</span>
+        <span class="var">item</span> = <span class="fn">input</span>(<span class="str">"  Item to remove: "</span>)
+        <span class="kw">if</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">shopping</span><span class="op">:</span>
+            <span class="var">shopping</span><span class="op">.</span><span class="fn">remove</span>(<span class="var">item</span>)
+            <span class="fn">print</span>(<span class="str">f"  ✓ '{item}' removed."</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">f"  ✗ '{item}' not on the list."</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"4"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"List saved with {len(shopping)} items. Goodbye!"</span>)
+        <span class="kw">break</span>
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  Please choose 1, 2, 3, or 4."</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Sample session</div>
+    <div class="output-block">=== Shopping List ===<br>Choose (1-4): <span class="in-line">2</span><br>  Item to add: <span class="in-line">milk</span><br>  ✓ 'milk' added.<br>Choose (1-4): <span class="in-line">2</span><br>  Item to add: <span class="in-line">eggs</span><br>  ✓ 'eggs' added.<br>Choose (1-4): <span class="in-line">1</span><br>  1. milk<br>  2. eggs<br>Choose (1-4): <span class="in-line">3</span><br>  Item to remove: <span class="in-line">cheese</span><br>  ✗ 'cheese' not on the list.<br>Choose (1-4): <span class="in-line">4</span><br>List saved with 2 items. Goodbye!</div>
+    <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>enumerate() bonus:</strong> The starter code uses <code>enumerate(shopping)</code> to get both index and value in one loop — a Pythonic shortcut that beats <code>range(len())</code> for display purposes. Students who ask about it get a great bonus explanation.</span></div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">Given <code>items = ["pen", "book", "ruler", "eraser"]</code>, what does <code>items[-2]</code> return?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>"book"</code> — index -2 counts 2 from the start</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span><code>"eraser"</code> — index -2 is the second item</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span><code>"ruler"</code> — index -1 is last, -2 is second-to-last</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>IndexError — negative indices are not valid</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Given <code>nums = [10, 20, 30, 40, 50]</code>, write one line each that:<br>
+      (1) Changes the first element to 99 &nbsp; (2) Adds 60 to the end &nbsp; (3) Removes 30 &nbsp; (4) Prints the number of items after all three changes
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">List</strong>An ordered, mutable collection of values. Created with square brackets: <code>[1, 2, 3]</code>.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Index</strong>The position of an element in a list. Starts at 0. Negative indices count from the end.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Mutable</strong>Can be changed after creation. Lists are mutable; strings and integers are not.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">IndexError</strong>Raised when you try to access an index that doesn't exist — e.g. index 5 of a 4-item list.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">append() vs pop()</strong>append adds to the end; pop removes from the end (or a given index) and returns the removed value.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">in operator</strong>Tests membership: <code>"apple" in fruits</code> returns True/False. Works with lists and strings.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 13)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a program that creates a list of 5 favourite movies. Then: print them all with a for loop, print only the first and last using indexing, replace the middle one with a new movie, and print the final list.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Given <code>temps = [22, 19, 25, 30, 17, 28, 21]</code>, write a for loop that prints only temperatures above 24. Then find and print the highest temperature using a loop and accumulator (no built-in <code>max()</code> yet!).</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: what does <code>items.remove("apple")</code> do if "apple" appears twice in the list? What error does <code>items.remove("mango")</code> raise if "mango" is not in the list? How would you prevent that error?</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Zero-indexing — say it three times:</strong> The most common list mistake is <code>list[1]</code> when they mean the first element. Drill it physically: point to the list visualiser and ask "what is the index of apple?" every time a student hesitates. By lesson end it should be reflex.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake with remove():</strong> Students who call <code>.remove()</code> without first checking <code>in</code> — if the item isn't in the list, Python raises a <code>ValueError</code>. The starter code for Activity 1 shows the safe pattern. Point it out explicitly.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common confusion:</strong> Students who think <code>list[i] = value</code> and <code>list.append(value)</code> do the same thing. The first replaces an existing slot; the second adds a new slot at the end. Show both in the explorer and watch the list length change only with append.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">enumerate() — introduce it but don't require it:</strong> The starter code uses enumerate(). Students who ask "what is that?" get a concise answer: "enumerate gives you both the index and the value at once." Students who don't notice it just use range(len()) — both approaches are valid today.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Activity 1 is the star of this lesson:</strong> The shopping list manager is the most complete program students have built so far — it combines while, if/elif, for, input, f-strings, and list methods. Celebrate when students get it working. It should feel powerful.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (13).html'">Next: Lesson 13 - Iterating lists & list methods</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// List visualiser
+const lvFruits = ["apple","banana","cherry","date","elderberry"];
+function renderLV(){
+  const row = document.getElementById('lv-row');
+  row.innerHTML='';
+  lvFruits.forEach((f,i)=>{
+    const cell = document.createElement('div');
+    cell.className='lv-cell';
+    cell.innerHTML=`<div class="lv-val">"${f}"</div><div class="lv-idx">[${i}]</div><div class="lv-neg">[-${lvFruits.length-i}]</div>`;
+    cell.onclick=()=>{
+      document.querySelectorAll('.lv-cell').forEach(c=>c.classList.remove('selected'));
+      cell.classList.add('selected');
+      document.getElementById('lv-info').textContent=`fruits[${i}] = fruits[-${lvFruits.length-i}] = "${f}"`;
+    };
+    row.appendChild(cell);
+  });
+}
+renderLV();
+
+// List explorer
+let expList = ["milk","eggs","bread"];
+function renderExp(){
+  const d=document.getElementById('exp-display');
+  d.innerHTML='';
+  if(expList.length===0){
+    const span=document.createElement('div');
+    span.style.cssText='padding:12px 16px;color:var(--color-text-tertiary);font-size:13px;font-style:italic';
+    span.textContent='(empty list)';
+    d.appendChild(span);
+    return;
+  }
+  expList.forEach((v,i)=>{
+    const cell=document.createElement('div');
+    cell.className='exp-cell';
+    cell.innerHTML=`<div class="exp-val">"${v}"</div><div class="exp-idx">[${i}]</div>`;
+    d.appendChild(cell);
+  });
+}
+function expLog(msg,color){
+  const log=document.getElementById('exp-log');
+  const line=document.createElement('div');
+  line.style.color=color||'var(--color-text-primary)';
+  line.textContent=msg;
+  log.appendChild(line);
+  log.scrollTop=log.scrollHeight;
+}
+function expAppend(){
+  const v=document.getElementById('exp-append-val').value.trim();
+  if(!v){expLog('  ⚠ Enter a value first.','var(--color-text-warning)');return;}
+  expList.push(v);
+  expLog(`append("${v}") → list now has ${expList.length} items`,'var(--color-text-success)');
+  document.getElementById('exp-append-val').value='';
+  renderExp();
+}
+function expRemove(){
+  const v=document.getElementById('exp-remove-val').value.trim();
+  if(!v){expLog('  ⚠ Enter a value first.','var(--color-text-warning)');return;}
+  const idx=expList.indexOf(v);
+  if(idx===-1){expLog(`remove("${v}") → ValueError: "${v}" not in list`,'var(--color-text-danger)');return;}
+  expList.splice(idx,1);
+  expLog(`remove("${v}") → removed, list now has ${expList.length} items`,'var(--color-text-danger)');
+  document.getElementById('exp-remove-val').value='';
+  renderExp();
+}
+function expPop(){
+  const raw=document.getElementById('exp-pop-idx').value;
+  let idx=raw===''?expList.length-1:parseInt(raw);
+  if(isNaN(idx))idx=expList.length-1;
+  if(expList.length===0){expLog('pop() → IndexError: pop from empty list','var(--color-text-danger)');return;}
+  const realIdx=idx<0?expList.length+idx:idx;
+  if(realIdx<0||realIdx>=expList.length){expLog(`pop(${idx}) → IndexError: index out of range`,'var(--color-text-danger)');return;}
+  const removed=expList.splice(realIdx,1)[0];
+  expLog(`pop(${idx}) → removed "${removed}", list now has ${expList.length} items`,'var(--color-text-warning)');
+  renderExp();
+}
+function expSet(){
+  const idx=parseInt(document.getElementById('exp-set-idx').value);
+  const val=document.getElementById('exp-set-val').value.trim();
+  if(isNaN(idx)||!val){expLog('  ⚠ Enter both index and value.','var(--color-text-warning)');return;}
+  const real=idx<0?expList.length+idx:idx;
+  if(real<0||real>=expList.length){expLog(`list[${idx}] = "${val}" → IndexError: index out of range`,'var(--color-text-danger)');return;}
+  const old=expList[real];
+  expList[real]=val;
+  expLog(`list[${idx}] = "${val}" (replaced "${old}")`,'var(--color-text-info)');
+  renderExp();
+}
+function expReset(){
+  expList=["milk","eggs","bread"];
+  document.getElementById('exp-log').innerHTML='';
+  expLog('List reset to ["milk", "eggs", "bread"]','var(--color-text-secondary)');
+  renderExp();
+}
+renderExp();
+expLog('List initialised: ["milk", "eggs", "bread"]','var(--color-text-secondary)');
+
+// Index quiz
+const cities=["Karachi","Lahore","Islamabad","Peshawar","Quetta"];
+const iqQuestions=[
+  {expr:'cities[0]', answer:'Karachi'},
+  {expr:'cities[2]', answer:'Islamabad'},
+  {expr:'cities[-1]', answer:'Quetta'},
+  {expr:'cities[-3]', answer:'Islamabad'},
+  {expr:'cities[len(cities)-1]', answer:'Quetta'},
+  {expr:'"Lahore" in cities', answer:'True'},
+  {expr:'cities[5]', answer:'IndexError'},
+];
+function renderIQ(){
+  const body=document.getElementById('iq-body');
+  body.innerHTML='';
+  iqQuestions.forEach((q,i)=>{
+    const row=document.createElement('div');
+    row.className='iq-row';
+    row.innerHTML=`<div class="iq-expr">${q.expr}</div><input class="iq-input" id="iq-in-${i}" placeholder="your answer"><button class="iq-check" onclick="checkIQ(${i},'${q.answer}')">Check</button><div class="iq-result" id="iq-res-${i}"></div>`;
+    body.appendChild(row);
+  });
+}
+function checkIQ(i,correct){
+  const val=document.getElementById(`iq-in-${i}`).value.trim();
+  const res=document.getElementById(`iq-res-${i}`);
+  if(val.toLowerCase()===correct.toLowerCase()||val===`"${correct}"`||val===`'${correct}'`){
+    res.textContent='✓ '+correct;
+    res.style.color='var(--color-text-success)';
+  } else {
+    res.textContent='✗ → '+correct;
+    res.style.color='var(--color-text-danger)';
+  }
+}
+renderIQ();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! Negative indexing counts from the end: -1 is the last item ("eraser"), -2 is second-to-last ("ruler"), -3 is "book", -4 is "pen". A list of 4 items has valid negative indices -1 through -4.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. Negative indices count from the end of the list. index[-1] = "eraser" (last), index[-2] = "ruler" (second-to-last). Negative indices are valid and very useful for accessing the end of a list without knowing its length.';
+  }
+}
+</script>
+</div>
+</body>
+</html>

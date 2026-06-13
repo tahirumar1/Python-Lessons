@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* truth table explorer */
+.tt-wrap{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.tt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tt-tabs{display:flex;gap:6px}
+.tt-tab{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.tt-tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500}
+.tt-body{padding:14px}
+.tt-table{width:100%;border-collapse:collapse;font-size:13px;font-family:var(--font-mono)}
+.tt-table th{padding:8px 14px;text-align:center;font-weight:500;font-size:12px;border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.tt-table td{padding:10px 14px;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .1s}
+.tt-table tr:last-child td{border-bottom:none}
+.tt-table tr:hover td{background:var(--color-background-secondary)}
+.tt-t{color:var(--color-text-success);font-weight:500}
+.tt-f{color:var(--color-text-danger);font-weight:500}
+.tt-res{font-weight:700;font-size:14px}
+/* operator cards */
+.op-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.op-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;background:var(--color-background-primary)}
+.op-sym{font-family:var(--font-mono);font-size:22px;font-weight:500;margin-bottom:6px;display:block}
+.op-name{font-size:13px;font-weight:500;margin-bottom:4px}
+.op-rule{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.op-ex{font-family:var(--font-mono);font-size:11px;margin-top:8px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:6px 8px;border-radius:var(--border-radius-md)}
+/* live logic tester */
+.logic-tester{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.logic-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.logic-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+.logic-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.logic-label{font-size:12px;color:var(--color-text-secondary);min-width:80px}
+.logic-toggle{display:flex;gap:6px}
+.lg-btn{padding:5px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;font-size:12px;font-weight:500;background:none;font-family:var(--font-sans);transition:all .12s;color:var(--color-text-secondary)}
+.lg-btn.sel-t{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+.lg-btn.sel-f{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger)}
+.logic-result{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:13px;border:0.5px solid var(--color-border-tertiary)}
+/* short-circuit demo */
+.sc-demo{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.sc-row{display:flex;gap:0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary);font-size:13px;align-items:stretch}
+.sc-expr{flex:1;padding:10px 14px;font-family:var(--font-mono);background:var(--color-background-secondary)}
+.sc-arrow{padding:10px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);border-left:0.5px solid var(--color-border-tertiary)}
+.sc-reason{flex:2;padding:10px 14px;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-primary);border-left:0.5px solid var(--color-border-tertiary)}
+.sc-result{padding:10px 14px;font-weight:500;border-left:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);min-width:60px;text-align:center}
+.sc-true{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+.sc-false{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger)}
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2>Lesson 7: Logical operators — and / or / not - Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 7: Logical operators — and / or / not</p>
+      <p class="hero-sub">Week 2 — Making Decisions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">if / elif / else</div></div>
+    <div class="meta-item"><div class="meta-label">New keywords</div><div class="meta-val">and · or · not</div></div>
+    <div class="meta-item"><div class="meta-label">Key concept</div><div class="meta-val">Boolean logic</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Combine two or more conditions using <code>and</code>, <code>or</code>, and <code>not</code></li>
+    <li>Predict the result of compound expressions by tracing each condition separately</li>
+    <li>Understand short-circuit evaluation and why it matters</li>
+    <li>Avoid common logic bugs: double-condition mistakes and <code>not</code> placement errors</li>
+    <li>Build a movie night checker and complete a logic truth table activity</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">Two keys to open the vault (5 min)</div>
+        <div class="tl-desc">Say: "A bank vault needs TWO keys turned at the same time to open. If only one key turns — the vault stays shut. That is exactly how <code>and</code> works. Now imagine an emergency exit that opens if EITHER alarm goes off — that is <code>or</code>." Draw the two scenarios on the board as simple diagrams. Ask students to give their own real-world examples of "and" and "or" decisions. This primes the lesson before a single line of code is written.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">and, or, not — operator cards + truth tables (10 min)</div>
+        <div class="tl-desc">Walk through the three operator cards below. For each one, draw the truth table on the board while asking students to predict each row. Key rule to state aloud: "<code>and</code> needs BOTH True. <code>or</code> needs at least ONE True. <code>not</code> flips whatever it gets." Then open the interactive truth table explorer and let students click rows to verify.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:15</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Using logical operators in if statements — live demo (10 min)</div>
+        <div class="tl-desc">Type Examples 1–4 on the projector. For each compound condition, point at each part and evaluate it separately before evaluating the whole. Introduce short-circuit evaluation with a simple analogy: "Python is lazy — if <code>and</code>'s first part is False, it doesn't even check the second part." Show the short-circuit demo panel below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Movie night checker (15 min)</div>
+        <div class="tl-desc">Students combine age and permission conditions using <code>and</code>. Uses all three operators — full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:40</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Logic truth table on paper (8 min)</div>
+        <div class="tl-desc">Students fill in a 6-row truth table by hand, verify with Python, then discuss the two rows that surprise them most.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Live logic tester + exit ticket (7–10 min)</div>
+        <div class="tl-desc">Students toggle A and B values in the live tester to see results. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Operator cards -->
+<div class="section">
+  <div class="sec-head">The three logical operators</div>
+  <div class="op-cards">
+    <div class="op-card">
+      <span class="op-sym" style="color:var(--color-text-info);">and</span>
+      <div class="op-name">Both must be True</div>
+      <div class="op-rule">Returns <strong>True</strong> only when <em>every</em> condition is True. If any one is False — the whole expression is False.</div>
+      <div class="op-ex">age &gt;= 13 and has_ticket<br>→ True only if BOTH hold</div>
+    </div>
+    <div class="op-card">
+      <span class="op-sym" style="color:var(--color-text-success);">or</span>
+      <div class="op-name">At least one must be True</div>
+      <div class="op-rule">Returns <strong>True</strong> when <em>at least one</em> condition is True. Only False when every condition is False.</div>
+      <div class="op-ex">is_member or has_coupon<br>→ True if EITHER holds</div>
+    </div>
+    <div class="op-card">
+      <span class="op-sym" style="color:var(--color-text-warning);">not</span>
+      <div class="op-name">Flips True ↔ False</div>
+      <div class="op-rule">A unary operator — takes only one condition and inverts it. <code>not True</code> → <code>False</code>. <code>not False</code> → <code>True</code>.</div>
+      <div class="op-ex">not is_banned<br>→ True if they are NOT banned</div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive truth table -->
+<div class="section">
+  <div class="sec-head">Interactive truth table explorer — click any row</div>
+  <div class="tt-wrap">
+    <div class="tt-head">
+      <span>Select an operator to explore its truth table</span>
+      <div class="tt-tabs">
+        <button class="tt-tab active" onclick="showTT('and',this)">and</button>
+        <button class="tt-tab" onclick="showTT('or',this)">or</button>
+        <button class="tt-tab" onclick="showTT('not',this)">not</button>
+      </div>
+    </div>
+    <div class="tt-body">
+      <table class="tt-table" id="tt-table"></table>
+      <div id="tt-note" style="font-size:12px;color:var(--color-text-secondary);margin-top:10px;min-height:20px;font-style:italic;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Short-circuit -->
+<div class="section">
+  <div class="sec-head">Short-circuit evaluation — Python stops early</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px;">Python evaluates logical expressions left to right and stops as soon as the result is determined. This is called <strong>short-circuit evaluation</strong>. It saves time and prevents errors.</p>
+  <div class="sc-demo">
+    <div class="sc-row">
+      <div class="sc-expr">False and ???</div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-reason"><strong>and</strong>: first part is False → whole expression must be False → second part never checked</div>
+      <div class="sc-result" style="color:var(--color-text-danger);">False</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-expr">True or ???</div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-reason"><strong>or</strong>: first part is True → whole expression must be True → second part never checked</div>
+      <div class="sc-result" style="color:var(--color-text-success);">True</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-expr">True and ???</div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-reason"><strong>and</strong>: first part is True → result depends on second → second part IS checked</div>
+      <div class="sc-result" style="color:var(--color-text-secondary);">depends</div>
+    </div>
+    <div class="sc-row">
+      <div class="sc-expr">False or ???</div>
+      <div class="sc-arrow">→</div>
+      <div class="sc-reason"><strong>or</strong>: first part is False → result depends on second → second part IS checked</div>
+      <div class="sc-result" style="color:var(--color-text-secondary);">depends</div>
+    </div>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Why it matters in practice:</strong> Short-circuit prevents crashes. Example: <code>if x != 0 and 10/x &gt; 2</code> — if <code>x</code> is 0, Python short-circuits and never divides by zero. Students don't need to use this today, but knowing it exists explains confusing behaviour later.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — and: both conditions must be true</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">age</span>        = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter age: "</span>))
+<span class="var">has_ticket</span> = <span class="fn">input</span>(<span class="str">"Do you have a ticket? (yes/no): "</span>)
+
+<span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="num">13</span> <span class="kw">and</span> <span class="var">has_ticket</span> <span class="op">==</span> <span class="str">"yes"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Welcome! Enjoy the show."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Sorry, you cannot enter."</span>)</pre>
+  </div>
+  <div class="output-label">Four possible outcomes</div>
+  <div class="output-block">age=15, ticket=yes → Welcome! Enjoy the show.<br>age=15, ticket=no  → Sorry, you cannot enter.<br>age=10, ticket=yes → Sorry, you cannot enter.<br>age=10, ticket=no  → Sorry, you cannot enter.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — or: at least one condition true</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">is_member</span>  = <span class="fn">input</span>(<span class="str">"Are you a member? (yes/no): "</span>)
+<span class="var">has_coupon</span> = <span class="fn">input</span>(<span class="str">"Do you have a coupon? (yes/no): "</span>)
+
+<span class="kw">if</span> <span class="var">is_member</span> <span class="op">==</span> <span class="str">"yes"</span> <span class="kw">or</span> <span class="var">has_coupon</span> <span class="op">==</span> <span class="str">"yes"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Discount applied! 20% off."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Full price applies."</span>)</pre>
+  </div>
+  <div class="output-label">Outcomes</div>
+  <div class="output-block">member=yes, coupon=yes → Discount applied! 20% off.<br>member=yes, coupon=no  → Discount applied! 20% off.<br>member=no,  coupon=yes → Discount applied! 20% off.<br>member=no,  coupon=no  → Full price applies.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — not: flip a condition</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">is_banned</span> = <span class="kw">False</span>
+<span class="var">username</span>  = <span class="fn">input</span>(<span class="str">"Enter username: "</span>)
+
+<span class="kw">if</span> <span class="kw">not</span> <span class="var">is_banned</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Welcome, <span class="var">{username}</span>!"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Access denied."</span>)
+
+<span class="cm"># not also works inline with comparisons</span>
+<span class="var">score</span> = <span class="num">45</span>
+<span class="kw">if</span> <span class="kw">not</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>        <span class="cm"># same as: score &lt; 50</span>
+    <span class="fn">print</span>(<span class="str">"Did not pass."</span>)</pre>
+  </div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — Combining all three + common mistake</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">temp</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Temperature in °C: "</span>))
+
+<span class="cm"># ✓ Correct — checks temp is between 20 and 30</span>
+<span class="kw">if</span> <span class="var">temp</span> <span class="op">&gt;=</span> <span class="num">20</span> <span class="kw">and</span> <span class="var">temp</span> <span class="op">&lt;=</span> <span class="num">30</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Perfect weather!"</span>)
+
+<span class="cm"># ✗ Common mistake — this ALWAYS passes (reads wrong)</span>
+<span class="kw">if</span> <span class="var">temp</span> <span class="op">&gt;=</span> <span class="num">20</span> <span class="kw">and</span> <span class="op">&lt;=</span> <span class="num">30</span><span class="op">:</span>     <span class="cm"># SyntaxError!</span>
+    <span class="fn">print</span>(<span class="str">"Wrong syntax"</span>)
+
+<span class="cm"># Python also allows chained comparisons (very readable!)</span>
+<span class="kw">if</span> <span class="num">20</span> <span class="op">&lt;=</span> <span class="var">temp</span> <span class="op">&lt;=</span> <span class="num">30</span><span class="op">:</span>          <span class="cm"># Pythonic shorthand</span>
+    <span class="fn">print</span>(<span class="str">"Perfect weather! (chained)"</span>)</pre>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>The range-check mistake is universal.</strong> Every beginner writes <code>20 &lt;= temp &lt;= 30</code> in their first language and it works. When they write <code>temp &gt;= 20 and &lt;= 30</code> in Python (missing the variable name on the right side), it crashes. Show this live, let them see the SyntaxError, then show the fix. Also reveal the chained comparison — it will delight them.</span></div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Movie night checker</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 15 minutes · Individual</div>
+    <div class="activity-title">Build a cinema access checker using and, or, and not</div>
+    <div class="activity-desc">A cinema has a PG-13 film and an R-18 film showing. Students write a program that checks the viewer's age and parental permission, then decides which film (if any) they can watch — using all three logical operators.</div>
+    <ol class="steps-list">
+      <li>Ask for the viewer's age (<code>int</code>) and whether they have parental permission (<code>yes</code>/<code>no</code>)</li>
+      <li>R-18 film: age must be 18+ OR (age 13–17 AND has permission) — use <code>and</code> + <code>or</code></li>
+      <li>PG-13 film: age must be 13+ OR has permission — simpler <code>or</code> condition</li>
+      <li>Use <code>not</code> in at least one branch (e.g. for the "no access" case)</li>
+      <li>Extension: add a third film (G-rated, any age) and a fourth output "no films available"</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="fn">print</span>(<span class="str">"=== Cinema Access Checker ==="</span>)
+<span class="var">age</span>        = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Your age: "</span>))
+<span class="var">permission</span> = <span class="fn">input</span>(<span class="str">"Parental permission? (yes/no): "</span>)
+
+<span class="cm"># R-18: must be 18+ OR (13-17 with permission)</span>
+<span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="num">18</span> <span class="kw">or</span> (<span class="var">age</span> <span class="op">&gt;=</span> <span class="num">13</span> <span class="kw">and</span> <span class="var">permission</span> <span class="op">==</span> <span class="str">"yes"</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"✓ You can watch the R-18 film."</span>)
+<span class="cm"># PG-13: must be 13+ OR has permission</span>
+<span class="kw">elif</span> ???<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"✓ You can watch the PG-13 film."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"✗ Sorry, no films available for age <span class="var">{age}</span>."</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example test cases — run all four to verify</div>
+    <div class="output-block">age=20, permission=no  → ✓ You can watch the R-18 film.<br>age=15, permission=yes → ✓ You can watch the R-18 film.<br>age=15, permission=no  → ✓ You can watch the PG-13 film.<br>age=10, permission=no  → ✗ Sorry, no films available for age 10.</div>
+    <div class="tip-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Parentheses in compound conditions:</strong> The starter code shows <code>age &gt;= 18 or (age &gt;= 13 and permission == "yes")</code>. Point out the parentheses — without them, <code>or</code> and <code>and</code> have different precedence (<code>and</code> binds tighter). When mixing operators, always use parentheses to make intent explicit.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Logic truth table on paper</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 8 minutes · Pairs</div>
+    <div class="activity-title">Fill the table on paper — then verify every row in Python</div>
+    <div class="activity-desc">Students complete this 6-row table in their notebooks first, predicting each result without running code. Then they open Python, type each expression, and mark their predictions correct or wrong. Discuss the two rows that most students get wrong.</div>
+    <div style="margin-top:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
+      <table class="tt-table" style="font-family:var(--font-sans)">
+        <thead><tr><th>A</th><th>B</th><th>Expression</th><th>Predict</th><th style="font-size:11px;color:var(--color-text-secondary);">Click to reveal</th></tr></thead>
+        <tbody id="paper-tt"></tbody>
+      </table>
+    </div>
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span>Verify in Python — copy and run</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">A</span> = <span class="kw">True</span>
+<span class="var">B</span> = <span class="kw">False</span>
+<span class="fn">print</span>(<span class="var">A</span> <span class="kw">and</span> <span class="var">B</span>)      <span class="cm"># row 1</span>
+<span class="fn">print</span>(<span class="var">A</span> <span class="kw">or</span> <span class="var">B</span>)       <span class="cm"># row 2</span>
+<span class="fn">print</span>(<span class="kw">not</span> <span class="var">A</span>)        <span class="cm"># row 3</span>
+<span class="fn">print</span>(<span class="kw">not</span> <span class="var">A</span> <span class="kw">and</span> <span class="var">B</span>)  <span class="cm"># row 4 — tricky! not binds to A only</span>
+<span class="fn">print</span>(<span class="kw">not</span> (<span class="var">A</span> <span class="kw">and</span> <span class="var">B</span>)) <span class="cm"># row 5 — not applies to whole expression</span>
+<span class="fn">print</span>(<span class="var">A</span> <span class="kw">or</span> <span class="kw">not</span> <span class="var">B</span>)   <span class="cm"># row 6</span></pre>
+    </div>
+    <div class="info-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🎯</span><span><strong>Rows 4 and 5 are the key learning moment.</strong> Most students predict row 4 (<code>not A and B</code>) wrong — they read it as <code>not (A and B)</code>. The truth is <code>not</code> only binds to <code>A</code>: it becomes <code>(not A) and B</code> = <code>False and False</code> = <code>False</code>. Spending 3 minutes on this saves hours of debugging later.</span></div>
+  </div>
+</div>
+
+<!-- Interactive logic tester -->
+<div class="section">
+  <div class="sec-head">Live logic tester — toggle A and B, see results instantly</div>
+  <div class="logic-tester">
+    <div class="logic-head">Set A and B to True or False — all three operator results update live</div>
+    <div class="logic-body">
+      <div class="logic-row">
+        <span class="logic-label">A =</span>
+        <div class="logic-toggle">
+          <button class="lg-btn sel-t" id="btn-at" onclick="setVal('A',true)">True</button>
+          <button class="lg-btn" id="btn-af" onclick="setVal('A',false)">False</button>
+        </div>
+      </div>
+      <div class="logic-row">
+        <span class="logic-label">B =</span>
+        <div class="logic-toggle">
+          <button class="lg-btn sel-t" id="btn-bt" onclick="setVal('B',true)">True</button>
+          <button class="lg-btn" id="btn-bf" onclick="setVal('B',false)">False</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px;font-weight:500;">Results:</div>
+      <div class="logic-result" id="logic-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What does <code>not (True and False)</code> evaluate to?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>False</code> — not flips True, giving False, then and False gives False</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span><code>True</code> — <code>True and False</code> is <code>False</code>, then <code>not False</code> is <code>True</code></div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span><code>False</code> — <code>not True</code> is <code>False</code>, and <code>False and False</code> is <code>False</code></div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span><code>True</code> — <code>not</code> makes both values True, so <code>True and True</code> is <code>True</code></div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">
+      Written part — write a single condition (one line) that is True only when a number is between 10 and 20 inclusive. Then write it again using Python's chained comparison syntax. What is the advantage of the chained version?
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Logical operator</strong>A keyword (<code>and</code>, <code>or</code>, <code>not</code>) that combines or inverts Boolean conditions.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Compound condition</strong>Two or more conditions joined by a logical operator into a single expression.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Truth table</strong>A grid showing every possible True/False input combination and the resulting output.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Short-circuit evaluation</strong>Python stops evaluating a compound condition as soon as the result is certain.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Operator precedence (logic)</strong><code>not</code> binds tightest, then <code>and</code>, then <code>or</code>. Use parentheses to override.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Chained comparison</strong>Python-specific syntax: <code>10 &lt;= x &lt;= 20</code> checks both bounds in one readable expression.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 8)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">✏️</span><span>Build a "loan eligibility" checker: ask for age (must be 18+), monthly income (must be &gt; Rs 20,000), and credit score (must be &gt;= 650). The loan is approved only if ALL three conditions pass. Use <code>and</code> to combine them.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🔍</span><span>Predict on paper (no Python): what does <code>not True or False and True</code> evaluate to? Show every step using operator precedence order. Then verify.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🤔</span><span>Research: what is De Morgan's Law? Write out both rules using Python syntax. Try to verify them with a truth table in Python.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-danger);font-size:16px;flex-shrink:0;margin-top:1px;">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Most common mistake:</strong> Writing <code>if age == 13 or 14 or 15</code> — students read this as "age equals 13 or 14 or 15" but Python reads it as "(age == 13) or (14) or (15)". Since non-zero integers are truthy, this condition is ALWAYS True. The fix: <code>13 &lt;= age &lt;= 15</code> or <code>age == 13 or age == 14 or age == 15</code>. Address this before Activity 1.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common confusion:</strong> <code>not A and B</code> vs <code>not (A and B)</code>. These are different — <code>not</code> has higher precedence than <code>and</code> so it binds to <code>A</code> alone. Activity 2 rows 4 and 5 address this directly. Spend the 3 minutes — it prevents a class of bugs that is very hard to spot.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> The truth table activity (Activity 2) runs 8 minutes but is high-value. If time is short, assign rows 1–3 in class and rows 4–6 as homework — but do not skip the class discussion of rows 4 and 5. Those two rows teach more than the other four combined.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Building on Lesson 6:</strong> Point out that today's operators make Lesson 6's if-elif-else chains far more powerful. A grade checker needed 4 elif branches; with <code>and</code>, the range check <code>60 &lt;= score &lt; 75</code> collapses two conditions into one. Students should see this as a tool that simplifies code, not complicates it.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Week 2 project preview:</strong> Lesson 10 is the number guessing game — it uses a <code>while</code> loop (Lesson 9) with conditions and hints (higher/lower) built using comparisons from Lesson 6 and logical operators from today. Students who understand both lessons well will have a satisfying project experience.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (8).html'">Next: Lesson 8 - Nested conditions</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// truth table data
+const ttData = {
+  and: {
+    headers:['A','B','A and B'],
+    rows:[
+      [true,true,true,'Both True → True'],
+      [true,false,false,'One False → False'],
+      [false,true,false,'One False → False'],
+      [false,false,false,'Both False → False'],
+    ]
+  },
+  or: {
+    headers:['A','B','A or B'],
+    rows:[
+      [true,true,true,'Both True → True'],
+      [true,false,true,'At least one True → True'],
+      [false,true,true,'At least one True → True'],
+      [false,false,false,'Both False → only case that gives False'],
+    ]
+  },
+  not: {
+    headers:['A','not A'],
+    rows:[
+      [true,false,'Flips True → False'],
+      [false,true,'Flips False → True'],
+    ]
+  }
+};
+const notes = {
+  and:['Remember: and needs BOTH to be True. Even one False kills it.','False and anything = False (short-circuit!).','False and anything = False (short-circuit!).','Both False is of course False.'],
+  or:['True or anything = True (short-circuit!).','Only one True needed — this is True.','Only one True needed — this is True.','This is the only False row for or — both must be False.'],
+  not:['not True → False. Simple flip.','not False → True. Simple flip.']
+};
+let currentOp = 'and';
+function showTT(op, btn) {
+  currentOp = op;
+  document.querySelectorAll('.tt-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTT();
+}
+function renderTT() {
+  const d = ttData[currentOp];
+  const t = document.getElementById('tt-table');
+  const isNot = currentOp === 'not';
+  t.innerHTML = '<thead><tr>' + d.headers.map(h=>`<th>${h}</th>`).join('') + '<th>Note</th></tr></thead>';
+  const tbody = document.createElement('tbody');
+  d.rows.forEach((row, ri) => {
+    const tr = document.createElement('tr');
+    const vals = isNot ? [row[0], row[1]] : [row[0], row[1], row[2]];
+    const note = isNot ? row[2] : row[3];
+    const result = isNot ? row[1] : row[2];
+    vals.forEach((v, vi) => {
+      const td = document.createElement('td');
+      const isResult = vi === vals.length - 1;
+      td.className = v ? 'tt-t' + (isResult?' tt-res':'') : 'tt-f' + (isResult?' tt-res':'');
+      td.textContent = v ? 'True' : 'False';
+      tr.appendChild(td);
+    });
+    const noteTd = document.createElement('td');
+    noteTd.style.cssText = 'font-size:12px;color:var(--color-text-secondary);font-family:var(--font-sans);text-align:left';
+    noteTd.textContent = note;
+    tr.appendChild(noteTd);
+    tbody.appendChild(tr);
+  });
+  t.appendChild(tbody);
+}
+
+// paper truth table
+const paperRows = [
+  {a:true, b:false, expr:'A and B', eval:(a,b)=>a&&b},
+  {a:true, b:false, expr:'A or B', eval:(a,b)=>a||b},
+  {a:true, b:false, expr:'not A', eval:(a,b)=>!a},
+  {a:true, b:false, expr:'not A and B', eval:(a,b)=>(!a)&&b},
+  {a:true, b:false, expr:'not (A and B)', eval:(a,b)=>!(a&&b)},
+  {a:true, b:false, expr:'A or not B', eval:(a,b)=>a||(!b)},
+];
+function renderPaperTT() {
+  const tbody = document.getElementById('paper-tt');
+  paperRows.forEach((row,i) => {
+    const result = row.eval(row.a, row.b);
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'cursor:pointer';
+    const aCell = `<td class="tt-t" style="font-family:var(--font-mono)">${row.a}</td>`;
+    const bCell = `<td class="tt-f" style="font-family:var(--font-mono)">${row.b}</td>`;
+    const exprCell = `<td style="font-family:var(--font-mono);text-align:left;padding-left:14px">${row.expr}</td>`;
+    const predictCell = `<td style="color:var(--color-text-tertiary);font-size:12px">________</td>`;
+    const revealCell = `<td id="paper-rev-${i}" style="font-size:12px;color:var(--color-text-secondary)">tap to reveal</td>`;
+    tr.innerHTML = aCell + bCell + exprCell + predictCell + revealCell;
+    tr.onclick = () => {
+      const cell = document.getElementById(`paper-rev-${i}`);
+      cell.textContent = result ? '✓ True' : '✗ False';
+      cell.style.color = result ? 'var(--color-text-success)' : 'var(--color-text-danger)';
+      cell.style.fontWeight = '500';
+    };
+    tbody.appendChild(tr);
+  });
+}
+
+// logic tester
+let valA = true, valB = true;
+function setVal(v, val) {
+  if(v==='A') valA=val;
+  else valB=val;
+  ['at','af'].forEach(id=>document.getElementById('btn-'+id).className='lg-btn');
+  ['bt','bf'].forEach(id=>document.getElementById('btn-'+id).className='lg-btn');
+  document.getElementById('btn-a'+(valA?'t':'f')).className='lg-btn '+(valA?'sel-t':'sel-f');
+  document.getElementById('btn-b'+(valB?'t':'f')).className='lg-btn '+(valB?'sel-t':'sel-f');
+  updateLogic();
+}
+function updateLogic() {
+  const r=document.getElementById('logic-result');
+  const andR=valA&&valB, orR=valA||valB, notAR=!valA, notBR=!valB;
+  const fmt=v=>`<span style="font-weight:700;color:${v?'var(--color-text-success)':'var(--color-text-danger)'}">${v}</span>`;
+  r.innerHTML=
+    `A = ${fmt(valA)} &nbsp; B = ${fmt(valB)}<br>`+
+    `A <b>and</b> B &nbsp;= ${fmt(andR)}<br>`+
+    `A <b>or</b>  B &nbsp;= ${fmt(orR)}<br>`+
+    `<b>not</b> A &nbsp;&nbsp;&nbsp;&nbsp;= ${fmt(notAR)}<br>`+
+    `<b>not</b> B &nbsp;&nbsp;&nbsp;&nbsp;= ${fmt(notBR)}<br>`+
+    `A <b>and</b> <b>not</b> B = ${fmt(valA&&!valB)}`;
+}
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! Python evaluates the parentheses first: True and False = False. Then not False = True. Always evaluate inside parentheses before applying not.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is B. Step 1: evaluate the parentheses: True and False = False. Step 2: not False = True. The key is that parentheses are evaluated first, then not is applied to the result.';
+  }
+}
+// init
+renderTT();
+renderPaperTT();
+setVal('A',true);
+setVal('B',true);
+updateLogic();
+</script>
+</body>
+</html>

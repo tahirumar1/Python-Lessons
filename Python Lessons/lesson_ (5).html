@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* Rubric table */
+.rubric-table{width:100%;border-collapse:collapse;font-size:13px}
+.rubric-table th{text-align:left;padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary)}
+.rubric-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.rubric-table tr:last-child td{border-bottom:none}
+.pts{font-weight:500;color:var(--color-text-info);font-family:var(--font-mono)}
+/* Peer review cards */
+.peer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.peer-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;background:var(--color-background-primary)}
+.peer-card-head{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.peer-input{width:100%;margin-top:6px;font-size:13px;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none}
+.live-ml{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.live-ml-head{padding:8px 14px;font-size:12px;font-weight:500;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center}
+.live-ml-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ml-inputs{display:flex;flex-direction:column;gap:6px}
+.ml-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:2px}
+.ml-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);width:100%}
+.ml-story{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;font-size:13px;line-height:1.9;border:0.5px solid var(--color-border-tertiary);min-height:120px}
+.ml-highlight{color:var(--color-text-info);font-weight:500;font-style:italic}
+/* Extension challenge cards */
+.ext-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
+.ext-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;background:var(--color-background-primary)}
+.ext-level{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ext-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.ext-desc{font-size:12px;color:var(--color-text-secondary)}
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 5: Week 1 Project — Mad Libs Generator</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 5: Week 1 Project — Mad Libs Generator</p>
+      <p class="lp-hero-sub">Week 1 — Python Foundations · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-purple">🛠 Project day</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">Project + demo</div></div>
+    <div class="meta-item"><div class="meta-label">Skills tested</div><div class="meta-val">L1 – L4 combined</div></div>
+    <div class="meta-item"><div class="meta-label">Deliverable</div><div class="meta-val">Working .py file</div></div>
+    <div class="meta-item"><div class="meta-label">Presentations</div><div class="meta-val">3–4 students share</div></div>
+  </div>
+</div>
+
+<!-- What is Mad Libs -->
+<div class="section">
+  <div class="sec-head">What is Mad Libs?</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 10px;">Mad Libs is a word-substitution game: a story has blank spaces labelled by word type (noun, verb, adjective…). Players fill in words without seeing the story. The result is a funny, often nonsensical tale. It is a perfect first project because the Python skills map directly: <code>input()</code> collects the words, variables store them, and <code>f-strings</code> slot them into the story. Students produce something they can immediately share with friends and family.</p>
+  <div class="success-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🎯</span><span><strong>The goal of a project day:</strong> Students leave with a complete, working program they built themselves — not a tutorial they followed. Resist the urge to live-code the solution. Circulate, ask questions, let them struggle productively.</span></div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Apply <code>print()</code>, variables, <code>input()</code>, f-strings, and arithmetic in one complete program</li>
+    <li>Write a program from scratch without a starter template</li>
+    <li>Debug their own code independently using error messages</li>
+    <li>Read and explain someone else's code during peer review</li>
+    <li>Present their work and describe at least one design decision they made</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Launch</span>
+        <div class="tl-title">Week 1 recap + project briefing (7 min)</div>
+        <div class="tl-desc">Quick-fire recap: ask students to name one thing from each of Lessons 1–4 without looking at notes. Write answers on board. Then reveal the project brief. Run the live Mad Libs demo below on the projector so students see what a finished product looks like — but don't show the code yet.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:07</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Plan</span>
+        <div class="tl-title">Students plan their story (5 min)</div>
+        <div class="tl-desc">Students write their story outline on paper first — not in Python. They decide: the theme, 5 blank slots, and what word type each blank needs (noun, adjective, verb, number, name…). Planning on paper prevents blank-editor paralysis. Teacher circulates and approves plans before students open their editor.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Build</span>
+        <div class="tl-title">Independent build session (25 min)</div>
+        <div class="tl-desc">Students build their Mad Libs program. Requirements checklist below. Teacher circulates silently for the first 5 minutes — let students attempt on their own before offering help. When helping: ask guiding questions rather than giving code. "What does input() return?" "How do you put a variable into a string?"</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Review</span>
+        <div class="tl-title">Peer code swap (8 min)</div>
+        <div class="tl-desc">Pairs swap computers. Each student runs their partner's program, fills in silly words, and writes feedback on the peer review card below. They must find one thing that works well and one thing to improve. No verbal feedback yet — written only so everyone gets a response.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:45</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-purple" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Share</span>
+        <div class="tl-title">Showcase + exit ticket (10 min)</div>
+        <div class="tl-desc">3–4 volunteers demo their program on the projector. Teacher asks: "Walk us through one line of code." Then exit ticket: self-assessment checklist.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Project brief -->
+<div class="section">
+  <div class="sec-head">Project brief — give this to students</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary);">
+    <div style="font-size:16px;font-weight:500;margin-bottom:6px;">Build your own Mad Libs generator</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;">You have 25 minutes to design and build a complete Mad Libs program. Your story must be your own — no copying. Your program must meet all the requirements below.</div>
+
+    <div style="font-size:13px;font-weight:500;margin-bottom:8px;">Requirements checklist — tick each one as you complete it:</div>
+    <div class="checklist" id="req-checklist">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Collects at least 5 words from the user using <code>input()</code></span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Stores each word in a clearly named variable (snake_case)</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Uses an f-string to slot variables into a story of at least 3 sentences</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Includes at least one number input converted to <code>int</code> or <code>float</code></span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Does at least one arithmetic calculation and includes it in the output</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Output is neatly formatted with a title banner and spacing</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Program runs without errors from start to finish</span></div>
+    </div>
+    <div style="margin-top:10px;">
+      <div class="progress-label" id="prog-label">Progress: 0 / 7 complete</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Extension challenges -->
+<div class="section">
+  <div class="sec-head">Extension challenges — for fast finishers</div>
+  <div class="ext-grid">
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-success);">⭐ Level 1</div>
+      <div class="ext-title">Word count</div>
+      <div class="ext-desc">Count the total characters in all the words combined using <code>len()</code> and print it at the end of the story.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-warning);">⭐⭐ Level 2</div>
+      <div class="ext-title">Two stories</div>
+      <div class="ext-desc">Collect words once and use them in two different story templates — so the same inputs produce two different tales.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-danger);">⭐⭐⭐ Level 3</div>
+      <div class="ext-title">Score the silliness</div>
+      <div class="ext-desc">Ask the user to rate how silly the story is (1–10). Use <code>%</code> and <code>//</code> to compute a "silliness percentage" and print it with a <code>:.1f</code> format.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher's example -->
+<div class="section">
+  <div class="sec-head">Teacher's example — show output only before build; reveal code after</div>
+
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">📌</span><span><strong>When to reveal this code:</strong> Show the output during the launch (so students know the target). Show the full code only after peer review — as a reference to compare against their own solution, not as a model to copy.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Teacher example — Space Adventure Mad Libs</div>
+  <div class="code-block">
+    <div class="code-header"><span>space_madlibs.py — teacher solution</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ============================================</span>
+<span class="cm">#  SPACE ADVENTURE MAD LIBS</span>
+<span class="cm"># ============================================</span>
+
+<span class="fn">print</span>(<span class="str">"🚀 SPACE ADVENTURE MAD LIBS 🚀"</span>)
+<span class="fn">print</span>(<span class="str">"Fill in the blanks to create your story!"</span>)
+<span class="fn">print</span>(<span class="str">"="</span> * <span class="num">40</span>)
+<span class="fn">print</span>()
+
+<span class="cm"># Collect words from the user</span>
+<span class="var">astronaut_name</span> = <span class="fn">input</span>(<span class="str">"Enter an astronaut's name: "</span>)
+<span class="var">planet</span>         = <span class="fn">input</span>(<span class="str">"Enter a planet name: "</span>)
+<span class="var">adjective</span>      = <span class="fn">input</span>(<span class="str">"Enter an adjective: "</span>)
+<span class="var">alien_food</span>     = <span class="fn">input</span>(<span class="str">"Enter a type of food: "</span>)
+<span class="var">verb_ing</span>       = <span class="fn">input</span>(<span class="str">"Enter a verb ending in -ing: "</span>)
+<span class="var">num_days</span>       = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter a number of days: "</span>))
+<span class="var">speed_kmh</span>      = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter a speed in km/h: "</span>))
+
+<span class="cm"># Arithmetic</span>
+<span class="var">total_hours</span>  = <span class="var">num_days</span> * <span class="num">24</span>
+<span class="var">distance_km</span>  = <span class="var">speed_kmh</span> * <span class="var">total_hours</span>
+
+<span class="cm"># Print the story</span>
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">"="</span> * <span class="num">40</span>)
+<span class="fn">print</span>(<span class="str">"       YOUR SPACE STORY"</span>)
+<span class="fn">print</span>(<span class="str">"="</span> * <span class="num">40</span>)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">f"Astronaut <span class="var">{astronaut_name}</span> blasted off toward the <span class="var">{adjective}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"planet of <span class="var">{planet}</span>, travelling at <span class="var">{speed_kmh:.1f}</span> km/h."</span>)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">f"After <span class="var">{num_days}</span> days ({total_hours} hours) of <span class="var">{verb_ing}</span> through"</span>)
+<span class="fn">print</span>(<span class="str">f"deep space, they had covered <span class="var">{distance_km:,.0f}</span> kilometres."</span>)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">f"The aliens greeted them with a feast of <span class="var">{alien_food}</span>."</span>)
+<span class="fn">print</span>(<span class="str">f'<span class="var">{astronaut_name}</span> said: "I have travelled far for this <span class="var">{alien_food}</span>."'</span>)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">"="</span> * <span class="num">40</span>)
+<span class="fn">print</span>(<span class="str">f"Story stats: <span class="var">{len(astronaut_name)}</span>-letter astronaut · <span class="var">{num_days}</span> days · <span class="var">{distance_km:,.0f}</span> km"</span>)</pre>
+  </div>
+  <div class="output-label">Example output (sample inputs)</div>
+  <div class="output-block">🚀 SPACE ADVENTURE MAD LIBS 🚀<br>Fill in the blanks to create your story!<br>========================================<br><br><span class="input-line">Enter an astronaut's name: Zara</span><br><span class="input-line">Enter a planet name: Cheeseburg-9</span><br><span class="input-line">Enter an adjective: wobbly</span><br><span class="input-line">Enter a type of food: spicy noodles</span><br><span class="input-line">Enter a verb ending in -ing: somersaulting</span><br><span class="input-line">Enter a number of days: 3</span><br><span class="input-line">Enter a speed in km/h: 25000</span><br><br>========================================<br>       YOUR SPACE STORY<br>========================================<br><br>Astronaut Zara blasted off toward the wobbly<br>planet of Cheeseburg-9, travelling at 25000.0 km/h.<br><br>After 3 days (72 hours) of somersaulting through<br>deep space, they had covered 1,800,000 kilometres.<br><br>The aliens greeted them with a feast of spicy noodles.<br>Zara said: "I have travelled far for this spicy noodles."<br><br>========================================<br>Story stats: 4-letter astronaut · 3 days · 1,800,000 km</div>
+  <div class="tip-box" style="margin-top:6px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Point out after reveal:</strong> The <code>:,</code> format specifier adds comma separators to large numbers (1,800,000 instead of 1800000). Students will ask — it's a great bonus detail.</span></div>
+</div>
+
+<!-- Live demo sandbox -->
+<div class="section">
+  <div class="sec-head">Live Mad Libs demo — show students what output looks like</div>
+  <div class="live-ml">
+    <div class="live-ml-head"><span>Interactive preview — type words to see your story</span></div>
+    <div class="live-ml-body">
+      <div class="ml-inputs">
+        <div><div class="ml-label">A name</div><input class="ml-input" id="ml-name" value="Zara" oninput="updateML()"></div>
+        <div><div class="ml-label">A planet</div><input class="ml-input" id="ml-planet" value="Cheeseburg-9" oninput="updateML()"></div>
+        <div><div class="ml-label">An adjective</div><input class="ml-input" id="ml-adj" value="wobbly" oninput="updateML()"></div>
+        <div><div class="ml-label">A food</div><input class="ml-input" id="ml-food" value="spicy noodles" oninput="updateML()"></div>
+        <div><div class="ml-label">A verb (-ing)</div><input class="ml-input" id="ml-verb" value="somersaulting" oninput="updateML()"></div>
+        <div><div class="ml-label">Number of days</div><input class="ml-input" id="ml-days" type="number" value="3" oninput="updateML()"></div>
+      </div>
+      <div>
+        <div class="ml-label" style="margin-bottom:6px;">Your story:</div>
+        <div class="ml-story" id="ml-story"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Peer review -->
+<div class="section">
+  <div class="sec-head">Peer review card — print one per student or use on screen</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <span style="font-size:13px;font-weight:500;">Peer Review — Week 1 Project</span>
+      <span style="font-size:12px;color:var(--color-text-secondary);">Reviewer: _____________ &nbsp; Author: _____________</span>
+    </div>
+    <div class="peer-grid">
+      <div class="peer-card">
+        <div class="peer-card-head">✅ One thing that works well</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;">Be specific — name the line or feature.</div>
+        <textarea class="peer-input" rows="3" placeholder="e.g. The f-string on line 18 slots all the variables in perfectly and the story is funny..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">🔧 One thing to improve</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;">Suggest how to fix it, don't just point out the problem.</div>
+        <textarea class="peer-input" rows="3" placeholder="e.g. The variable name 'x' on line 5 could be renamed to 'num_aliens' to make it clearer..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">❓ One question for the author</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;">Something you're curious about their code.</div>
+        <textarea class="peer-input" rows="3" placeholder="e.g. Why did you multiply by 24? I wasn't sure what that was for..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">🎯 Does it meet all 7 requirements?</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;">Tick any that are missing:</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;">
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="checkbox"> 5+ inputs with input()</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="checkbox"> Named variables (snake_case)</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="checkbox"> f-string with 3+ sentences</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="checkbox"> Number input + arithmetic</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer;"><input type="checkbox"> Neat output with banner</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rubric -->
+<div class="section">
+  <div class="sec-head">Grading rubric — optional, for formal assessment</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
+    <table class="rubric-table">
+      <thead><tr><th>Criterion</th><th>Full marks</th><th>Partial</th><th>Not yet</th><th>Pts</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Functionality</strong> — runs without errors</td><td>Runs perfectly, all inputs work</td><td>Runs with minor issues</td><td>Crashes or incomplete</td><td class="pts">3</td></tr>
+        <tr><td><strong>input() usage</strong> — 5+ prompts, clear labels</td><td>5+ inputs, prompts are clear</td><td>3–4 inputs or unclear prompts</td><td>Fewer than 3 inputs</td><td class="pts">2</td></tr>
+        <tr><td><strong>f-strings</strong> — variables correctly embedded</td><td>All variables in f-strings, correct syntax</td><td>Some variables missing or comma-print used</td><td>No f-strings used</td><td class="pts">2</td></tr>
+        <tr><td><strong>Arithmetic</strong> — int/float conversion + calculation</td><td>Correct conversion and a meaningful calculation</td><td>Conversion done but calculation missing</td><td>No number handling</td><td class="pts">2</td></tr>
+        <tr><td><strong>Code quality</strong> — naming, comments, readability</td><td>snake_case names, at least 2 comments</td><td>Some good names, few comments</td><td>Single-letter vars, no comments</td><td class="pts">1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-top:8px;">Total: 10 points. For a beginner cohort, consider marking pass/not-yet rather than numeric grades on the first project.</div>
+</div>
+
+<!-- Exit ticket / self-assessment -->
+<div class="section">
+  <div class="sec-head">Check for understanding — self-assessment exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">A classmate's program crashes with: <code>TypeError: can only concatenate str (not "int") to str</code>. What is the most likely cause and fix?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>They used <code>print()</code> without parentheses — add them back</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span>They tried to do arithmetic on a value from <code>input()</code> without converting it with <code>int()</code> or <code>float()</code></div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>Their f-string is missing the <code>f</code> prefix</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>They used <code>=</code> instead of <code>==</code> to compare values</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:14px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">
+      Written self-reflection (students complete in notebooks):<br>
+      (1) What is the one line of your program you are most proud of? Write it and explain why.<br>
+      (2) What was the hardest part of today, and how did you solve it?<br>
+      (3) Name one Python concept from this week you want to practise more before Week 2.
+    </div>
+  </div>
+</div>
+
+<!-- Week 2 preview -->
+<div class="section">
+  <div class="sec-head">Looking ahead — Week 2 preview</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary);">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px;">Week 2: Making decisions</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;">This week our programs could only go in one direction — top to bottom. Next week we give Python the ability to <em>choose</em>. Programs that respond differently depending on what the user enters. Games that say "you win" or "try again". Real logic.</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary);"><div style="font-weight:500;margin-bottom:2px;">L6</div><div style="color:var(--color-text-secondary);">if / elif / else</div></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary);"><div style="font-weight:500;margin-bottom:2px;">L7</div><div style="color:var(--color-text-secondary);">and, or, not</div></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary);"><div style="font-weight:500;margin-bottom:2px;">L8</div><div style="color:var(--color-text-secondary);">Nested conditions</div></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary);"><div style="font-weight:500;margin-bottom:2px;">L9</div><div style="color:var(--color-text-secondary);">while loops</div></div>
+      <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary);"><div style="font-weight:500;margin-bottom:2px;">L10</div><div style="color:var(--color-text-purple);">🛠 Project</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Biggest trap:</strong> Students who spend 10 minutes staring at a blank screen. The planning-on-paper step prevents this — enforce it. A student who has a story written down will always start faster than one who doesn't.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common bug:</strong> Students whose story has a quote character inside an f-string — e.g. <code>f"She said "hello""</code> — causing a SyntaxError. Fix: use single quotes for the outer string: <code>f'She said "hello"'</code>. The teacher example shows this technique on the last story line.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing:</strong> 25 minutes is tight for some students. If a student hasn't finished by the peer review phase, pair them with a fast finisher who can help them complete it during the review window. Never skip the showcase — it is the motivational payoff for the whole week.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">The <code>"="*40</code> trick:</strong> Students will notice the banner lines in the teacher example use <code>"=" * 40</code>. This string repetition operator wasn't explicitly taught — it's a natural discovery moment. Let students ask about it. It previews loops beautifully.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-danger);font-size:16px;flex-shrink:0;margin-top:1px;">❤️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Celebration:</strong> End the lesson by having the class applaud every presenter. Week 1 is complete. Students who had never written a line of code on Monday have a working interactive program by Friday. Make sure they feel that.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (6).html'">Next: Lesson 6 - if / elif / else</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button></div>
+</div>
+<script src="scripts.js"></script>
+<script>
+function updateML(){
+  const n=document.getElementById('ml-name').value||'___';
+  const p=document.getElementById('ml-planet').value||'___';
+  const a=document.getElementById('ml-adj').value||'___';
+  const f=document.getElementById('ml-food').value||'___';
+  const v=document.getElementById('ml-verb').value||'___';
+  const d=parseInt(document.getElementById('ml-days').value)||1;
+  const hrs=d*24;
+  const hl=s=>`<span class="ml-highlight">${s}</span>`;
+  document.getElementById('ml-story').innerHTML=
+    `Astronaut ${hl(n)} blasted off toward the ${hl(a)} planet of ${hl(p)}.<br><br>`+
+    `After ${hl(d)} days (${hl(hrs)} hours) of ${hl(v)} through deep space,`+
+    ` they had covered millions of kilometres.<br><br>`+
+    `The aliens greeted them with a feast of ${hl(f)}.<br>`+
+    `${hl(n)} said: "I have travelled far for this ${hl(f)}."`;
+}
+function toggleCheck(el){
+  el.classList.toggle('done');
+  const items=document.querySelectorAll('#req-checklist .cl-item');
+  const done=[...items].filter(i=>i.classList.contains('done')).length;
+  document.getElementById('prog-label').textContent=`Progress: ${done} / ${items.length} complete`;
+  document.getElementById('prog-bar').style.width=(done/items.length*100)+'%';
+}
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){fb.style.color='var(--color-text-success)';fb.textContent='✓ Correct! input() always returns a str. Wrapping it with int() or float() fixes the TypeError instantly. This is the most common bug in beginner Python — spotting it quickly is a real skill.';}
+  else{fb.style.color='var(--color-text-secondary)';fb.textContent='Not quite — the answer is B. TypeError: can only concatenate str to str means Python received a str where a number was expected. The fix: int(input(...)) or float(input(...)).';}
+}
+updateML();
+</script>
+</body>
+</html>

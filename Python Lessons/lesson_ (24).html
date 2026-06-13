@@ -1,0 +1,983 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+<style>
+/* anatomy */
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.an-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.an-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.an-code{font-family:var(--font-mono);font-size:13px;line-height:2.2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.an-labels{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* three-way compare */
+.three-compare{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.tc-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.tc-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);text-align:center}
+.tc-list .tc-head{background:var(--color-background-info);color:var(--color-text-info)}
+.tc-tuple .tc-head{background:var(--color-background-success);color:var(--color-text-success)}
+.tc-dict .tc-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.tc-body{padding:10px 12px;font-size:12px;color:var(--color-text-secondary)}
+.tc-row{display:flex;gap:8px;margin-bottom:4px;font-size:12px}
+.tc-label{font-weight:500;min-width:80px;color:var(--color-text-primary)}
+/* tuple visualiser */
+.tvis{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.tv-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.tv-body{padding:14px}
+.tv-row{display:flex;gap:0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary);margin-bottom:10px}
+.tv-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:10px 4px;border-right:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s;position:relative}
+.tv-cell:last-child{border-right:none}
+.tv-cell:hover{background:var(--color-background-secondary)}
+.tv-cell.selected{background:var(--color-background-info)}
+.tv-val{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.tv-idx{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.tv-lock{font-size:10px;position:absolute;top:4px;right:6px;color:var(--color-text-tertiary)}
+.tv-info{font-size:13px;color:var(--color-text-secondary);min-height:22px;font-style:italic}
+.tv-try{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);margin-top:8px}
+.tv-try-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px}
+.tv-try-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.tv-try-code{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);flex:1;min-width:180px}
+.tv-try-result{font-family:var(--font-mono);font-size:12px;font-weight:500}
+.tv-try-result.ok{color:var(--color-text-success)}
+.tv-try-result.err{color:var(--color-text-danger)}
+/* immutability demo */
+.imm-demo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.id-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.id-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.id-panel{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px}
+.id-panel-head{font-size:12px;font-weight:500;margin-bottom:8px;color:var(--color-text-secondary)}
+.id-op-btn{width:100%;text-align:left;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-mono);margin-bottom:6px;transition:all .12s}
+.id-op-btn:hover{background:var(--color-background-primary)}
+.id-op-btn.ok{border-color:var(--color-border-success);color:var(--color-text-success);background:var(--color-background-success)}
+.id-op-btn.err{border-color:var(--color-border-danger);color:var(--color-text-danger);background:var(--color-background-danger)}
+.id-log{font-family:var(--font-mono);font-size:12px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);min-height:30px;margin-top:6px;color:var(--color-text-secondary)}
+/* week 5 activities */
+.w5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.w5-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+/* unpacking stepper */
+.unpack-stepper{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.us-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.us-body{padding:14px}
+.us-tuple-display{display:flex;gap:0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary);margin-bottom:12px}
+.us-cell{display:flex;flex-direction:column;align-items:center;padding:10px 16px;border-right:0.5px solid var(--color-border-tertiary);flex:1;transition:background .2s}
+.us-cell:last-child{border-right:none}
+.us-cell.active{background:var(--color-background-info)}
+.us-cell-val{font-family:var(--font-mono);font-size:14px;font-weight:500}
+.us-cell-var{font-size:11px;margin-top:4px;font-family:var(--font-mono);color:var(--color-text-info);min-height:16px;font-weight:500}
+.us-vars{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.us-var-badge{font-family:var(--font-mono);font-size:13px;padding:6px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);transition:all .2s}
+.us-var-badge.assigned{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.us-explanation{font-size:13px;color:var(--color-text-secondary);min-height:22px;font-style:italic}
+.us-nav{display:flex;gap:8px;margin-top:10px}
+.us-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.us-btn:hover{background:var(--color-background-primary)}
+.us-btn:disabled{opacity:.4;cursor:not-allowed}
+/* riddle cards */
+.riddle-grid{display:flex;flex-direction:column;gap:8px}
+.riddle-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s;flex-wrap:wrap}
+.riddle-row:hover{background:var(--color-background-primary)}
+.riddle-expr{font-family:var(--font-mono);font-size:13px;flex:1;min-width:200px}
+.riddle-hint{font-size:12px;color:var(--color-text-tertiary);font-style:italic}
+.riddle-answer{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-success);display:none}
+.riddle-error{color:var(--color-text-danger)}
+.riddle-row.revealed .riddle-answer{display:block}
+.riddle-row.revealed .riddle-hint{display:none}
+/* data structure chooser */
+.ds-chooser{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.dsc-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.dsc-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.dsc-scenario{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-secondary)}
+.dsc-q{font-size:13px;margin-bottom:8px}
+.dsc-opts{display:flex;gap:6px;flex-wrap:wrap}
+.dsc-opt{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);font-family:var(--font-sans);transition:all .12s}
+.dsc-opt:hover{background:var(--color-background-secondary)}
+.dsc-opt.chosen-correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success);pointer-events:none}
+.dsc-opt.chosen-wrong{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger);pointer-events:none}
+.dsc-opt.reveal-correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success);pointer-events:none}
+.dsc-fb{font-size:12px;margin-top:6px;display:none}
+/* coord tool */
+.coord-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.ct-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ct-body{padding:14px}
+.ct-add-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.ct-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:80px}
+.ct-label-input{font-family:var(--font-sans);width:100px}
+.ct-btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.ct-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.ct-point{padding:6px 12px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);font-size:12px}
+.ct-point-key{color:var(--color-text-info)}
+.ct-point-val{color:var(--color-text-secondary)}
+.ct-code{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;border:0.5px solid var(--color-border-tertiary);margin-top:6px;white-space:pre-wrap;word-break:break-all}
+
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 23: Tuples &amp; when to use them - Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 23: Tuples &amp; when to use them</p>
+      <p class="lp-hero-sub">Week 5 — Dictionaries &amp; Tuples · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">Lists · Dicts · Functions</div></div>
+    <div class="meta-item"><div class="meta-label">New syntax</div><div class="meta-val">( ) · unpacking</div></div>
+    <div class="meta-item"><div class="meta-label">Key concept</div><div class="meta-val">Immutability</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="sec">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Create a tuple using parentheses and recognise when Python creates tuples implicitly</li>
+    <li>Access tuple elements by index and understand that tuples support slicing</li>
+    <li>Explain immutability — why tuples cannot be modified after creation</li>
+    <li>Unpack tuples into named variables in one line</li>
+    <li>Use tuples as function return values and as dictionary keys</li>
+    <li>Decide confidently whether to use a list, tuple, or dictionary for a given task</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="sec">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">You have already used tuples (4 min)</div>
+        <div class="tl-desc">Open last lesson's code and point to <code>for k, v in d.items()</code>. Ask: "What type does .items() actually return?" Run <code>print(type(list(d.items())[0]))</code> and show <code>&lt;class 'tuple'&gt;</code>. Then show the Week 4 quiz questions stored as <code>("question", "answer", [opts])</code> — also tuples. Then ask: "What is a tuple?" Let students guess. Land the definition: <strong>an immutable, ordered sequence — like a list that is locked forever after creation.</strong></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Creating tuples, indexing, immutability (10 min)</div>
+        <div class="tl-desc">Show the anatomy panel and Examples 1–2. Run the immutability demo live — try to modify a tuple and show the TypeError. Key message: the parentheses are optional; the comma makes a tuple. Single-element tuple <code>(42,)</code> is the classic gotcha — run it live.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Tuple unpacking (7 min)</div>
+        <div class="tl-desc">Show Example 3. Unpacking is where tuples shine — assign multiple variables in one line. Connect to <code>a, b = get_numbers()</code> from Lesson 19 and <code>for k, v in d.items()</code> from Lesson 22 — students have been unpacking all along. Show the swap trick: <code>a, b = b, a</code>.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:21</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">When to use tuples: 3 key use cases (6 min)</div>
+        <div class="tl-desc">Show Example 4 — three scenarios where tuples are the right choice: (1) function multiple return values, (2) fixed collections like coordinates or RGB colours, (3) dict keys (tuples are hashable; lists are not). Show the list-as-key TypeError live.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Coordinate system with tuples (12 min)</div>
+        <div class="tl-desc">Students store 2D coordinates as tuples, write functions that return tuples, and use a dict keyed by tuples to store a "grid" of values.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:39</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — List, tuple, or dict? (10 min)</div>
+        <div class="tl-desc">Students receive 8 data modelling scenarios and choose the right data structure for each — with justification. Tests conceptual understanding.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:49</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Exit ticket (6–8 min)</div>
+        <div class="tl-desc">Interactive quiz below. Written self-reflection on data structure choice.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy panel -->
+<div class="sec">
+  <div class="sec-head">Anatomy of a tuple — display on projector</div>
+  <div class="anatomy">
+    <div class="an-head">Tuples look like lists but use ( ) and can never be changed after creation</div>
+    <div class="an-body">
+      <div class="an-code">
+<span style="color:#E5C07B">point</span> <span style="color:#ABB2BF">=</span> <span style="color:#ABB2BF">(</span><span style="color:#D19A66">10</span><span style="color:#ABB2BF">,</span> <span style="color:#D19A66">25</span><span style="color:#ABB2BF">)</span>
+
+<span style="color:#E5C07B">colour</span> <span style="color:#ABB2BF">=</span> <span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">,</span> <span style="color:#D19A66">128</span><span style="color:#ABB2BF">,</span> <span style="color:#D19A66">0</span><span style="color:#ABB2BF">)</span>
+
+<span style="color:#61AFEF">print</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">point</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">])</span>   <span style="color:#7F848E"># 10</span>
+
+<span style="color:#E5C07B">point</span><span style="color:#ABB2BF">[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]</span> <span style="color:#ABB2BF">=</span> <span style="color:#D19A66">99</span>   <span style="color:#7F848E"># TypeError!</span>
+      </div>
+      <div class="an-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div><strong>( )</strong> — parentheses. Optional but strongly recommended for clarity. The comma is what actually makes a tuple.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>Indexing</strong> works exactly like lists — <code>point[0]</code>, <code>colour[-1]</code>, slices — all supported.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div><strong>Immutable</strong> — once created, no item can be added, removed, or changed. Any attempt raises a TypeError.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>Ordered</strong> — maintains insertion order, supports indexing and slicing like a list.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-secondary)"></div><div><strong>Hashable</strong> — can be used as a dictionary key, unlike lists.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- List vs Tuple vs Dict -->
+<div class="sec">
+  <div class="sec-head">List vs tuple vs dictionary — the complete comparison</div>
+  <div class="three-compare">
+    <div class="tc-col tc-list">
+      <div class="tc-head">List [ ]</div>
+      <div class="tc-body">
+        <div class="tc-row"><span class="tc-label">Ordered</span><span>✓ yes</span></div>
+        <div class="tc-row"><span class="tc-label">Mutable</span><span>✓ yes — add/remove/change</span></div>
+        <div class="tc-row"><span class="tc-label">Access by</span><span>Integer index [0]</span></div>
+        <div class="tc-row"><span class="tc-label">Dict key?</span><span>✗ no — not hashable</span></div>
+        <div class="tc-row"><span class="tc-label">Use for</span><span>Same-type items that change: task list, scores, names</span></div>
+      </div>
+    </div>
+    <div class="tc-col tc-tuple">
+      <div class="tc-head">Tuple ( )</div>
+      <div class="tc-body">
+        <div class="tc-row"><span class="tc-label">Ordered</span><span>✓ yes</span></div>
+        <div class="tc-row"><span class="tc-label">Mutable</span><span>✗ no — fixed forever</span></div>
+        <div class="tc-row"><span class="tc-label">Access by</span><span>Integer index [0]</span></div>
+        <div class="tc-row"><span class="tc-label">Dict key?</span><span>✓ yes — hashable</span></div>
+        <div class="tc-row"><span class="tc-label">Use for</span><span>Fixed grouped values: coordinates, RGB, function return, dict keys</span></div>
+      </div>
+    </div>
+    <div class="tc-col tc-dict">
+      <div class="tc-head">Dictionary { }</div>
+      <div class="tc-body">
+        <div class="tc-row"><span class="tc-label">Ordered</span><span>✓ insertion order (Python 3.7+)</span></div>
+        <div class="tc-row"><span class="tc-label">Mutable</span><span>✓ yes — add/remove/change</span></div>
+        <div class="tc-row"><span class="tc-label">Access by</span><span>Named key ["name"]</span></div>
+        <div class="tc-row"><span class="tc-label">Dict key?</span><span>✗ no — not hashable</span></div>
+        <div class="tc-row"><span class="tc-label">Use for</span><span>Named properties of one thing: student profile, quiz question, config</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tuple visualiser -->
+<div class="sec">
+  <div class="sec-head">Tuple visualiser — click any element, then try to modify it</div>
+  <div class="tvis">
+    <div class="tv-head">colour = (255, 128, 0) — an RGB colour tuple. Click elements to access, then try the operations below.</div>
+    <div class="tv-body">
+      <div class="tv-row" id="tv-row"></div>
+      <div class="tv-info" id="tv-info">Click any element to see its access expression</div>
+      <div class="tv-try">
+        <div class="tv-try-label">Try these operations — green means it works, red means TypeError:</div>
+        <div id="tv-ops"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Immutability demo -->
+<div class="sec">
+  <div class="sec-head">Interactive immutability demo — compare list vs tuple operations</div>
+  <div class="imm-demo">
+    <div class="id-head"><span>Click each operation to see what works and what raises an error</span><button style="padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:12px;cursor:pointer;font-family:var(--font-sans)" onclick="immReset()">Reset</button></div>
+    <div class="id-body">
+      <div class="id-panel">
+        <div class="id-panel-head" style="color:var(--color-text-info)">List — lst = [1, 2, 3]</div>
+        <div id="imm-list-ops"></div>
+        <div class="id-log" id="imm-list-log"></div>
+      </div>
+      <div class="id-panel">
+        <div class="id-panel-head" style="color:var(--color-text-success)">Tuple — tup = (1, 2, 3)</div>
+        <div id="imm-tup-ops"></div>
+        <div class="id-log" id="imm-tup-log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demo -->
+<div class="sec">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Creating tuples, indexing, the comma rule</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Creating tuples</span>
+<span class="var">point</span>   = (<span class="num">10</span>, <span class="num">25</span>)
+<span class="var">colour</span>  = (<span class="num">255</span>, <span class="num">128</span>, <span class="num">0</span>)
+<span class="var">person</span>  = (<span class="str">"Aisha"</span>, <span class="num">15</span>, <span class="str">"A"</span>)
+<span class="var">empty</span>   = ()
+
+<span class="cm"># Indexing — same as lists</span>
+<span class="fn">print</span>(<span class="var">point</span>[<span class="num">0</span>])        <span class="cm"># 10</span>
+<span class="fn">print</span>(<span class="var">colour</span>[<span class="op">-</span><span class="num">1</span>])      <span class="cm"># 0</span>
+<span class="fn">print</span>(<span class="var">person</span>[<span class="num">1</span>:<span class="num">3</span>])     <span class="cm"># (15, 'A')</span>
+
+<span class="cm"># The comma makes the tuple — not the parentheses!</span>
+<span class="var">not_tuple</span> = (<span class="num">42</span>)       <span class="cm"># int — just brackets for grouping</span>
+<span class="var">is_tuple</span>  = (<span class="num">42</span>,)      <span class="cm"># tuple — the trailing comma matters</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">not_tuple</span>)) <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">is_tuple</span>))  <span class="cm"># &lt;class 'tuple'&gt;</span>
+
+<span class="cm"># Parentheses are optional</span>
+<span class="var">implicit</span> = <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>
+<span class="fn">print</span>(<span class="var">implicit</span>)          <span class="cm"># (1, 2, 3) — Python adds parens</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="var">implicit</span>))    <span class="cm"># &lt;class 'tuple'&gt;</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">10<br>0<br>(15, 'A')<br>&lt;class 'int'&gt;<br>&lt;class 'tuple'&gt;<br>(1, 2, 3)<br>&lt;class 'tuple'&gt;</div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>The single-element tuple trap:</strong> <code>(42)</code> is just the integer 42 in brackets — not a tuple. You must write <code>(42,)</code> with a trailing comma. Run both live and show <code>type()</code> — this surprises every beginner without exception.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Immutability: what breaks, what still works</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">t</span> = (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+
+<span class="cm"># ✓ These all work — reading is fine</span>
+<span class="fn">print</span>(<span class="var">t</span>[<span class="num">0</span>])           <span class="cm"># 1</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">t</span>))          <span class="cm"># 3</span>
+<span class="fn">print</span>(<span class="num">2</span> <span class="kw">in</span> <span class="var">t</span>)          <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="var">t</span>[<span class="num">1</span>:])           <span class="cm"># (2, 3)</span>
+<span class="fn">print</span>(<span class="var">t</span> <span class="op">+</span> (<span class="num">4</span>, <span class="num">5</span>))      <span class="cm"># (1, 2, 3, 4, 5) — new tuple</span>
+<span class="fn">print</span>(<span class="var">t</span> <span class="op">*</span> <span class="num">2</span>)           <span class="cm"># (1, 2, 3, 1, 2, 3) — new tuple</span>
+
+<span class="cm"># ✗ These raise errors — no modification allowed</span>
+<span class="var">t</span>[<span class="num">0</span>] = <span class="num">99</span>             <span class="cm"># TypeError!</span>
+<span class="var">t</span><span class="op">.</span><span class="fn">append</span>(<span class="num">4</span>)           <span class="cm"># AttributeError!</span>
+<span class="var">t</span><span class="op">.</span><span class="fn">remove</span>(<span class="num">1</span>)           <span class="cm"># AttributeError!</span></pre>
+  </div>
+  <div class="out-lbl">Output (first section)</div>
+  <div class="out">1<br>3<br>True<br>(2, 3)<br>(1, 2, 3, 4, 5)<br>(1, 2, 3, 1, 2, 3)</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Tuple unpacking</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Basic unpacking — assign multiple variables at once</span>
+<span class="var">point</span>        = (<span class="num">10</span>, <span class="num">25</span>)
+<span class="var">x</span>, <span class="var">y</span>         = <span class="var">point</span>
+<span class="fn">print</span>(<span class="str">f"x={x}, y={y}"</span>)     <span class="cm"># x=10, y=25</span>
+
+<span class="cm"># Unpack a person tuple</span>
+<span class="var">person</span>       = (<span class="str">"Aisha"</span>, <span class="num">15</span>, <span class="str">"A"</span>)
+<span class="var">name</span>, <span class="var">age</span>, <span class="var">grade</span> = <span class="var">person</span>
+<span class="fn">print</span>(<span class="str">f"{name} is {age} with grade {grade}"</span>)
+
+<span class="cm"># The variable-swap trick — no temp variable needed!</span>
+<span class="var">a</span>, <span class="var">b</span> = <span class="num">10</span>, <span class="num">20</span>
+<span class="fn">print</span>(<span class="str">f"Before: a={a}, b={b}"</span>)
+<span class="var">a</span>, <span class="var">b</span> = <span class="var">b</span>, <span class="var">a</span>
+<span class="fn">print</span>(<span class="str">f"After:  a={a}, b={b}"</span>)
+
+<span class="cm"># Unpack with _ to discard unwanted values</span>
+<span class="var">name</span>, <span class="var">_</span>, <span class="var">grade</span> = (<span class="str">"Omar"</span>, <span class="num">16</span>, <span class="str">"B"</span>)
+<span class="fn">print</span>(<span class="str">f"{name}: {grade}"</span>)  <span class="cm"># age discarded with _</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">x=10, y=25<br>Aisha is 15 with grade A<br>Before: a=10, b=20<br>After:  a=20, b=10<br>Omar: B</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>The swap trick always gets a reaction:</strong> Before running <code>a, b = b, a</code> ask students to predict what happens. Most expect it to not work (they're used to needing a temp variable). Show them it does — then explain: Python evaluates the right side first as a tuple <code>(b, a)</code> = <code>(20, 10)</code>, then unpacks it into <code>a</code> and <code>b</code>.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — Three use cases where tuples are the right choice</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Use case 1: Function returning multiple values</span>
+<span class="kw">def</span> <span class="fn">min_max</span>(<span class="var">numbers</span>)<span class="op">:</span>
+    <span class="str">"""Return (min, max) of a list."""</span>
+    <span class="kw">return</span> <span class="fn">min</span>(<span class="var">numbers</span>), <span class="fn">max</span>(<span class="var">numbers</span>)   <span class="cm"># implicit tuple</span>
+
+<span class="var">lo</span>, <span class="var">hi</span> = <span class="fn">min_max</span>([<span class="num">5</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">9</span>])
+<span class="fn">print</span>(<span class="str">f"Min={lo}, Max={hi}"</span>)   <span class="cm"># Min=1, Max=9</span>
+
+<span class="cm"># Use case 2: Fixed data — RGB colour, GPS coordinate</span>
+<span class="var">RED</span>   = (<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>)
+<span class="var">GREEN</span> = (<span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>)
+<span class="var">home</span>  = (<span class="num">33.7</span>, <span class="num">73.1</span>)    <span class="cm"># latitude, longitude</span>
+
+<span class="cm"># Use case 3: Tuple as dictionary key (lists can't do this!)</span>
+<span class="var">grid</span> = {}
+<span class="var">grid</span>[(<span class="num">0</span>, <span class="num">0</span>)] = <span class="str">"origin"</span>
+<span class="var">grid</span>[(<span class="num">1</span>, <span class="num">2</span>)] = <span class="str">"point A"</span>
+<span class="var">grid</span>[(<span class="num">3</span>, <span class="num">4</span>)] = <span class="str">"point B"</span>
+<span class="fn">print</span>(<span class="var">grid</span>[(<span class="num">1</span>, <span class="num">2</span>)])      <span class="cm"># "point A"</span>
+
+<span class="cm"># ✗ List as dict key — TypeError!</span>
+<span class="var">grid</span>[[<span class="num">0</span>, <span class="num">0</span>]] = <span class="str">"fail"</span>   <span class="cm"># TypeError: unhashable type: 'list'</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Min=1, Max=9<br>point A<br>TypeError: unhashable type: 'list'</div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔑</span><span><strong>Why tuples can be dict keys but lists can't:</strong> Dict keys must be hashable — they need a fixed identity. Tuples are immutable so their hash never changes. Lists can change, so their hash would change, which would break the dict. This is why <code>(0,0)</code> works as a key but <code>[0,0]</code> doesn't.</span></div>
+</div>
+
+<!-- Interactive unpacking stepper -->
+<div class="sec">
+  <div class="sec-head">Interactive unpacking stepper — watch variables get assigned one by one</div>
+  <div class="unpack-stepper">
+    <div class="us-head">
+      <span>person = ("Aisha", 15, "A") → name, age, grade = person</span>
+      <div style="display:flex;gap:6px">
+        <button class="us-btn" id="us-prev" onclick="usStep(-1)" disabled>← Prev</button>
+        <button class="us-btn" id="us-next" onclick="usStep(1)">Next →</button>
+        <button class="us-btn" onclick="usReset()">Reset</button>
+      </div>
+    </div>
+    <div class="us-body">
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500">Tuple:</div>
+      <div class="us-tuple-display" id="us-tuple"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500">Variables after unpacking:</div>
+      <div class="us-vars" id="us-vars"></div>
+      <div class="us-explanation" id="us-explanation">Click Next to begin unpacking</div>
+    </div>
+  </div>
+</div>
+
+<!-- Predict output riddles -->
+<div class="sec">
+  <div class="sec-head">Predict the output — tap each card to reveal</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Given: <code>t = ("apple", "banana", "cherry", "date")</code></p>
+  <div class="riddle-grid" id="riddle-grid23"></div>
+</div>
+
+<!-- Activity 1 — Coordinate system -->
+<div class="sec">
+  <div class="sec-head">Activity 1 — Coordinate system with tuple dict keys</div>
+  <div class="act-card">
+    <div class="act-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="act-title">Use tuples as dictionary keys to build a 2D grid</div>
+    <div class="act-desc">Students write a program that stores named points on a grid using <code>(x, y)</code> tuples as dictionary keys. Cements the "tuple as dict key" concept and practises unpacking in loops.</div>
+    <ol class="sl">
+      <li>Create an empty dict <code>grid = {}</code></li>
+      <li>Write a function <code>place(grid, x, y, label)</code> that stores <code>grid[(x, y)] = label</code></li>
+      <li>Call <code>place()</code> to add at least 5 named points</li>
+      <li>Write a function <code>show_grid(grid)</code> that uses <code>.items()</code> and unpacks each key: <code>for (x, y), label in grid.items()</code></li>
+      <li>Write a function <code>find_point(grid, x, y)</code> that returns the label using <code>.get()</code> with a default of "empty"</li>
+      <li>Extension: write <code>distance(p1, p2)</code> that takes two (x, y) tuples and returns the Euclidean distance using <code>((x2-x1)**2 + (y2-y1)**2) ** 0.5</code></li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Live grid builder — try it here first</div>
+    <div class="coord-tool">
+      <div class="ct-head">
+        <span>Add named points to a tuple-keyed dict</span>
+        <button style="padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:12px;cursor:pointer;font-family:var(--font-sans)" onclick="ctReset()">Reset</button>
+      </div>
+      <div class="ct-body">
+        <div class="ct-add-row">
+          <span style="font-size:12px;color:var(--color-text-secondary)">x:</span>
+          <input class="ct-input" id="ct-x" type="number" placeholder="0" value="1">
+          <span style="font-size:12px;color:var(--color-text-secondary)">y:</span>
+          <input class="ct-input" id="ct-y" type="number" placeholder="0" value="2">
+          <span style="font-size:12px;color:var(--color-text-secondary)">label:</span>
+          <input class="ct-input ct-label-input" id="ct-label" placeholder="e.g. school" value="school">
+          <button class="ct-btn" onclick="ctAdd()">place()</button>
+        </div>
+        <div class="ct-grid" id="ct-grid"></div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Python dict (grid):</div>
+        <div class="ct-code" id="ct-code">grid = {}</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="ch"><span>main.py — starter</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">place</span>(<span class="var">grid</span>, <span class="var">x</span>, <span class="var">y</span>, <span class="var">label</span>)<span class="op">:</span>
+    <span class="str">"""Add a labelled point to the grid dict."""</span>
+    <span class="var">grid</span>[(<span class="var">x</span>, <span class="var">y</span>)] = <span class="var">label</span>
+
+<span class="kw">def</span> <span class="fn">show_grid</span>(<span class="var">grid</span>)<span class="op">:</span>
+    <span class="str">"""Print all points with their labels."""</span>
+    <span class="fn">print</span>(<span class="str">"Grid contents:"</span>)
+    <span class="kw">for</span> (<span class="var">x</span>, <span class="var">y</span>), <span class="var">label</span> <span class="kw">in</span> <span class="var">grid</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"  ({x}, {y}) → {label}"</span>)
+
+<span class="kw">def</span> <span class="fn">find_point</span>(<span class="var">grid</span>, <span class="var">x</span>, <span class="var">y</span>)<span class="op">:</span>
+    <span class="str">"""Return label at (x,y) or 'empty' if not found."""</span>
+    <span class="kw">return</span> <span class="var">grid</span><span class="op">.</span><span class="fn">get</span>((<span class="var">x</span>, <span class="var">y</span>), <span class="str">"empty"</span>)
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="var">grid</span> = {}
+    <span class="fn">place</span>(<span class="var">grid</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="str">"origin"</span>)
+    <span class="fn">place</span>(<span class="var">grid</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="str">"school"</span>)
+    <span class="fn">place</span>(<span class="var">grid</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="str">"park"</span>)
+    <span class="fn">show_grid</span>(<span class="var">grid</span>)
+    <span class="fn">print</span>(<span class="fn">find_point</span>(<span class="var">grid</span>, <span class="num">1</span>, <span class="num">2</span>))    <span class="cm"># "school"</span>
+    <span class="fn">print</span>(<span class="fn">find_point</span>(<span class="var">grid</span>, <span class="num">9</span>, <span class="num">9</span>))    <span class="cm"># "empty"</span>
+
+<span class="fn">main</span>()</pre>
+    </div>
+    <div class="out-lbl">Expected output</div>
+    <div class="out">Grid contents:<br>  (0, 0) → origin<br>  (1, 2) → school<br>  (3, 4) → park<br>school<br>empty</div>
+  </div>
+</div>
+
+<!-- Activity 2 — Data structure chooser -->
+<div class="sec">
+  <div class="sec-head">Activity 2 — List, tuple, or dict? Choose the right structure</div>
+  <div class="ds-chooser">
+    <div class="dsc-head">8 scenarios — click the best data structure for each. Think before clicking!</div>
+    <div class="dsc-body" id="dsc-body"></div>
+  </div>
+</div>
+
+<!-- Variable swap interactive demo -->
+<div class="sec">
+  <div class="sec-head">The variable swap trick — live demo</div>
+  <div class="swap-demo">
+    <div class="sd-head">Python swaps variables using implicit tuple packing — no temp variable needed</div>
+    <div class="sd-body">
+      <div class="sd-vals">
+        <div class="sd-box a-box">
+          <div class="sd-box-label">a</div>
+          <div class="sd-box-val" id="sd-a">10</div>
+        </div>
+        <div class="sd-arrow" id="sd-arrow">⇄</div>
+        <div class="sd-box b-box">
+          <div class="sd-box-label">b</div>
+          <div class="sd-box-val" id="sd-b">20</div>
+        </div>
+      </div>
+      <div class="sd-controls">
+        <button class="sd-btn" onclick="sdSwap()">a, b = b, a</button>
+        <button class="sd-btn" onclick="sdSetVals()">Set custom values</button>
+        <button class="sd-btn success" onclick="sdReset()">Reset</button>
+      </div>
+      <div class="sd-log" id="sd-log">Click "a, b = b, a" to swap using tuple packing</div>
+    </div>
+  </div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>How it works behind the scenes:</strong> Python evaluates the right side first, creating an implicit tuple <code>(b, a)</code> = <code>(20, 10)</code>. It then unpacks this tuple into the left side variables: <code>a = 20, b = 10</code>. The whole thing happens atomically — no temporary variable is ever needed.</span></div>
+</div>
+
+<!-- Named tuple preview -->
+<div class="sec">
+  <div class="sec-head">Preview — named tuples (collections module)</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Regular tuples use position — <code>point[0]</code> could mean x or y. Python's <code>namedtuple</code> gives each position a name, making tuples as readable as dicts while staying immutable. You'll encounter this in real Python code — here's a preview.</p>
+  <div class="named-preview">
+    <div class="np-head">Regular tuple vs named tuple — same immutability, much more readable</div>
+    <div class="np-body">
+      <div class="np-col np-plain">
+        <div class="np-col-head">⚠ Regular tuple</div>
+        <div class="code-block" style="margin:0;border:none;border-radius:0">
+          <pre style="font-size:12px"><span class="var">p</span> = (<span class="num">10</span>, <span class="num">25</span>)
+<span class="fn">print</span>(<span class="var">p</span>[<span class="num">0</span>])  <span class="cm"># x? y?</span>
+<span class="fn">print</span>(<span class="var">p</span>[<span class="num">1</span>])  <span class="cm"># must remember!</span></pre>
+        </div>
+        <div style="padding:8px 12px;font-size:12px;color:var(--color-text-warning)">Position-based — easy to mix up x and y.</div>
+      </div>
+      <div class="np-col np-named">
+        <div class="np-col-head">✓ Named tuple</div>
+        <div class="code-block" style="margin:0;border:none;border-radius:0">
+          <pre style="font-size:12px"><span class="kw">from</span> <span class="bi">collections</span> <span class="kw">import</span> <span class="fn">namedtuple</span>
+<span class="var">Point</span> = <span class="fn">namedtuple</span>(<span class="str">"Point"</span>, [<span class="str">"x"</span>, <span class="str">"y"</span>])
+<span class="var">p</span> = <span class="var">Point</span>(<span class="num">10</span>, <span class="num">25</span>)
+<span class="fn">print</span>(<span class="var">p</span><span class="op">.</span><span class="var">x</span>)   <span class="cm"># 10 — obvious!</span>
+<span class="fn">print</span>(<span class="var">p</span>[<span class="num">0</span>])  <span class="cm"># also works</span></pre>
+        </div>
+        <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success)">Still immutable. Access by name or index.</div>
+      </div>
+    </div>
+  </div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Don't teach namedtuple today</strong> — this is a preview only. Mention it exists, show the syntax briefly, and move on. Students who want to explore it have a clear hook for self-study. The key lesson remains: plain tuples for simple grouped immutable data.</span></div>
+</div>
+
+<!-- Quick tuple builder sandbox -->
+<div class="sec">
+  <div class="sec-head">Tuple builder sandbox — create and unpack tuples live</div>
+  <div class="nt-builder">
+    <div class="ntb-head">Enter up to 4 values — see the tuple, its type, and unpack it</div>
+    <div class="ntb-body">
+      <div class="ntb-row">
+        <span class="ntb-label">Values:</span>
+        <input class="ntb-input" id="ntb-v1" placeholder="value 1" value="Aisha" oninput="runNTB()">
+        <input class="ntb-input" id="ntb-v2" placeholder="value 2" value="15" oninput="runNTB()">
+        <input class="ntb-input" id="ntb-v3" placeholder="value 3 (opt)" value="A" oninput="runNTB()">
+        <input class="ntb-input" id="ntb-v4" placeholder="value 4 (opt)" value="" oninput="runNTB()">
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Result:</div>
+      <div class="ntb-result" id="ntb-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="sec">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="ck">
+    <div class="ck-q">What is the output of the following code?<br><code style="font-size:13px">t = (10, 20, 30)<br>a, b, c = t<br>a, b = b, a<br>print(a, b, c)</code></div>
+    <div class="ck-opts">
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">A</span><code>10 20 30</code> — variables are assigned but the tuple is unchanged</div>
+      <div class="ck-opt" onclick="ans(this,true)"><span class="opt-l">B</span><code>20 10 30</code> — a and b are swapped by tuple unpacking; c stays 30</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">C</span>TypeError — you cannot swap tuple variables</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">D</span><code>20 10</code> — c is lost after the swap</div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: (1) Why can a tuple be used as a dictionary key but a list cannot? (2) Write a function <code>stats(numbers)</code> that returns a tuple of <code>(min, max, average)</code>. (3) Give one real-world example where you would use a tuple instead of a list.
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="sec">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vg">
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Tuple</strong>An immutable, ordered sequence created with <code>()</code>. Elements cannot be added, removed, or changed after creation.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Immutable</strong>Cannot be changed after creation. Tuples are immutable; lists and dicts are mutable.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Tuple unpacking</strong>Assigning multiple variables from a tuple in one line: <code>x, y = (10, 25)</code>. The number of variables must match the tuple length.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Hashable</strong>A type whose value never changes, allowing it to be used as a dict key. Tuples are hashable; lists are not.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Single-element tuple</strong><code>(42,)</code> — the trailing comma is essential. Without it, <code>(42)</code> is just the integer 42 in brackets.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Implicit tuple</strong>Python creates a tuple automatically when you write comma-separated values without brackets: <code>a = 1, 2, 3</code> creates a tuple.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="sec">
+  <div class="sec-head">Homework / self-study (before Lesson 24)</div>
+  <div class="hw">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a function <code>stats(numbers)</code> that returns a tuple of <code>(minimum, maximum, average)</code>. Call it with three different lists and unpack the result each time: <code>lo, hi, avg = stats([...])</code>. Print a formatted summary for each.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Create a grid dict where keys are <code>(row, col)</code> tuples — a 3×3 noughts-and-crosses board. Fill some positions with "X" or "O". Write a function that checks if a given position is empty using <code>.get()</code>. Print the dict using <code>.items()</code> and nested tuple unpacking.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: what happens when you try to use a list as a dict key? What is the exact error message? Now try a tuple — does it work? Research: what does "hashable" mean and why does immutability make something hashable?</span></div>
+  </div>
+</div>
+
+<!-- Week 5 preview -->
+<div class="sec">
+  <div class="sec-head">Looking ahead — Lesson 24: Nested data structures</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Lesson 24: Nested data structures</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Now that students know lists, dicts, and tuples, the next lesson shows how to nest them — dicts inside dicts, lists of dicts, dicts of lists. This unlocks real-world data modelling: a list of student records, a quiz with questions stored as dicts, a contact book. The Week 5 project (Lesson 25) uses all of these together.</div>
+    <div class="w5-grid">
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L21 ✓</div><div style="color:var(--color-text-success)">Create &amp; access</div></div>
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L22 ✓</div><div style="color:var(--color-text-success)">.keys .values .items</div></div>
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L23 ✓</div><div style="color:var(--color-text-success)">Tuples</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L24</div><div style="color:var(--color-text-secondary)">Nested data</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L25</div><div style="color:var(--color-text-success)">🛠 Contact book</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="sec">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">The single-element tuple trap — demonstrate it every time:</strong> <code>(42)</code> is an int; <code>(42,)</code> is a tuple. Run <code>print(type((42)))</code> and <code>print(type((42,)))</code> side by side. The comma is what makes a tuple. Students who skip the comma spend 20 minutes debugging mysterious type errors.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common confusion — when to use tuple vs list:</strong> The decision rule is: if the data has a fixed structure with a specific meaning for each position (x and y, name and age), use a tuple. If the data is a growing collection of same-type items, use a list. This is worth repeating three times across the lesson.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Unpacking count must match:</strong> <code>a, b = (1, 2, 3)</code> raises a ValueError — too many values to unpack. Students who try this will see a confusing error. Show it live and explain: the number of variables on the left must exactly match the tuple length.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Connect to what students already know:</strong> <code>for k, v in d.items()</code> is tuple unpacking. <code>a, b = get_numbers()</code> from Lesson 19 is tuple unpacking. The swap trick <code>a, b = b, a</code> is tuple packing + unpacking. Students have been using tuples all course — this lesson gives the name to what they already do.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Activity 2 timing:</strong> The data structure chooser is the lesson's most conceptually demanding activity. If the class is struggling, do the first 4 scenarios together as a group, then let students try the last 4 independently. The justification is as important as the answer — require one sentence of reasoning for each choice.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (3).html'">Next: Lesson 24 - Nested data structures</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+ 
+<script src="scripts.js"></script>
+<script>
+// Tuple visualiser
+const tvColour = [255, 128, 0];
+function buildTV() {
+  const row = document.getElementById('tv-row');
+  row.innerHTML = '';
+  tvColour.forEach((v, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'tv-cell';
+    cell.innerHTML = `<div class="tv-lock">🔒</div><div class="tv-val">${v}</div><div class="tv-idx">[${i}]</div>`;
+    cell.onclick = () => {
+      document.querySelectorAll('.tv-cell').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      document.getElementById('tv-info').textContent = `colour[${i}] → ${v}  (type: int)`;
+    };
+    row.appendChild(cell);
+  });
+}
+buildTV();
+
+const tvOps = [
+  {code:'colour[0]', result:'255', ok:true},
+  {code:'colour[-1]', result:'0', ok:true},
+  {code:'colour[1:3]', result:'(128, 0)', ok:true},
+  {code:'len(colour)', result:'3', ok:true},
+  {code:'colour[0] = 99', result:'TypeError: tuple does not support item assignment', ok:false},
+  {code:'colour.append(255)', result:'AttributeError: tuple has no attribute append', ok:false},
+  {code:'255 in colour', result:'True', ok:true},
+];
+function buildTVOps() {
+  const el = document.getElementById('tv-ops');
+  tvOps.forEach(op => {
+    const row = document.createElement('div');
+    row.className = 'tv-try-row';
+    row.innerHTML = `<div class="tv-try-code">${op.code}</div><div class="tv-try-result ${op.ok?'ok':'err'}" style="display:none">→ ${op.result}</div>`;
+    row.onclick = () => {
+      const r = row.querySelector('.tv-try-result');
+      r.style.display = r.style.display === 'none' ? 'block' : 'none';
+    };
+    el.appendChild(row);
+  });
+}
+buildTVOps();
+
+// Immutability demo
+const immListOps = [
+  {code:'lst[0] = 99', effect:'Changes first element to 99', ok:true},
+  {code:'lst.append(4)', effect:'Adds 4 to end → [1,2,3,4]', ok:true},
+  {code:'lst.remove(2)', effect:'Removes 2 → [1,3]', ok:true},
+  {code:'lst.sort()', effect:'Sorts in place → [1,2,3]', ok:true},
+];
+const immTupOps = [
+  {code:'tup[0] = 99', effect:'TypeError: tuple does not support item assignment', ok:false},
+  {code:'tup.append(4)', effect:'AttributeError: tuple has no attribute append', ok:false},
+  {code:'tup[0]', effect:'→ 1  (reading is fine)', ok:true},
+  {code:'new = tup + (4,)', effect:'→ (1,2,3,4)  (creates NEW tuple — original unchanged)', ok:true},
+];
+function buildImmOps(ops, containerId, logId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  ops.forEach(op => {
+    const btn = document.createElement('button');
+    btn.className = 'id-op-btn';
+    btn.textContent = op.code;
+    btn.onclick = () => {
+      document.getElementById(logId).textContent = op.effect;
+      document.getElementById(logId).style.color = op.ok ? 'var(--color-text-success)' : 'var(--color-text-danger)';
+      btn.className = 'id-op-btn ' + (op.ok ? 'ok' : 'err');
+    };
+    el.appendChild(btn);
+  });
+}
+function immReset() {
+  buildImmOps(immListOps,'imm-list-ops','imm-list-log');
+  buildImmOps(immTupOps,'imm-tup-ops','imm-tup-log');
+  document.getElementById('imm-list-log').textContent = 'Click an operation to see the result';
+  document.getElementById('imm-tup-log').textContent = 'Click an operation to see the result';
+}
+immReset();
+
+// Unpacking stepper
+const usData = [
+  {tuple:['Aisha','15','A'], vars:['name','age','grade']},
+];
+const usSteps = [
+  {active:-1, assigned:[], explanation:'Tuple: ("Aisha", 15, "A") — ready to unpack into 3 variables.'},
+  {active:0, assigned:[0], explanation:'name = "Aisha" — first element assigned to first variable.'},
+  {active:1, assigned:[0,1], explanation:'age = 15 — second element assigned to second variable.'},
+  {active:2, assigned:[0,1,2], explanation:'grade = "A" — third element assigned to third variable. Unpacking complete!'},
+];
+const usVals = ['Aisha', 15, 'A'];
+const usVarNames = ['name', 'age', 'grade'];
+let usCur = 0;
+
+function renderUS() {
+  const step = usSteps[usCur];
+  // tuple display
+  const tupleEl = document.getElementById('us-tuple');
+  tupleEl.innerHTML = '';
+  usVals.forEach((v, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'us-cell' + (step.active === i ? ' active' : '');
+    const vStr = typeof v === 'string' ? `"${v}"` : String(v);
+    cell.innerHTML = `<div class="us-cell-val">${vStr}</div><div class="us-cell-var">${step.assigned.includes(i) ? usVarNames[i] + ' ↑' : ''}</div>`;
+    tupleEl.appendChild(cell);
+  });
+  // vars
+  const varsEl = document.getElementById('us-vars');
+  varsEl.innerHTML = '';
+  usVarNames.forEach((name, i) => {
+    const badge = document.createElement('div');
+    badge.className = 'us-var-badge' + (step.assigned.includes(i) ? ' assigned' : '');
+    const vStr = step.assigned.includes(i) ? (typeof usVals[i] === 'string' ? `"${usVals[i]}"` : usVals[i]) : '?';
+    badge.textContent = `${name} = ${vStr}`;
+    varsEl.appendChild(badge);
+  });
+  document.getElementById('us-explanation').textContent = step.explanation;
+  document.getElementById('us-prev').disabled = usCur === 0;
+  document.getElementById('us-next').disabled = usCur === usSteps.length - 1;
+}
+
+function usStep(dir) {
+  usCur = Math.max(0, Math.min(usSteps.length - 1, usCur + dir));
+  renderUS();
+}
+
+function usReset() { usCur = 0; renderUS(); }
+renderUS();
+
+// Riddles
+const riddles23 = [
+  {expr:'t[0]', answer:'"apple"', hint:'index 0', error:false},
+  {expr:'t[-1]', answer:'"date"', hint:'last element', error:false},
+  {expr:'t[1:3]', answer:'("banana", "cherry")', hint:'slice returns a tuple', error:false},
+  {expr:'len(t)', answer:'4', hint:'number of elements', error:false},
+  {expr:'t[0] = "mango"', answer:'TypeError: tuple does not support item assignment', hint:'immutable!', error:true},
+  {expr:'"cherry" in t', answer:'True', hint:'membership check', error:false},
+  {expr:'a, b, c, d = t', answer:'a="apple" b="banana" c="cherry" d="date"', hint:'full unpacking', error:false},
+  {expr:'t + ("elderberry",)', answer:'("apple","banana","cherry","date","elderberry")', hint:'concatenation returns new tuple', error:false},
+];
+
+function buildRiddles23() {
+  const grid = document.getElementById('riddle-grid23');
+  riddles23.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'riddle-row';
+    row.innerHTML = `<div class="riddle-expr">${r.expr}</div><div class="riddle-hint">tap to reveal · ${r.hint}</div><div class="riddle-answer ${r.error?'riddle-error':''}">→ ${r.answer}</div>`;
+    row.onclick = () => row.classList.toggle('revealed');
+    grid.appendChild(row);
+  });
+}
+buildRiddles23();
+
+// Data structure chooser
+const dscScenarios = [
+  {q:'Store a student\'s name, age, and grade — fields that belong together and have names', correct:'dict', opts:['list','tuple','dict'], reason:'Named fields belonging to one entity → dictionary.'},
+  {q:'Store the monthly rainfall figures for 12 months in order', correct:'list', opts:['list','tuple','dict'], reason:'Ordered, same-type, might change → list.'},
+  {q:'Store a GPS coordinate (latitude, longitude) that should never change', correct:'tuple', opts:['list','tuple','dict'], reason:'Fixed paired values, immutable → tuple.'},
+  {q:'Track scores in a running quiz game — score increases after each question', correct:'list', opts:['list','tuple','dict'], reason:'Ordered, mutable collection → list (or just an int if it\'s a single score).'},
+  {q:'Use a 2D grid position as a dictionary key', correct:'tuple', opts:['list','tuple','dict'], reason:'Dict keys must be hashable — only tuples work here, not lists.'},
+  {q:'Store a phone book where names map to numbers', correct:'dict', opts:['list','tuple','dict'], reason:'Key→value lookup by name → dictionary.'},
+  {q:'Return both the minimum and maximum value from a function', correct:'tuple', opts:['list','tuple','dict'], reason:'Multiple return values from a function → implicit tuple.'},
+  {q:'Store the to-do tasks for today — items will be added and removed', correct:'list', opts:['list','tuple','dict'], reason:'Mutable, ordered collection of same-type items → list.'},
+];
+
+const dscReasons = {
+  dict:'Named properties of one thing → dictionary. Access by meaningful name, not by position.',
+  list:'Ordered, mutable, same-type items → list. Will grow or shrink.',
+  tuple:'Fixed, immutable group of values → tuple. Can be a dict key.',
+};
+
+function buildDSC() {
+  const body = document.getElementById('dsc-body');
+  dscScenarios.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'dsc-scenario';
+    div.innerHTML = `<div class="dsc-q">${i+1}. ${s.q}</div>
+      <div class="dsc-opts">${s.opts.map(o => `<button class="dsc-opt" onclick="dscChoose(this,'${o}','${s.correct}',${i})">${o}</button>`).join('')}</div>
+      <div class="dsc-fb" id="dsc-fb-${i}"></div>`;
+    body.appendChild(div);
+  });
+}
+
+function dscChoose(btn, chosen, correct, i) {
+  const opts = btn.parentElement.querySelectorAll('.dsc-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById(`dsc-fb-${i}`);
+  if (chosen === correct) {
+    btn.classList.add('chosen-correct');
+    fb.textContent = `✓ Correct! ${dscScenarios[i].reason}`;
+    fb.style.color = 'var(--color-text-success)';
+  } else {
+    btn.classList.add('chosen-wrong');
+    opts.forEach(o => { if (o.textContent === correct) o.classList.add('reveal-correct'); });
+    fb.textContent = `✗ Better: ${correct} — ${dscScenarios[i].reason}`;
+    fb.style.color = 'var(--color-text-danger)';
+  }
+  fb.style.display = 'block';
+}
+buildDSC();
+
+// Coord tool
+let ctGrid = {};
+function ctRender() {
+  const gridEl = document.getElementById('ct-grid');
+  gridEl.innerHTML = '';
+  Object.entries(ctGrid).forEach(([k, v]) => {
+    const div = document.createElement('div');
+    div.className = 'ct-point';
+    div.innerHTML = `<span class="ct-point-key">(${k})</span> <span class="ct-point-val">→ "${v}"</span>`;
+    gridEl.appendChild(div);
+  });
+  const codeEl = document.getElementById('ct-code');
+  if (Object.keys(ctGrid).length === 0) { codeEl.textContent = 'grid = {}'; return; }
+  const lines = Object.entries(ctGrid).map(([k, v]) => `  (${k}): "${v}"`).join(',\n');
+  codeEl.textContent = `grid = {\n${lines}\n}`;
+}
+
+function ctAdd() {
+  const x = document.getElementById('ct-x').value.trim();
+  const y = document.getElementById('ct-y').value.trim();
+  const label = document.getElementById('ct-label').value.trim();
+  if (!x || !y || !label) return;
+  ctGrid[`${x}, ${y}`] = label;
+  ctRender();
+}
+
+function ctReset() { ctGrid = {}; ctRender(); }
+ctRender();
+
+// Swap demo
+let sdA = 10, sdB = 20, sdSwapCount = 0;
+function sdRender() {
+  document.getElementById('sd-a').textContent = sdA;
+  document.getElementById('sd-b').textContent = sdB;
+}
+function sdSwap() {
+  sdSwapCount++;
+  const oldA = sdA;
+  sdA = sdB;
+  sdB = oldA;
+  sdRender();
+  document.getElementById('sd-log').textContent = `Swap #${sdSwapCount}: a, b = b, a → a = ${sdA}, b = ${sdB}. Python packed (b, a) = (${sdB}, ${sdA}) then unpacked.`;
+}
+function sdSetVals() {
+  const a = parseInt(prompt('Enter value for a:', sdA) || sdA);
+  const b = parseInt(prompt('Enter value for b:', sdB) || sdB);
+  if (!isNaN(a)) sdA = a;
+  if (!isNaN(b)) sdB = b;
+  sdSwapCount = 0;
+  sdRender();
+  document.getElementById('sd-log').textContent = `Values set: a = ${sdA}, b = ${sdB}`;
+}
+function sdReset() {
+  sdA = 10; sdB = 20; sdSwapCount = 0;
+  sdRender();
+  document.getElementById('sd-log').textContent = 'Reset — a = 10, b = 20';
+}
+sdRender();
+
+// Tuple builder sandbox
+function runNTB() {
+  const v1 = document.getElementById('ntb-v1').value.trim();
+  const v2 = document.getElementById('ntb-v2').value.trim();
+  const v3 = document.getElementById('ntb-v3').value.trim();
+  const v4 = document.getElementById('ntb-v4').value.trim();
+  const vals = [v1, v2, v3, v4].filter(v => v !== '');
+  const res = document.getElementById('ntb-result');
+  if (vals.length === 0) { res.textContent = 'Enter at least one value'; return; }
+  const fmtVal = v => isNaN(v) ? `"${v}"` : v;
+  const tupleStr = vals.length === 1
+    ? `(${fmtVal(vals[0])},)  ← single-element tuple needs trailing comma`
+    : `(${vals.map(fmtVal).join(', ')})`;
+  const varNames = ['a','b','c','d'].slice(0, vals.length);
+  const unpackStr = `${varNames.join(', ')} = ${vals.length === 1 ? `(${fmtVal(vals[0])},)` : `(${vals.map(fmtVal).join(', ')})`}\n→ ${varNames.map((n,i) => `${n} = ${fmtVal(vals[i])}`).join('  ·  ')}`;
+  res.textContent = `tuple: ${tupleStr}\nlen: ${vals.length}\n${unpackStr}`;
+}
+runNTB();
+
+// Exit ticket
+function ans(el, correct) {
+  if (document.querySelector('.ck-opt.correct')) return;
+  document.querySelectorAll('.ck-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! Step through: (1) t = (10,20,30). (2) a,b,c = t → a=10, b=20, c=30. (3) a,b = b,a → Python packs (b,a)=(20,10), unpacks: a=20, b=10. c is untouched. (4) print(a,b,c) → 20 10 30.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is B. After unpacking: a=10, b=20, c=30. Then a,b = b,a swaps a and b using implicit tuple packing. c=30 is never touched. Final print: 20 10 30.';
+  }
+}
+
+</script>
+</body>
+</html>

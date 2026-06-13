@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 2: Variables and Data Types — Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 2: Variables &amp; data types</p>
+      <p class="lp-hero-sub">Week 1 — Python Foundations · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">print()</div></div>
+    <div class="meta-item"><div class="meta-label">Key concept</div><div class="meta-val">Variables</div></div>
+    <div class="meta-item"><div class="meta-label">New functions</div><div class="meta-val">type()</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-target" aria-hidden="true"></i> Learning objectives</div>
+  <ul class="obj-list">
+    <li>Understand what a variable is and use the box/label analogy to explain it</li>
+    <li>Declare variables and assign values using the <code>=</code> operator</li>
+    <li>Identify the four core data types: <code>str</code>, <code>int</code>, <code>float</code>, <code>bool</code></li>
+    <li>Use <code>type()</code> to inspect what type a value or variable is</li>
+    <li>Reassign variables and observe how the value changes</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-clock" aria-hidden="true"></i> Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-amber">Hook</span><div class="tl-title">The memory box analogy (5 min)</div><div class="tl-desc">Draw a box on the board. Label it <code>name</code>. Write "Aisha" inside it. Ask: "What if we want to change what's inside?" Erase and write "Omar". Explain: a variable is like a labelled box — the label stays the same, but the contents can change. Ask a student their name; write it in a new box labelled <code>student_name</code>. This physical analogy anchors the lesson.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-blue">Teach</span><div class="tl-title">Declaring variables — live demo (10 min)</div><div class="tl-desc">Type and run the demo examples below on the projector. Cover: assignment with <code>=</code>, naming rules (no spaces, no starting with a number, snake_case convention), reassignment, and printing variables without quotes.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:15</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-blue">Teach</span><div class="tl-title">The four data types + type() (8 min)</div><div class="tl-desc">Introduce str, int, float, bool with the reference table below. Show type() on each. Key point: Python automatically decides the type based on how you write the value — quotes → str, whole number → int, decimal → float, True/False → bool. Emphasise the capital T/F on booleans.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:23</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-green">Activity</span><div class="tl-title">Activity 1 — My profile variables (12 min)</div><div class="tl-desc">Students create and print a set of personal variables. Teacher circulates and checks naming conventions and types. Full instructions below.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:35</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-green">Activity</span><div class="tl-title">Activity 2 — Type detective (10 min)</div><div class="tl-desc">Students predict types before running code. Builds intuition for when each type applies. Full instructions below.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:45</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-amber">Check</span><div class="tl-title">Exit ticket + wrap-up (5–10 min)</div><div class="tl-desc">Interactive quiz below. Ask: "What's one thing that confused you today?" — address the most common answer live. Preview Lesson 3: "Tomorrow we'll make programs interactive — the user will type information in and the program will respond personally using variables."</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Data types reference -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-table" aria-hidden="true"></i> Data types reference — display on projector</div>
+  <div style="border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden;">
+    <table class="type-table">
+      <thead><tr><th>Type</th><th>Full name</th><th>What it stores</th><th>Examples</th><th>How Python knows</th></tr></thead>
+      <tbody>
+        <tr><td><span class="type-badge tb-str">str</span></td><td>String</td><td>Text, characters</td><td><code>"Aisha"</code>, <code>"hello"</code>, <code>"42"</code></td><td>Wrapped in quotes</td></tr>
+        <tr><td><span class="type-badge tb-int">int</span></td><td>Integer</td><td>Whole numbers</td><td><code>15</code>, <code>0</code>, <code>-7</code>, <code>1000</code></td><td>No quotes, no decimal</td></tr>
+        <tr><td><span class="type-badge tb-float">float</span></td><td>Float</td><td>Decimal numbers</td><td><code>3.14</code>, <code>1.8</code>, <code>-0.5</code></td><td>No quotes, has a dot</td></tr>
+        <tr><td><span class="type-badge tb-bool">bool</span></td><td>Boolean</td><td>True or False only</td><td><code>True</code>, <code>False</code></td><td>Capital T or F, no quotes</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box" style="margin-top:8px;"><i class="ti ti-lightbulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Important distinction:</strong> <code>"42"</code> is a <span class="type-badge tb-str">str</span> — it's the text "42", not the number. <code>42</code> without quotes is an <span class="type-badge tb-int">int</span>. You can do maths with the int but not the string. This comes up constantly — address it now.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-code" aria-hidden="true"></i> Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — Creating and printing variables</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">name</span> = <span class="str">"Aisha"</span>
+<span class="var">age</span> = <span class="num">15</span>
+<span class="var">height</span> = <span class="num">1.65</span>
+<span class="var">is_student</span> = <span class="kw">True</span>
+
+<span class="fn">print</span>(<span class="var">name</span>)
+<span class="fn">print</span>(<span class="var">age</span>)
+<span class="fn">print</span>(<span class="var">height</span>)
+<span class="fn">print</span>(<span class="var">is_student</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">Aisha<br>15<br>1.65<br>True</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Using type() to inspect values</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="bi">type</span>(<span class="str">"Aisha"</span>))
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="num">15</span>))
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="num">1.65</span>))
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="kw">True</span>))
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="str">"42"</span>))   <span class="cm"># What will this be?</span></pre>
+  </div>
+  <div class="output-label">Output — ask students to predict before running</div>
+  <div class="output-block">&lt;class 'str'&gt;<br>&lt;class 'int'&gt;<br>&lt;class 'float'&gt;<br>&lt;class 'bool'&gt;<br>&lt;class 'str'&gt;</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — Reassigning a variable</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">score</span> = <span class="num">0</span>
+<span class="fn">print</span>(<span class="str">"Score at start:"</span>, <span class="var">score</span>)
+
+<span class="var">score</span> = <span class="num">10</span>
+<span class="fn">print</span>(<span class="str">"Score after round 1:"</span>, <span class="var">score</span>)
+
+<span class="var">score</span> = <span class="num">25</span>
+<span class="fn">print</span>(<span class="str">"Score after round 2:"</span>, <span class="var">score</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">Score at start: 0<br>Score after round 1: 10<br>Score after round 2: 25</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — Variable naming rules</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — valid vs invalid names</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="cm"># ✓ Valid names</span>
+<span class="var">first_name</span> = <span class="str">"Omar"</span>
+<span class="var">age2</span> = <span class="num">16</span>
+<span class="var">is_logged_in</span> = <span class="kw">False</span>
+<span class="var">totalScore</span> = <span class="num">99</span>   <span class="cm"># works, but prefer snake_case</span>
+
+<span class="cm"># ✗ Invalid names — these cause errors</span>
+<span class="cm"># 2age = 16         → can't start with a number</span>
+<span class="cm"># first name = "X"  → no spaces allowed</span>
+<span class="cm"># for = 10          → 'for' is a reserved keyword</span></pre>
+  </div>
+  <div class="tip-box"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Teaching tip:</strong> After Example 3, ask "Did the variable name change?" (no) "Did the box move?" (no). The label stays; only what's inside changes. Revisit the whiteboard drawing.</span></div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-puzzle" aria-hidden="true"></i> Activity 1 — My profile variables</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="activity-title">Create a variable for every piece of information about yourself</div>
+    <div class="activity-desc">Students declare at least 6 variables covering different data types, then print each with a descriptive label. The constraint forces them to think about which type each piece of information should be.</div>
+    <ol class="steps-list">
+      <li>Create variables for: name (str), age (int), height in metres (float), favourite subject (str), is_morning_person (bool), and one variable of your own choice</li>
+      <li>Print each variable on its own line with a label e.g. <code>print("Name:", name)</code></li>
+      <li>Add one line at the bottom that prints the type of each variable using type()</li>
+      <li>Extension: try reassigning your age variable to <code>age + 1</code> and print it — what happens?</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="cm"># My Profile — fill in your own information!</span>
+
+<span class="var">name</span> = <span class="str">"???"</span>            <span class="cm"># str  — your name</span>
+<span class="var">age</span> = <span class="num">???</span>               <span class="cm"># int  — your age</span>
+<span class="var">height</span> = <span class="num">???</span>            <span class="cm"># float — height in metres e.g. 1.65</span>
+<span class="var">favourite_subject</span> = <span class="str">"???"</span>  <span class="cm"># str</span>
+<span class="var">is_morning_person</span> = <span class="kw">???</span>  <span class="cm"># bool — True or False</span>
+<span class="var">my_variable</span> = <span class="num">???</span>        <span class="cm"># your choice!</span>
+
+<span class="cm"># Print everything with labels</span>
+<span class="fn">print</span>(<span class="str">"Name            :"</span>, <span class="var">name</span>)
+<span class="fn">print</span>(<span class="str">"Age             :"</span>, <span class="var">age</span>)
+<span class="fn">print</span>(<span class="str">"Height          :"</span>, <span class="var">height</span>)
+<span class="fn">print</span>(<span class="str">"Favourite subject:"</span>, <span class="var">favourite_subject</span>)
+<span class="fn">print</span>(<span class="str">"Morning person? :"</span>, <span class="var">is_morning_person</span>)
+
+<span class="cm"># Check types</span>
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="var">name</span>), <span class="bi">type</span>(<span class="var">age</span>), <span class="bi">type</span>(<span class="var">height</span>), <span class="bi">type</span>(<span class="var">is_morning_person</span>))</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example completed output</div>
+    <div class="output-block">Name            : Aisha Rahman<br>Age             : 15<br>Height          : 1.65<br>Favourite subject: Mathematics<br>Morning person? : False<br>&lt;class 'str'&gt; &lt;class 'int'&gt; &lt;class 'float'&gt; &lt;class 'bool'&gt;</div>
+    <div class="tip-box" style="margin-top:8px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Common mistake to watch for:</strong> Students writing <code>age = "15"</code> — they put quotes around a number by habit from the previous lesson. Ask: "Is age a piece of text, or a number you might do maths with?"</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-search" aria-hidden="true"></i> Activity 2 — Type detective</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Pairs</div>
+    <div class="activity-title">Predict the type before running — then verify with type()</div>
+    <div class="activity-desc">Each row below is a value. Click it to reveal the type. Students should write their prediction first in their notebook, then click to check, then verify by running <code>type(value)</code> in their editor.</div>
+    <div class="det-game" id="detective-game">
+      <div class="det-row" onclick="reveal(this, 'str')"><span class="det-val"><code>"Hello, World!"</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-str type-badge">str</span></div>
+      <div class="det-row" onclick="reveal(this, 'int')"><span class="det-val"><code>100</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-int type-badge">int</span></div>
+      <div class="det-row" onclick="reveal(this, 'float')"><span class="det-val"><code>9.99</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-float type-badge">float</span></div>
+      <div class="det-row" onclick="reveal(this, 'bool')"><span class="det-val"><code>False</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-bool type-badge">bool</span></div>
+      <div class="det-row" onclick="reveal(this, 'str')"><span class="det-val"><code>"3.14"</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-str type-badge">str ← tricky! quotes make it str</span></div>
+      <div class="det-row" onclick="reveal(this, 'float')"><span class="det-val"><code>0.0</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-float type-badge">float ← 0 with a dot = float</span></div>
+      <div class="det-row" onclick="reveal(this, 'bool')"><span class="det-val"><code>True</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-bool type-badge">bool</span></div>
+      <div class="det-row" onclick="reveal(this, 'int')"><span class="det-val"><code>-42</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-int type-badge">int ← negatives are still int</span></div>
+      <div class="det-row" onclick="reveal(this, 'str')"><span class="det-val"><code>"True"</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-str type-badge">str ← quotes = str, not bool!</span></div>
+      <div class="det-row" onclick="reveal(this, 'float')"><span class="det-val"><code>1_000_000.5</code></span><span style="font-size:12px;color:var(--color-text-tertiary);">tap to reveal →</span><span class="det-answer tb-float type-badge">float ← _ is valid number separator</span></div>
+    </div>
+    <div class="tip-box" style="margin-top:10px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Discussion question after the game:</strong> "Why does Python need to know the type? Why can't it just store everything as text?" — lead toward: you can do <code>10 + 5 = 15</code> but <code>"10" + "5" = "105"</code>. Types determine what operations are possible.</span></div>
+    <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Bonus challenge — run this and explain the output</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — what does this print?</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="fn">print</span>(<span class="str">"10"</span> + <span class="str">"5"</span>)   <span class="cm"># What do you expect?</span>
+<span class="fn">print</span>(<span class="num">10</span> + <span class="num">5</span>)     <span class="cm"># And this?</span>
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="str">"10"</span> + <span class="str">"5"</span>))
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="num">10</span> + <span class="num">5</span>))</span></pre>
+    </div>
+    <div class="output-label">Output — this surprises most students!</div>
+    <div class="output-block">105<br>15<br>&lt;class 'str'&gt;<br>&lt;class 'int'&gt;</div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-checkbox" aria-hidden="true"></i> Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div style="font-size:15px;font-weight:500;margin-bottom:4px;">Which data type does <code>type(3.14)</code> return?</div>
+    <div class="check-opts" id="opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>int</code> — because 3 and 14 are both whole numbers</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span><code>str</code> — because it contains a dot which is a character</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span><code>float</code> — because it has a decimal point</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span><code>bool</code> — because 3.14 is a positive, truthy number</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">Written part: Create a variable called <code>favourite_number</code> and assign it a value. Then write one line that prints its type. What type did you get, and why?</div>
+  </div>
+</div>
+
+<!-- Vocabulary -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-book" aria-hidden="true"></i> Key vocabulary for this lesson</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Variable</strong>A named container that stores a value in memory.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Assignment</strong>Using <code>=</code> to store a value in a variable. Not the same as "equals" in maths.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Data type</strong>The category of a value — what kind of thing it is (text, number, etc.).</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">snake_case</strong>The Python convention for naming variables: lowercase words joined by underscores.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Reassignment</strong>Giving a variable a new value after it was already created.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Dynamic typing</strong>Python figures out the type automatically — you don't have to declare it.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-home" aria-hidden="true"></i> Homework / self-study (before lesson 3)</div>
+  <div class="hw-box">
+    <div class="hw-item"><i class="ti ti-pencil" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Write a program that stores 8 facts about your favourite athlete, musician, or fictional character — using all four data types at least once. Print everything with neat labels.</span></div>
+    <div class="hw-item"><i class="ti ti-help-circle" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Research question: What happens when you try <code>print("Hello" + 5)</code>? Run it, read the error, and write one sentence explaining what it means. We'll discuss in Lesson 3.</span></div>
+    <div class="hw-item"><i class="ti ti-list-check" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Look up: what are Python's <em>reserved keywords</em>? Write down 5 that you cannot use as variable names and why.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-notes" aria-hidden="true"></i> Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Students write <code>name = Aisha</code> without quotes. Python looks for a variable called <code>Aisha</code> and crashes with NameError. Reinforce: text always needs quotes.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Confusion between <code>=</code> (assignment) and <code>==</code> (comparison). Don't introduce <code>==</code> today — just note "in Python, a single = means store, not equals. We'll meet double == in Lesson 5."</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> <code>True</code> and <code>False</code> written as <code>true</code> / <code>false</code> — Python is case-sensitive here. Only <code>True</code> and <code>False</code> (capitalised) are booleans.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-bulb" aria-hidden="true" style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Concept tip:</strong> Don't introduce type conversion (<code>int()</code>, <code>str()</code>) today — that's Lesson 3. If a student asks, say "great question, that's tomorrow's topic."</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-bulb" aria-hidden="true" style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing:</strong> The bonus challenge in Activity 2 (<code>"10" + "5"</code>) surprises nearly every student. Budget 2–3 extra minutes if it sparks a good discussion — it's worth it. String concatenation with <code>+</code> previews Lesson 3 naturally.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (3).html'">Next: Lesson 3 - User input & f-strings</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+</div>
+
+<script src="scripts.js"></script>
+<script>
+function reveal(el, type) {
+  el.classList.add('revealed');
+  const hint = el.querySelector('[style*="tap to reveal"]');
+  if (hint) hint.style.display = 'none';
+}
+function answer(el, correct) {
+  if (document.querySelector('.check-opt.correct')) return;
+  document.querySelectorAll('.check-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! Any number with a decimal point is a float in Python. 3.14 is the float representation of pi.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is C. Any number with a decimal point is a float. The dot signals to Python that this is not a whole number.';
+  }
+}
+</script>

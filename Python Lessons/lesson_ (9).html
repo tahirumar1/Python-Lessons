@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* while anatomy */
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.anatomy-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.anatomy-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.anatomy-code{font-family:var(--font-mono);font-size:13px;line-height:2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.anatomy-labels{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* loop tracer */
+.loop-tracer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.lt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lt-body{padding:14px}
+.lt-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.lt-label{font-size:12px;color:var(--color-text-secondary)}
+.lt-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:80px}
+.lt-select{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.lt-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+.lt-btn:hover{background:var(--color-background-secondary)}
+.lt-btn.primary{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.lt-table{width:100%;border-collapse:collapse;font-size:13px}
+.lt-table th{padding:7px 12px;text-align:left;font-weight:500;font-size:12px;border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.lt-table td{padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);font-size:12px}
+.lt-table tr:last-child td{border-bottom:none}
+.row-active{background:var(--color-background-info)}
+.row-exit{background:var(--color-background-success)}
+.row-break{background:var(--color-background-warning)}
+/* infinite loop warning */
+.inf-warn{border:0.5px solid var(--color-border-danger);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.inf-head{padding:8px 14px;background:var(--color-background-danger);font-size:12px;font-weight:500;color:var(--color-text-danger)}
+.inf-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* flowchart */
+.flow-wrap{overflow-x:auto;margin:10px 0}
+</style>
+
+</head>
+
+<body>
+<div class="lp">
+<h2>Lesson 9: while loops - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 9: while loops</p>
+      <p class="hero-sub">Week 2 — Making Decisions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">if/elif, validation</div></div>
+    <div class="meta-item"><div class="meta-label">New keywords</div><div class="meta-val">while · break · continue</div></div>
+    <div class="meta-item"><div class="meta-label">Key risk</div><div class="meta-val">Infinite loops</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Explain what a loop is and why programs need to repeat actions</li>
+    <li>Write a <code>while</code> loop with a clear, reachable exit condition</li>
+    <li>Use <code>break</code> to exit a loop early from inside the body</li>
+    <li>Use <code>continue</code> to skip the current iteration and return to the condition</li>
+    <li>Recognise and fix an infinite loop</li>
+    <li>Build a countdown timer and a number-guessing game prototype using while</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The Lesson 8 callback — keep asking until valid (4 min)</div>
+        <div class="tl-desc">Open with the safe divider from Lesson 8. Run it on the projector and type bad input. Say: "It politely tells us the input is wrong — but then it just stops. What if we want it to keep asking until we get a valid answer?" Ask students: "How would you do this without copy-pasting the input() line fifty times?" Let them suggest. Someone will say "repeat it" — that is exactly what a loop does. Land the insight: <strong>a while loop repeats a block of code as long as a condition is True</strong>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Anatomy of a while loop + flowchart (8 min)</div>
+        <div class="tl-desc">Show the anatomy panel and flowchart below. Walk through each part: the keyword, the condition, the colon, the indented body, and — critically — the update that eventually makes the condition False. Trace a simple countdown (5 → 4 → 3 → 2 → 1 → 0 → exits) on the board step by step before touching the editor.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Infinite loops, break, and continue — live demo (10 min)</div>
+        <div class="tl-desc">Deliberately create an infinite loop on the projector — let it print a few lines, then use Ctrl+C to stop it. Students need to see this and know how to stop it. Then show <code>break</code> and <code>continue</code> with Examples 3 and 4. Use the loop tracer to walk through each iteration.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:22</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Loop + validation: the "keep asking" pattern (5 min)</div>
+        <div class="tl-desc">Show Example 5 — the improved safe divider that loops until valid input is received. This is the pattern students will use in almost every future project. Connect to Lesson 8: "We now solve the problem we identified yesterday."</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Countdown timer (10 min)</div>
+        <div class="tl-desc">Students write a while loop that counts down from a user-supplied number and prints "Blast off!" at zero. Introduces the decrement pattern and loop output.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Guess the number (12 min)</div>
+        <div class="tl-desc">Students build a number-guessing game using a while loop with break, importing random for the first time. This is the Week 2 project prototype — full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:49</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Loop tracer + exit ticket (6–8 min)</div>
+        <div class="tl-desc">Students use the interactive loop tracer to trace a given while loop step by step. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy -->
+<div class="section">
+  <div class="sec-head">Anatomy of a while loop — display on projector</div>
+  <div class="anatomy">
+    <div class="anatomy-head">Every while loop has exactly four components — all four are required</div>
+    <div class="anatomy-body">
+      <div class="anatomy-code"><span style="color:#56B6C2">count</span> <span style="color:#ABB2BF">=</span> <span style="color:#D19A66">5</span>          <span style="color:#7F848E;font-style:italic"># ① initialise</span>
+<span style="color:#C678DD">while</span> <span style="color:#E5C07B">count</span> <span style="color:#ABB2BF">&gt;</span> <span style="color:#D19A66">0</span><span style="color:#ABB2BF">:</span>   <span style="color:#7F848E;font-style:italic"># ② condition</span>
+    <span style="color:#61AFEF">print</span>(<span style="color:#E5C07B">count</span>)      <span style="color:#7F848E;font-style:italic"># ③ body</span>
+    <span style="color:#E5C07B">count</span> <span style="color:#ABB2BF">-=</span> <span style="color:#D19A66">1</span>       <span style="color:#7F848E;font-style:italic"># ④ update</span>
+<span style="color:#61AFEF">print</span>(<span style="color:#98C379">"Blast off!"</span>)  <span style="color:#7F848E;font-style:italic"># after loop</span></div>
+      <div class="anatomy-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>① Initialise</strong> — set the variable that the condition depends on <em>before</em> the loop</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>② Condition</strong> — checked before every iteration; loop runs while True, exits when False</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div><strong>③ Body</strong> — the indented code that runs each iteration</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div><strong>④ Update</strong> — change the variable so the condition eventually becomes False. <em>Forgetting this creates an infinite loop.</em></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flowchart -->
+<div class="section">
+  <div class="sec-head">While loop flowchart — draw this on the board</div>
+  <div class="flow-wrap">
+    <svg viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" font-family="var(--font-sans)" font-size="12" style="max-width:420px;width:100%">
+      <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-secondary)"/></marker></defs>
+      <!-- start -->
+      <rect x="150" y="10" width="120" height="32" rx="16" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="1"/>
+      <text x="210" y="30" text-anchor="middle" fill="var(--color-text-info)" font-weight="500">count = 5</text>
+      <!-- arrow -->
+      <line x1="210" y1="42" x2="210" y2="66" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- diamond -->
+      <polygon points="210,66 300,100 210,134 120,100" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1"/>
+      <text x="210" y="97" text-anchor="middle" fill="var(--color-text-warning)" font-weight="500">count &gt; 0</text>
+      <text x="210" y="111" text-anchor="middle" fill="var(--color-text-warning)">?</text>
+      <!-- True → body -->
+      <line x1="210" y1="134" x2="210" y2="158" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="222" y="150" fill="var(--color-text-success)" font-size="11" font-weight="500">True</text>
+      <!-- body -->
+      <rect x="140" y="158" width="140" height="32" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1"/>
+      <text x="210" y="178" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">print(count)</text>
+      <!-- arrow to update -->
+      <line x1="210" y1="190" x2="210" y2="214" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- update -->
+      <rect x="140" y="214" width="140" height="32" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1"/>
+      <text x="210" y="234" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">count -= 1</text>
+      <!-- loop back arrow -->
+      <line x1="140" y1="230" x2="60" y2="230" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+      <line x1="60" y1="230" x2="60" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+      <line x1="60" y1="100" x2="118" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="36" y="170" fill="var(--color-text-secondary)" font-size="11" transform="rotate(-90,36,170)">loop back</text>
+      <!-- False → exit -->
+      <line x1="300" y1="100" x2="370" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="332" y="94" fill="var(--color-text-danger)" font-size="11" font-weight="500">False</text>
+      <rect x="370" y="84" width="40" height="32" rx="6" fill="var(--color-background-danger)" stroke="var(--color-border-danger)" stroke-width="1"/>
+      <text x="390" y="104" text-anchor="middle" fill="var(--color-text-danger)" font-weight="500" font-size="11">exit</text>
+      <!-- after loop -->
+      <line x1="390" y1="116" x2="390" y2="290" stroke="var(--color-border-secondary)" stroke-width="1.5"/>
+      <line x1="390" y1="290" x2="282" y2="290" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <rect x="130" y="274" width="150" height="32" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="1"/>
+      <text x="205" y="294" text-anchor="middle" fill="var(--color-text-secondary)" font-weight="500">print("Blast off!")</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Infinite loop warning -->
+<div class="section">
+  <div class="sec-head">The infinite loop — what it is and how to stop it</div>
+  <div class="inf-warn">
+    <div class="inf-head">🚨 Infinite loops freeze your program — every beginner writes one. Here is how to survive it.</div>
+    <div class="inf-body">
+      <div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-danger);">The broken loop — missing update</div>
+        <div class="code-block" style="margin:0">
+          <pre style="font-size:12px"><span class="var">count</span> = <span class="num">5</span>
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> <span class="num">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Hello"</span>)
+    <span class="cm"># ✗ count never changes!</span>
+    <span class="cm"># → prints "Hello" forever</span></pre>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+        <div style="font-weight:500;color:var(--color-text-primary);">How to stop a runaway loop:</div>
+        <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-family:var(--font-mono);background:var(--color-background-secondary);padding:2px 8px;border-radius:4px;font-size:12px;flex-shrink:0">Ctrl+C</span><span style="color:var(--color-text-secondary)">In the terminal — sends a KeyboardInterrupt and stops the program immediately</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-start;"><span style="font-family:var(--font-mono);background:var(--color-background-secondary);padding:2px 8px;border-radius:4px;font-size:12px;flex-shrink:0">■ Stop</span><span style="color:var(--color-text-secondary)">The red stop button in Replit, VS Code, or any online IDE</span></div>
+        <div style="padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)"><strong style="color:var(--color-text-primary)">Prevention checklist:</strong> Before running a while loop, ask — (1) does the body change the variable the condition checks? (2) can the condition ever become False?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — Basic countdown</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">count</span> = <span class="num">5</span>
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> <span class="num">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{count}</span>..."</span>)
+    <span class="var">count</span> <span class="op">-=</span> <span class="num">1</span>
+<span class="fn">print</span>(<span class="str">"Blast off! 🚀"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">5...<br>4...<br>3...<br>2...<br>1...<br>Blast off! 🚀</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Loop accumulator (summing numbers)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">total</span> = <span class="num">0</span>
+<span class="var">count</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&lt;=</span> <span class="num">5</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">count</span>      <span class="cm"># accumulate</span>
+    <span class="fn">print</span>(<span class="str">f"Added {count}, running total = {total}"</span>)
+    <span class="var">count</span> <span class="op">+=</span> <span class="num">1</span>
+<span class="fn">print</span>(<span class="str">f"Final sum: {total}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output — trace this before running</div>
+  <div class="out">Added 1, running total = 1<br>Added 2, running total = 3<br>Added 3, running total = 6<br>Added 4, running total = 10<br>Added 5, running total = 15<br>Final sum: 15</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Accumulator pattern:</strong> initialise a variable to 0 before the loop, then add to it each iteration. This pattern — a variable that collects results across loop iterations — appears in almost every real program. Name it clearly: <code>total</code>, <code>count</code>, <code>result</code>.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — break: exit early when a target is found</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">secret</span> = <span class="num">7</span>
+<span class="var">guess</span>  = <span class="num">0</span>
+
+<span class="kw">while</span> <span class="var">guess</span> <span class="op">!=</span> <span class="var">secret</span><span class="op">:</span>
+    <span class="var">guess</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Guess: "</span>))
+    <span class="kw">if</span> <span class="var">guess</span> <span class="op">==</span> <span class="var">secret</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"✓ Correct!"</span>)
+        <span class="kw">break</span>           <span class="cm"># exit immediately</span>
+    <span class="kw">elif</span> <span class="var">guess</span> <span class="op">&lt;</span> <span class="var">secret</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Too low."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Too high."</span>)</pre>
+  </div>
+  <div class="out-lbl">Sample run</div>
+  <div class="out"><span class="in-line">Guess: 3</span> → Too low.<br><span class="in-line">Guess: 10</span> → Too high.<br><span class="in-line">Guess: 7</span> → ✓ Correct!</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — continue: skip one iteration</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">n</span> = <span class="num">0</span>
+<span class="kw">while</span> <span class="var">n</span> <span class="op">&lt;</span> <span class="num">10</span><span class="op">:</span>
+    <span class="var">n</span> <span class="op">+=</span> <span class="num">1</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="kw">continue</span>        <span class="cm"># skip even numbers</span>
+    <span class="fn">print</span>(<span class="var">n</span>)           <span class="cm"># only odd numbers reach here</span></pre>
+  </div>
+  <div class="out-lbl">Output — only odd numbers</div>
+  <div class="out">1  3  5  7  9</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>break vs continue:</strong> <code>break</code> exits the loop entirely. <code>continue</code> skips to the next check of the condition — the rest of the body is skipped but the loop keeps going. A useful mnemonic: "break = leave the room, continue = skip to the next question."</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 5 — The "keep asking" validation pattern</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — improved safe divider from Lesson 8</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Keep asking until a valid positive number is given</span>
+<span class="var">raw</span> = <span class="str">""</span>
+<span class="kw">while</span> <span class="kw">not</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>() <span class="kw">or</span> <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+    <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">"Enter a positive whole number: "</span>)
+    <span class="kw">if</span> <span class="kw">not</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  Please type digits only."</span>)
+    <span class="kw">elif</span> <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  Must be greater than zero."</span>)
+
+<span class="var">number</span> = <span class="fn">int</span>(<span class="var">raw</span>)
+<span class="fn">print</span>(<span class="str">f"Great! You entered: {number}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Sample run with bad then good input</div>
+  <div class="out"><span class="in-line">Enter a positive whole number: abc</span><br>  Please type digits only.<br><span class="in-line">Enter a positive whole number: 0</span><br>  Must be greater than zero.<br><span class="in-line">Enter a positive whole number: 5</span><br>Great! You entered: 5</div>
+</div>
+
+<!-- Interactive loop tracer -->
+<div class="section">
+  <div class="sec-head">Interactive loop tracer — step through iterations</div>
+  <div class="loop-tracer">
+    <div class="lt-head">
+      <span>Trace a while loop iteration by iteration</span>
+    </div>
+    <div class="lt-body">
+      <div class="lt-controls">
+        <span class="lt-label">Start value:</span>
+        <input class="lt-input" id="lt-start" type="number" value="5" min="1" max="15">
+        <span class="lt-label">Condition:</span>
+        <select class="lt-select" id="lt-cond">
+          <option value="gt0">count &gt; 0 (countdown)</option>
+          <option value="lte5">count &lt;= 5 (count up)</option>
+          <option value="even">count % 2 == 0 (while even)</option>
+        </select>
+        <button class="lt-btn primary" onclick="buildTrace()">Build trace</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="lt-table" id="lt-table">
+          <thead><tr><th>Iteration</th><th>count (before)</th><th>Condition</th><th>Action</th><th>count (after)</th></tr></thead>
+          <tbody id="lt-body"></tbody>
+        </table>
+      </div>
+      <div id="lt-summary" style="font-size:13px;color:var(--color-text-secondary);margin-top:8px;font-style:italic;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Countdown timer</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Individual</div>
+    <div class="activity-title">Build a configurable countdown timer using a while loop</div>
+    <div class="activity-desc">Students write a while loop that asks the user for a starting number, validates it is a positive integer, then counts down to zero and prints "Blast off!" Uses input validation from Lesson 8 combined with today's while loop.</div>
+    <ol class="steps-list">
+      <li>Ask the user for a starting number using <code>input()</code> — validate with <code>.isdigit()</code></li>
+      <li>If invalid, print an error and ask again using a while loop (keep-asking pattern)</li>
+      <li>Once valid, convert to <code>int</code> and start a second while loop that counts down</li>
+      <li>Each iteration: print the current count with an f-string, then decrement by 1</li>
+      <li>After the loop: print "🚀 Blast off!" on its own line</li>
+      <li>Extension: also print how many seconds the countdown took using a counter variable</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># Countdown Timer</span>
+<span class="var">raw</span> = <span class="str">""</span>
+<span class="kw">while</span> <span class="kw">not</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>
+    <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">"Start countdown from: "</span>)
+    <span class="kw">if</span> <span class="kw">not</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  Enter a whole number."</span>)
+
+<span class="var">count</span> = <span class="fn">int</span>(<span class="var">raw</span>)
+
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> ???<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  <span class="var">{???}</span>..."</span>)
+    <span class="var">count</span> <span class="op">???=</span> <span class="num">1</span>      <span class="cm"># decrement</span>
+
+<span class="fn">print</span>(<span class="str">"🚀 Blast off!"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Expected output (start = 4)</div>
+    <div class="out"><span class="in-line">Start countdown from: 4</span><br>  4...<br>  3...<br>  2...<br>  1...<br>🚀 Blast off!</div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Guess the number game</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 12 minutes · Individual</div>
+    <div class="activity-title">Build a number guessing game — first use of import random</div>
+    <div class="activity-desc">Students build a complete guessing game: the computer picks a random number, the player guesses until correct, getting "too high" or "too low" hints each time. Uses a while loop with break and introduces <code>import random</code> for the first time.</div>
+    <ol class="steps-list">
+      <li>Add <code>import random</code> at the top — use <code>random.randint(1, 100)</code> to pick a secret number</li>
+      <li>Initialise a <code>tries</code> counter to 0 before the loop</li>
+      <li>Write a <code>while True:</code> loop (infinite loop intentionally — break will exit it)</li>
+      <li>Inside: ask for a guess, convert to <code>int</code>, increment tries counter</li>
+      <li>Check: if correct → print congratulations with tries count and <code>break</code></li>
+      <li>If too low or too high → print the hint and loop again</li>
+      <li>Extension: add a maximum of 7 tries before the game ends — use the tries counter</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">import</span> <span class="bi">random</span>
+
+<span class="var">secret</span> = <span class="bi">random</span><span class="op">.</span><span class="fn">randint</span>(<span class="num">1</span>, <span class="num">100</span>)
+<span class="var">tries</span>  = <span class="num">0</span>
+
+<span class="fn">print</span>(<span class="str">"I'm thinking of a number between 1 and 100."</span>)
+
+<span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>                          <span class="cm"># loop forever until break</span>
+    <span class="var">guess</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Your guess: "</span>))
+    <span class="var">tries</span> <span class="op">+=</span> <span class="num">1</span>
+
+    <span class="kw">if</span> <span class="var">guess</span> <span class="op">==</span> <span class="var">secret</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"🎉 Correct! You got it in {tries} tries."</span>)
+        <span class="kw">break</span>
+    <span class="kw">elif</span> <span class="var">guess</span> <span class="op">&lt;</span> <span class="var">secret</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Too low — try higher."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Too high — try lower."</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Sample output</div>
+    <div class="out"><span class="in-line">Your guess: 50</span> → Too high — try lower.<br><span class="in-line">Your guess: 25</span> → Too low — try higher.<br><span class="in-line">Your guess: 37</span> → Too high — try lower.<br><span class="in-line">Your guess: 31</span> → 🎉 Correct! You got it in 4 tries.</div>
+    <div class="info-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🔗</span><span><strong>while True with break is a valid pattern.</strong> It reads as "loop forever, but break when done." It is cleaner than a flag variable like <code>running = True</code> in many simple games. Point this out — students will see <code>while True</code> in real Python code and should recognise it.</span></div>
+    <div class="tip-box" style="margin-top:6px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Week 2 project preview:</strong> Tomorrow's project (Lesson 10) expands this game — adding a play-again loop and a best-score tracker. Students who finish this activity have essentially built the core of the project already. Fast finishers should start the extension (7-try limit) now.</span></div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What is the difference between <code>break</code> and <code>continue</code> inside a while loop?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>break</code> skips the current iteration; <code>continue</code> exits the loop entirely</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span><code>break</code> exits the loop entirely; <code>continue</code> skips the rest of the current iteration and goes back to check the condition</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>Both do the same thing — they both stop the loop from running</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span><code>break</code> pauses the loop; <code>continue</code> restarts it from the beginning</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">
+      Written part — trace this loop on paper and write every line it prints:<br>
+      <code style="font-size:12px;">n = 1 &nbsp; while n &lt;= 6: &nbsp; if n == 4: n += 1 &nbsp; continue &nbsp; print(n) &nbsp; n += 1</code><br>
+      (Watch out — the update inside the <code>if</code> changes things!)
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">while loop</strong>Repeats a block of code as long as a condition is True. Stops when the condition becomes False.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Infinite loop</strong>A while loop whose condition never becomes False — it runs forever. Caused by forgetting to update the condition variable.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">break</strong>Immediately exits the loop, regardless of the condition. Execution jumps to the first line after the loop.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">continue</strong>Skips the rest of the current iteration and jumps back to the condition check.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Accumulator</strong>A variable initialised before a loop and updated each iteration to collect a running total or result.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">while True</strong>A loop with a condition that is always True — relies entirely on <code>break</code> to exit. Common pattern for menu-driven programs and games.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 10 — Week 2 Project)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">✏️</span><span>Extend the guessing game: add a 7-try limit. If the player runs out of tries, print "Game over! The number was X." — reveal the secret number. Use the <code>tries</code> counter and an extra condition in the loop.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">🔢</span><span>Write a while loop that prints the first 10 multiples of a number the user enters. Use an accumulator variable for the multiplier.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">🤔</span><span>Predict then verify: what does this print? <code>n=10; while n&gt;0: n-=3; print(n)</code>. Does it reach exactly 0, or does it go negative? Explain why.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger);">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Run an infinite loop on purpose.</strong> Students must experience it — not just hear about it. Let it print 10–15 lines, then press Ctrl+C. Say "that would have run forever." The visceral experience of stopping a runaway program is more memorable than any explanation.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning);">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Most common mistake:</strong> Forgetting to update the loop variable — leading to an infinite loop. Ask students to show you their update line before they run any while loop. A 5-second check prevents 10 minutes of frozen editors.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning);">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common confusion:</strong> <code>while True</code> looks wrong to beginners — "won't that loop forever?" Explain: yes, by design. The <code>break</code> is the real exit condition. It's a deliberate pattern, not a bug. Show Examples 3 and the guessing game side by side.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info);">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> Activity 2 (guessing game) is the higher-value activity. If time is short, reduce Activity 1 to just the countdown without validation — students can add validation in homework. Do not cut Activity 2; it is the Week 2 project prototype.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info);">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">import random preview:</strong> Students will be curious about <code>random.randint()</code>. Keep it brief — "random is a module (a toolbox of functions) that Python includes for free. We'll explore modules properly in Week 6. For now, just know that <code>random.randint(1, 100)</code> picks a random whole number between 1 and 100 inclusive."</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (10).html'">Next: Lesson 10 - Week 2 Project</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+function buildTrace(){
+  const start = parseInt(document.getElementById('lt-start').value)||5;
+  const cond = document.getElementById('lt-cond').value;
+  const tbody = document.getElementById('lt-body');
+  tbody.innerHTML='';
+  let count = start;
+  let iter = 0;
+  const maxIter = 20;
+  const rows = [];
+  while(iter < maxIter){
+    let condResult, action, countAfter;
+    if(cond==='gt0') condResult = count > 0;
+    else if(cond==='lte5') condResult = count <= 5;
+    else condResult = count % 2 === 0;
+    if(!condResult){
+      rows.push({iter: iter===0?'(before loop 1)':'check '+iter, before: count, cond: 'False', action:'Exit loop', after:count, type:'exit'});
+      break;
+    }
+    const before = count;
+    if(cond==='gt0') count--;
+    else if(cond==='lte5') count++;
+    else count++;
+    rows.push({iter:'Iteration '+(iter+1), before, cond:'True', action:`print(${before}), update→${count}`, after:count, type:'active'});
+    iter++;
+  }
+  if(iter>=maxIter) rows.push({iter:'...', before:'...', cond:'True', action:'Still running (too many iterations)', after:'...', type:'exit'});
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.className = r.type==='exit'?'row-exit':r.type==='break'?'row-break':'';
+    tr.innerHTML = `<td>${r.iter}</td><td style="color:var(--color-text-info)">${r.before}</td><td style="color:${r.cond==='True'?'var(--color-text-success)':'var(--color-text-danger)'};font-weight:500">${r.cond}</td><td style="color:var(--color-text-secondary)">${r.action}</td><td style="color:var(--color-text-warning)">${r.after}</td>`;
+    tbody.appendChild(tr);
+  });
+  const summary = document.getElementById('lt-summary');
+  const loopCount = rows.filter(r=>r.type==='active').length;
+  summary.textContent = `Loop ran ${loopCount} iteration${loopCount!==1?'s':''}, then exited when condition became False.`;
+}
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! break exits the loop completely — execution jumps to whatever comes after the loop. continue only skips the remaining lines in the current iteration, then goes back to check the while condition again. The loop itself keeps going after continue.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is B. break = leave the loop entirely. continue = skip the rest of this iteration and check the condition again. They are both loop control statements but they do very different things.';
+  }
+}
+buildTrace();
+</script>
+</body>
+</html>

@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="styles.css">
+<style>
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.an-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.an-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.an-code{font-family:var(--font-mono);font-size:13px;line-height:2.2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.an-labels{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* list vs dict compare */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.cmp-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.cmp-list .cmp-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.cmp-dict .cmp-head{background:var(--color-background-success);color:var(--color-text-success)}
+/* dict visualiser */
+.dict-vis{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.dv-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.dv-body{padding:14px}
+.dv-row{display:flex;gap:0;margin-bottom:6px;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-secondary);cursor:pointer;transition:background .12s}
+.dv-row:hover{opacity:.85}
+.dv-key{background:var(--color-background-info);padding:8px 14px;font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--color-text-info);min-width:120px;border-right:0.5px solid var(--color-border-secondary)}
+.dv-val{background:var(--color-background-secondary);padding:8px 14px;font-family:var(--font-mono);font-size:13px;flex:1;color:var(--color-text-primary)}
+.dv-type{background:var(--color-background-primary);padding:8px 12px;font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-align:right;min-width:60px;border-left:0.5px solid var(--color-border-tertiary)}
+.dv-info{font-size:13px;color:var(--color-text-secondary);min-height:22px;margin-top:8px;font-style:italic}
+/* dict explorer */
+.explorer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.ex-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ex-body{padding:14px}
+.ex-display{background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);overflow:hidden;margin-bottom:10px}
+.ex-pair{display:flex;align-items:stretch;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ex-pair:last-child{border-bottom:none}
+.ex-k{font-family:var(--font-mono);font-size:12.5px;font-weight:500;padding:8px 12px;color:var(--color-text-info);background:color-mix(in srgb,var(--color-background-info) 30%,transparent);min-width:110px;border-right:0.5px solid var(--color-border-tertiary)}
+.ex-v{font-family:var(--font-mono);font-size:12.5px;padding:8px 12px;flex:1}
+.ex-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ex-field{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--color-text-secondary)}
+.ex-input{font-size:13px;padding:5px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:90px}
+.ex-btn{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer}
+.ex-btn:hover{background:var(--color-background-primary)}
+.ex-btn.success{border-color:var(--color-border-success);color:var(--color-text-success);background:var(--color-background-success)}
+.ex-btn.danger{border-color:var(--color-border-danger);color:var(--color-text-danger);background:var(--color-background-danger)}
+.ex-log{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-family:var(--font-mono);font-size:12px;border:0.5px solid var(--color-border-tertiary);min-height:30px;max-height:120px;overflow-y:auto;line-height:1.9}
+/* methods table */
+.meth-table{width:100%;border-collapse:collapse;font-size:13px}
+.meth-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.meth-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.meth-table tr:last-child td{border-bottom:none}
+.meth-table td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);white-space:nowrap}
+.meth-table td:nth-child(3){font-family:var(--font-mono);font-size:11px;color:var(--color-text-success)}
+/* riddle cards */
+.riddle-grid{display:flex;flex-direction:column;gap:8px}
+.riddle-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s;flex-wrap:wrap}
+.riddle-row:hover{background:var(--color-background-primary)}
+.riddle-expr{font-family:var(--font-mono);font-size:13px;flex:1;min-width:220px}
+.riddle-hint{font-size:12px;color:var(--color-text-tertiary);font-style:italic}
+.riddle-answer{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-success);display:none}
+.riddle-error{color:var(--color-text-danger)}
+.riddle-row.revealed .riddle-answer{display:block}
+.riddle-row.revealed .riddle-hint{display:none}
+/* tuple vs dict compare */
+.tvc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.tvc-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.tvc-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tvc-tuple .tvc-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.tvc-dict .tvc-head{background:var(--color-background-success);color:var(--color-text-success)}
+/* quiz refactor demo */
+.refactor-demo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.rd-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.rd-body{padding:14px}
+.rd-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.rd-tab{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);font-family:var(--font-sans);transition:all .12s}
+.rd-tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500}
+.rd-panel{display:none}
+.rd-panel.show{display:block}
+.rd-comparison{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.rd-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:4px;margin-bottom:4px;display:inline-block}
+.rd-tuple-lbl{background:var(--color-background-warning);color:var(--color-text-warning)}
+.rd-dict-lbl{background:var(--color-background-success);color:var(--color-text-success)}
+/* key error sandbox */
+.sandbox{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.sb-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.sb-body{padding:14px}
+.sb-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.sb-label{font-size:12px;color:var(--color-text-secondary);min-width:80px}
+.sb-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);flex:1;min-width:120px}
+.sb-btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.sb-result{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:13px;border:0.5px solid var(--color-border-tertiary);min-height:36px}
+/* word freq tool */
+.wf-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.wf-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.wf-body{padding:14px}
+.wf-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none;margin-bottom:8px;line-height:1.5}
+.wf-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-success);background:var(--color-background-success);color:var(--color-text-success);font-size:13px;cursor:pointer;font-family:var(--font-sans);margin-bottom:10px}
+.wf-output{display:flex;flex-wrap:wrap;gap:6px;min-height:36px}
+.wf-word{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-family:var(--font-mono);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.wf-count{font-weight:500;color:var(--color-text-info)}
+/* access pattern table */
+.ap-table{width:100%;border-collapse:collapse;font-size:13px}
+.ap-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.ap-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.ap-table tr:last-child td{border-bottom:none}
+.ap-table td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info)}
+.ap-good{color:var(--color-text-success);font-size:11px;font-weight:500}
+.ap-bad{color:var(--color-text-danger);font-size:11px;font-weight:500}
+/* w5 preview */
+.w5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.w5-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2>Lesson 21: Dictionaries — create &amp; access - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 21: Dictionaries — create &amp; access</p>
+      <p class="lp-hero-sub">Week 5 — Dictionaries &amp; Tuples · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">Lists · Functions</div></div>
+    <div class="meta-item"><div class="meta-label">New syntax</div><div class="meta-val">{ } · d[key]</div></div>
+    <div class="meta-item"><div class="meta-label">Key concept</div><div class="meta-val">Key-value pairs</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="sec">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Explain what a dictionary is and why it is more readable than a list for named data</li>
+    <li>Create a dictionary using curly-brace syntax with string and integer keys</li>
+    <li>Access values using <code>d[key]</code> and the safer <code>d.get(key)</code></li>
+    <li>Add and update key-value pairs using assignment <code>d[key] = value</code></li>
+    <li>Delete entries using <code>del d[key]</code> and <code>d.pop(key)</code></li>
+    <li>Check membership using <code>key in d</code> and get the number of pairs with <code>len(d)</code></li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="sec">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The real dictionary analogy (4 min)</div>
+        <div class="tl-desc">Say: "In a real dictionary, you look up a word — the key — and find its definition — the value. Python dictionaries work exactly the same: you give Python a key and it instantly gives back the value. No loop needed, no index to remember — just the name." Write on the board: <code>student["name"]</code> gives <code>"Aisha"</code>. Contrast with the list version: <code>student[0]</code> — what's at index 0? You have to remember. Dictionaries are self-documenting. Land the key insight: <strong>use a list when order matters; use a dictionary when names matter.</strong></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Creating dictionaries and accessing values (8 min)</div>
+        <div class="tl-desc">Show the anatomy panel and Examples 1–2. Use the clickable dict visualiser below — students click any key and see the value highlighted. Emphasise: keys can be strings or integers; values can be anything. Access with <code>d[key]</code> raises a KeyError if the key doesn't exist; <code>d.get(key)</code> returns None safely.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Adding, updating, deleting entries (7 min)</div>
+        <div class="tl-desc">Show Examples 3–4. Key insight: assignment to a new key adds it; assignment to an existing key overwrites it. Python doesn't distinguish — same syntax for both. Show <code>del d[key]</code> and <code>d.pop(key)</code>. Use the interactive dict explorer below to demonstrate live.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:19</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Membership checking and len() (4 min)</div>
+        <div class="tl-desc">Show Example 5. <code>key in d</code> checks keys only — not values. Connect to the list <code>in</code> operator from Lesson 12. Show the safe access pattern: check <code>in</code> before accessing, or use <code>.get()</code> with a default.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:23</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Student profile builder (12 min)</div>
+        <div class="tl-desc">Students build a dict for a student profile from scratch — adding, accessing, updating, and deleting fields using all the syntax from today.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:35</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Quiz question as a dict (10 min)</div>
+        <div class="tl-desc">Students convert last week's quiz tuple <code>("question", "answer", [opts])</code> into a dict. Shows immediately why dicts are more readable. Connects directly to Week 4.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:45</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Dict explorer + exit ticket (8–10 min)</div>
+        <div class="tl-desc">Students test operations in the interactive explorer. Then exit quiz below.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy panel -->
+<div class="sec">
+  <div class="sec-head">Anatomy of a dictionary — display on projector</div>
+  <div class="anatomy">
+    <div class="an-head">A dictionary maps keys to values — keys must be unique, values can be anything</div>
+    <div class="an-body">
+      <div class="an-code">
+<span style="color:#E5C07B">student</span> <span style="color:#ABB2BF">=</span> <span style="color:#ABB2BF">{</span>
+    <span style="color:#98C379">"name"</span><span style="color:#ABB2BF">:</span>  <span style="color:#98C379">"Aisha"</span><span style="color:#ABB2BF">,</span>
+    <span style="color:#98C379">"age"</span><span style="color:#ABB2BF">:</span>   <span style="color:#D19A66">15</span><span style="color:#ABB2BF">,</span>
+    <span style="color:#98C379">"grade"</span><span style="color:#ABB2BF">:</span> <span style="color:#98C379">"A"</span><span style="color:#ABB2BF">,</span>
+    <span style="color:#98C379">"score"</span><span style="color:#ABB2BF">:</span> <span style="color:#D19A66">92.5</span>
+<span style="color:#ABB2BF">}</span>
+      </div>
+      <div class="an-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div><strong>{ }</strong> — curly braces wrap the whole dictionary. Different from lists (square brackets) and tuples (parentheses).</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>"name"</strong> — the key. Usually a string. Must be unique within the dict. Immutable types only (strings, ints, tuples).</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>:</strong> — separates each key from its value. Read it as "maps to".</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div><strong>"Aisha"</strong> — the value. Any Python type: string, int, float, bool, list, even another dict.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-secondary)"></div><div>Pairs separated by commas. Trailing comma on last pair is fine and often used.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- List vs Dict compare -->
+<div class="sec">
+  <div class="sec-head">List vs dictionary — when to use each</div>
+  <div class="compare">
+    <div class="cmp-col cmp-list">
+      <div class="cmp-head">⚠ List — positional, unnamed</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="cm"># What is index 2? You must remember.</span>
+<span class="var">student</span> = [<span class="str">"Aisha"</span>, <span class="num">15</span>, <span class="str">"A"</span>, <span class="num">92.5</span>]
+<span class="fn">print</span>(<span class="var">student</span>[<span class="num">0</span>])   <span class="cm"># "Aisha" — but why 0?</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="num">3</span>])   <span class="cm"># 92.5 — is this score?</span></pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-warning)">Position is fragile — insert an item and all indices shift. Reader must memorise what each position means.</div>
+    </div>
+    <div class="cmp-col cmp-dict">
+      <div class="cmp-head">✓ Dictionary — named, self-documenting</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="cm"># The key tells you exactly what you're getting.</span>
+<span class="var">student</span> = {<span class="str">"name"</span>:<span class="str">"Aisha"</span>, <span class="str">"age"</span>:<span class="num">15</span>,
+            <span class="str">"grade"</span>:<span class="str">"A"</span>, <span class="str">"score"</span>:<span class="num">92.5</span>}
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"name"</span>])   <span class="cm"># "Aisha" — obvious</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"score"</span>])  <span class="cm"># 92.5 — no guessing</span></pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success)">Keys are meaningful names — code is readable without comments. Order doesn't matter for access.</div>
+    </div>
+  </div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>Rule of thumb:</strong> Use a <em>list</em> for an ordered collection of similar items (scores, names, tasks). Use a <em>dictionary</em> for a collection of named properties belonging to one thing (a student profile, a quiz question, a product).</span></div>
+</div>
+
+<!-- Clickable dict visualiser -->
+<div class="sec">
+  <div class="sec-head">Dictionary visualiser — click any key to access its value</div>
+  <div class="dict-vis">
+    <div class="dv-head">student = { "name":"Aisha", "age":15, "grade":"A", "score":92.5, "passed":True } — click a key</div>
+    <div class="dv-body">
+      <div id="dv-rows"></div>
+      <div class="dv-info" id="dv-info">Click any key to see the access expression and value type</div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive dict explorer -->
+<div class="sec">
+  <div class="sec-head">Interactive dictionary explorer — add, update, delete live</div>
+  <div class="explorer">
+    <div class="ex-head">
+      <span>Modify the dictionary — every operation updates the display</span>
+      <button class="ex-btn" onclick="exReset()">Reset</button>
+    </div>
+    <div class="ex-body">
+      <div class="ex-display" id="ex-display"></div>
+      <div class="ex-actions">
+        <div class="ex-field">
+          <span>key:</span><input class="ex-input" id="ex-key" placeholder="key">
+          <span>value:</span><input class="ex-input" id="ex-val" placeholder="value">
+          <button class="ex-btn success" onclick="exSet()">set [ ]</button>
+        </div>
+        <div class="ex-field">
+          <span>delete key:</span><input class="ex-input" id="ex-del" placeholder="key">
+          <button class="ex-btn danger" onclick="exDel()">del</button>
+        </div>
+        <div class="ex-field">
+          <span>get key:</span><input class="ex-input" id="ex-get" placeholder="key">
+          <button class="ex-btn" onclick="exGet()">get( )</button>
+        </div>
+      </div>
+      <div class="ex-log" id="ex-log"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Part 1 ends — Part 2 pastes below this line -->
+<!-- Live demo -->
+<div class="sec">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Creating and accessing a dictionary</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Create a dictionary</span>
+<span class="var">student</span> = {
+    <span class="str">"name"</span><span class="op">:</span>   <span class="str">"Aisha"</span><span class="op">,</span>
+    <span class="str">"age"</span><span class="op">:</span>    <span class="num">15</span><span class="op">,</span>
+    <span class="str">"grade"</span><span class="op">:</span>  <span class="str">"A"</span><span class="op">,</span>
+    <span class="str">"score"</span><span class="op">:</span>  <span class="num">92.5</span><span class="op">,</span>
+    <span class="str">"passed"</span><span class="op">:</span> <span class="kw">True</span>
+}
+
+<span class="cm"># Access values with the key</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"name"</span>])    <span class="cm"># "Aisha"</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"score"</span>])   <span class="cm"># 92.5</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"passed"</span>])  <span class="cm"># True</span>
+
+<span class="cm"># Use in f-strings</span>
+<span class="fn">print</span>(<span class="str">f"{student['name']} scored {student['score']} — grade {student['grade']}"</span>)
+
+<span class="cm"># KeyError — key does not exist</span>
+<span class="fn">print</span>(<span class="var">student</span>[<span class="str">"email"</span>])   <span class="cm"># KeyError!</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Aisha<br>92.5<br>True<br>Aisha scored 92.5 — grade A<br>KeyError: 'email'</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Safe access with .get()</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">student</span> = {<span class="str">"name"</span><span class="op">:</span> <span class="str">"Aisha"</span><span class="op">,</span> <span class="str">"age"</span><span class="op">:</span> <span class="num">15</span>}
+
+<span class="cm"># .get() returns None if key missing — no crash</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">get</span>(<span class="str">"name"</span>))    <span class="cm"># "Aisha"</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">get</span>(<span class="str">"email"</span>))   <span class="cm"># None</span>
+
+<span class="cm"># .get() with a default value</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">get</span>(<span class="str">"email"</span><span class="op">,</span> <span class="str">"not set"</span>))  <span class="cm"># "not set"</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">get</span>(<span class="str">"age"</span><span class="op">,</span> <span class="num">0</span>))             <span class="cm"># 15 (key exists, default ignored)</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Aisha<br>None<br>not set<br>15</div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong><code>d[key]</code> vs <code>d.get(key)</code>:</strong> Use <code>d[key]</code> when you are certain the key exists — it raises KeyError clearly if it doesn't, which helps debugging. Use <code>d.get(key)</code> when the key might be absent and you want a safe fallback. Mixing these up is the #1 dictionary bug.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Adding and updating entries</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">profile</span> = {<span class="str">"name"</span><span class="op">:</span> <span class="str">"Omar"</span><span class="op">,</span> <span class="str">"city"</span><span class="op">:</span> <span class="str">"Lahore"</span>}
+<span class="fn">print</span>(<span class="var">profile</span>)   <span class="cm"># {'name': 'Omar', 'city': 'Lahore'}</span>
+
+<span class="cm"># Add a NEW key — same syntax as update</span>
+<span class="var">profile</span>[<span class="str">"age"</span>] = <span class="num">17</span>
+<span class="fn">print</span>(<span class="var">profile</span>)   <span class="cm"># {'name': 'Omar', 'city': 'Lahore', 'age': 17}</span>
+
+<span class="cm"># UPDATE existing key — overwrites silently</span>
+<span class="var">profile</span>[<span class="str">"city"</span>] = <span class="str">"Karachi"</span>
+<span class="fn">print</span>(<span class="var">profile</span>)   <span class="cm"># {'name': 'Omar', 'city': 'Karachi', 'age': 17}</span>
+
+<span class="cm"># Increment a numeric value</span>
+<span class="var">profile</span>[<span class="str">"age"</span>] <span class="op">+=</span> <span class="num">1</span>
+<span class="fn">print</span>(<span class="var">profile</span>[<span class="str">"age"</span>])   <span class="cm"># 18</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">{'name': 'Omar', 'city': 'Lahore'}<br>{'name': 'Omar', 'city': 'Lahore', 'age': 17}<br>{'name': 'Omar', 'city': 'Karachi', 'age': 17}<br>18</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Add vs update — same syntax, different effect:</strong> Python doesn't care whether the key already exists. <code>d[key] = value</code> adds a new pair if the key is new, or silently overwrites the value if the key exists. Students who expect a warning when overwriting are often surprised — point this out explicitly.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — Deleting entries</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">car</span> = {<span class="str">"make"</span><span class="op">:</span> <span class="str">"Toyota"</span><span class="op">,</span> <span class="str">"model"</span><span class="op">:</span> <span class="str">"Corolla"</span><span class="op">,</span>
+        <span class="str">"year"</span><span class="op">:</span> <span class="num">2020</span><span class="op">,</span>  <span class="str">"colour"</span><span class="op">:</span> <span class="str">"white"</span>}
+
+<span class="cm"># del — removes key, returns nothing</span>
+<span class="kw">del</span> <span class="var">car</span>[<span class="str">"colour"</span>]
+<span class="fn">print</span>(<span class="var">car</span>)   <span class="cm"># {'make':'Toyota','model':'Corolla','year':2020}</span>
+
+<span class="cm"># .pop() — removes AND returns the value</span>
+<span class="var">yr</span> = <span class="var">car</span><span class="op">.</span><span class="fn">pop</span>(<span class="str">"year"</span>)
+<span class="fn">print</span>(<span class="var">yr</span>)    <span class="cm"># 2020</span>
+<span class="fn">print</span>(<span class="var">car</span>)   <span class="cm"># {'make': 'Toyota', 'model': 'Corolla'}</span>
+
+<span class="cm"># .pop() with default — safe, no KeyError</span>
+<span class="var">col</span> = <span class="var">car</span><span class="op">.</span><span class="fn">pop</span>(<span class="str">"colour"</span><span class="op">,</span> <span class="str">"unknown"</span>)
+<span class="fn">print</span>(<span class="var">col</span>)   <span class="cm"># "unknown" — key was already gone</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">{'make': 'Toyota', 'model': 'Corolla', 'year': 2020}<br>2020<br>{'make': 'Toyota', 'model': 'Corolla'}<br>unknown</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — Membership, len(), and empty dict</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span> = {<span class="str">"Aisha"</span><span class="op">:</span> <span class="num">92</span><span class="op">,</span> <span class="str">"Omar"</span><span class="op">:</span> <span class="num">78</span><span class="op">,</span> <span class="str">"Zara"</span><span class="op">:</span> <span class="num">85</span>}
+
+<span class="cm"># in checks KEYS only</span>
+<span class="fn">print</span>(<span class="str">"Aisha"</span> <span class="kw">in</span> <span class="var">scores</span>)    <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="str">"Bilal"</span> <span class="kw">in</span> <span class="var">scores</span>)    <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="num">92</span> <span class="kw">in</span> <span class="var">scores</span>)         <span class="cm"># False — 92 is a VALUE, not a key</span>
+
+<span class="cm"># len() — number of key-value pairs</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">scores</span>))           <span class="cm"># 3</span>
+
+<span class="cm"># Safe access pattern — check before access</span>
+<span class="var">name</span> = <span class="str">"Bilal"</span>
+<span class="kw">if</span> <span class="var">name</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"{name}: {scores[name]}"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"{name} not found"</span>)
+
+<span class="cm"># Empty dict — create now, fill later</span>
+<span class="var">inventory</span> = {}
+<span class="var">inventory</span>[<span class="str">"apples"</span>] = <span class="num">50</span>
+<span class="var">inventory</span>[<span class="str">"bananas"</span>] = <span class="num">30</span>
+<span class="fn">print</span>(<span class="var">inventory</span>)             <span class="cm"># {'apples': 50, 'bananas': 30}</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">True<br>False<br>False<br>3<br>Bilal not found<br>{'apples': 50, 'bananas': 30}</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong><code>in</code> checks keys, not values.</strong> Students who expect <code>92 in scores</code> to be True because 92 is in the dict will be surprised. <code>in</code> on a dict only checks the keys. To check values, use <code>92 in scores.values()</code> — preview for Lesson 22.</span></div>
+</div>
+
+<!-- Methods reference table -->
+<div class="sec">
+  <div class="sec-head">Dictionary operations reference — display on projector</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="meth-table">
+      <thead><tr><th>Operation</th><th>What it does</th><th>Example → Result</th></tr></thead>
+      <tbody>
+        <tr><td>d[key]</td><td>Access value — raises KeyError if key missing</td><td>d["name"] → "Aisha"</td></tr>
+        <tr><td>d.get(key)</td><td>Safe access — returns None if key missing</td><td>d.get("email") → None</td></tr>
+        <tr><td>d.get(key, default)</td><td>Safe access with fallback value</td><td>d.get("age", 0) → 0</td></tr>
+        <tr><td>d[key] = value</td><td>Add new key or update existing key</td><td>d["city"] = "Karachi"</td></tr>
+        <tr><td>del d[key]</td><td>Remove key-value pair — KeyError if missing</td><td>del d["age"]</td></tr>
+        <tr><td>d.pop(key)</td><td>Remove and RETURN value — KeyError if missing</td><td>d.pop("score") → 92</td></tr>
+        <tr><td>d.pop(key, default)</td><td>Remove safely with fallback</td><td>d.pop("x", None) → None</td></tr>
+        <tr><td>key in d</td><td>Check if key exists — True/False</td><td>"name" in d → True</td></tr>
+        <tr><td>len(d)</td><td>Number of key-value pairs</td><td>len(d) → 4</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Riddle cards -->
+<div class="sec">
+  <div class="sec-head">Predict the output — tap to reveal each answer</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Given: <code>p = {"name":"Zara", "age":16, "city":"Lahore", "score":88}</code></p>
+  <div class="riddle-grid" id="riddle-grid"></div>
+</div>
+
+<!-- Activity 1 -->
+<div class="sec">
+  <div class="sec-head">Activity 1 — Student profile builder</div>
+  <div class="act-card">
+    <div class="act-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="act-title">Build, access, update and delete from a student profile dictionary</div>
+    <div class="act-desc">Students create a profile dictionary from scratch and perform every major operation. Every new syntax from today must appear at least once.</div>
+    <ol class="sl">
+      <li>Create a dict <code>profile</code> with keys: <code>"name"</code>, <code>"age"</code>, <code>"city"</code>, <code>"subject"</code>, <code>"score"</code></li>
+      <li>Print the full dict, then print the name and score using key access</li>
+      <li>Add a new key <code>"grade"</code> — set it to <code>"A"</code> if score ≥ 80, <code>"B"</code> if ≥ 60, else <code>"C"</code></li>
+      <li>Update the score by adding 5 bonus points using <code>+=</code></li>
+      <li>Use <code>.get()</code> to safely access a key called <code>"email"</code> — print a fallback message if absent</li>
+      <li>Remove the <code>"city"</code> key using <code>del</code>, then verify it's gone with <code>"city" in profile</code></li>
+      <li>Print a formatted summary using an f-string with at least 3 fields</li>
+      <li>Extension: ask the user for their own name, age, and city; build their profile dynamically</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="ch"><span>main.py — starter</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># Step 1: Create the profile</span>
+<span class="var">profile</span> = {
+    <span class="str">"name"</span><span class="op">:</span>    ???<span class="op">,</span>
+    <span class="str">"age"</span><span class="op">:</span>     ???<span class="op">,</span>
+    <span class="str">"city"</span><span class="op">:</span>    ???<span class="op">,</span>
+    <span class="str">"subject"</span><span class="op">:</span> ???<span class="op">,</span>
+    <span class="str">"score"</span><span class="op">:</span>   ???
+}
+
+<span class="cm"># Step 2: Print name and score</span>
+<span class="fn">print</span>(<span class="var">profile</span>[<span class="str">"name"</span>])
+<span class="fn">print</span>(<span class="var">profile</span>[<span class="str">"score"</span>])
+
+<span class="cm"># Step 3: Add grade based on score</span>
+<span class="kw">if</span> <span class="var">profile</span>[<span class="str">"score"</span>] <span class="op">&gt;=</span> <span class="num">80</span><span class="op">:</span>
+    <span class="var">profile</span>[<span class="str">"grade"</span>] = ???
+<span class="kw">elif</span> <span class="var">profile</span>[<span class="str">"score"</span>] <span class="op">&gt;=</span> <span class="num">60</span><span class="op">:</span>
+    <span class="var">profile</span>[<span class="str">"grade"</span>] = ???
+<span class="kw">else</span><span class="op">:</span>
+    <span class="var">profile</span>[<span class="str">"grade"</span>] = ???
+
+<span class="cm"># Step 4: Add 5 bonus points</span>
+<span class="var">profile</span>[<span class="str">"score"</span>] <span class="op">+=</span> ???
+
+<span class="cm"># Step 5: Safe access — email</span>
+<span class="var">email</span> = <span class="var">profile</span><span class="op">.</span><span class="fn">get</span>(<span class="str">"email"</span><span class="op">,</span> <span class="str">"no email on record"</span>)
+<span class="fn">print</span>(<span class="str">f"Email: {email}"</span>)
+
+<span class="cm"># Step 6: Delete city</span>
+<span class="kw">del</span> <span class="var">profile</span>[<span class="str">"city"</span>]
+<span class="fn">print</span>(<span class="str">"city" in <span class="var">profile</span></span>)   <span class="cm"># should be False</span>
+
+<span class="cm"># Step 7: Print summary</span>
+<span class="fn">print</span>(<span class="str">f"\n--- Profile Summary ---"</span>)
+<span class="fn">print</span>(<span class="str">f"Name   : {profile['name']}"</span>)
+<span class="fn">print</span>(<span class="str">f"Score  : {profile['score']}"</span>)
+<span class="fn">print</span>(<span class="str">f"Grade  : {profile['grade']}"</span>)</pre>
+    </div>
+    <div class="out-lbl">Example output</div>
+    <div class="out">Aisha<br>85<br>Email: no email on record<br>False<br><br>--- Profile Summary ---<br>Name   : Aisha<br>Score  : 90<br>Grade  : A</div>
+  </div>
+</div>
+
+<!-- Activity 2 — Quiz question as dict -->
+<div class="sec">
+  <div class="sec-head">Activity 2 — Quiz question: tuple vs dictionary</div>
+  <div class="act-card">
+    <div class="act-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="act-title">Rewrite a quiz question tuple as a dictionary — feel the readability improvement</div>
+    <div class="act-desc">Students take a question from their Week 4 quiz game (stored as a tuple) and convert it to a dictionary. Then they update the access code to use keys instead of indices. The improvement should be immediately obvious.</div>
+
+    <!-- Refactor demo -->
+    <div class="refactor-demo">
+      <div class="rd-head">
+        <span>Click each tab to see: tuple approach vs dictionary approach vs access comparison</span>
+      </div>
+      <div class="rd-body">
+        <div class="rd-tabs">
+          <button class="rd-tab active" onclick="rdTab(0)">As tuple</button>
+          <button class="rd-tab" onclick="rdTab(1)">As dictionary</button>
+          <button class="rd-tab" onclick="rdTab(2)">Accessing data</button>
+        </div>
+        <div class="rd-panel show" id="rd-0">
+          <div class="code-block" style="margin-top:0">
+            <div class="ch"><span>quiz_tuple.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="cm"># Question stored as a tuple</span>
+<span class="var">q</span> = (<span class="str">"What keyword defines a function?"</span><span class="op">,</span>
+     <span class="str">"def"</span><span class="op">,</span>
+     [<span class="str">"func"</span><span class="op">,</span> <span class="str">"define"</span><span class="op">,</span> <span class="str">"def"</span><span class="op">,</span> <span class="str">"function"</span>])
+
+<span class="cm"># To access fields — you must remember positions</span>
+<span class="var">question_text</span> = <span class="var">q</span>[<span class="num">0</span>]   <span class="cm"># what is 0? Must check docs</span>
+<span class="var">correct</span>       = <span class="var">q</span>[<span class="num">1</span>]   <span class="cm"># what is 1? Fragile</span>
+<span class="var">options</span>       = <span class="var">q</span>[<span class="num">2</span>]   <span class="cm"># what is 2? Easy to break</span></pre>
+          </div>
+          <div style="padding:8px;font-size:12px;color:var(--color-text-warning)">⚠ Positional — insert a field and all indices shift. Nobody knows what index 1 means without reading the tuple definition.</div>
+        </div>
+        <div class="rd-panel" id="rd-1">
+          <div class="code-block" style="margin-top:0">
+            <div class="ch"><span>quiz_dict.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+            <pre><span class="cm"># Same question stored as a dictionary</span>
+<span class="var">q</span> = {
+    <span class="str">"question"</span><span class="op">:</span> <span class="str">"What keyword defines a function?"</span><span class="op">,</span>
+    <span class="str">"answer"</span><span class="op">:</span>   <span class="str">"def"</span><span class="op">,</span>
+    <span class="str">"options"</span><span class="op">:</span>  [<span class="str">"func"</span><span class="op">,</span> <span class="str">"define"</span><span class="op">,</span> <span class="str">"def"</span><span class="op">,</span> <span class="str">"function"</span>]
+}
+
+<span class="cm"># Access fields by name — self-documenting</span>
+<span class="var">question_text</span> = <span class="var">q</span>[<span class="str">"question"</span>]   <span class="cm"># obvious!</span>
+<span class="var">correct</span>       = <span class="var">q</span>[<span class="str">"answer"</span>]     <span class="cm"># obvious!</span>
+<span class="var">options</span>       = <span class="var">q</span>[<span class="str">"options"</span>]    <span class="cm"># obvious!</span></pre>
+          </div>
+          <div style="padding:8px;font-size:12px;color:var(--color-text-success)">✓ Named keys — code is self-documenting. Add a "difficulty" key later without touching anything else.</div>
+        </div>
+        <div class="rd-panel" id="rd-2">
+          <div style="font-size:13px;font-weight:500;margin-bottom:8px">Side-by-side: how display_question() looks with each</div>
+          <div class="rd-comparison">
+            <div>
+              <span class="rd-label rd-tuple-lbl">Tuple version</span>
+              <div class="code-block" style="margin-top:4px">
+                <pre style="font-size:12px"><span class="kw">def</span> <span class="fn">display_question</span>(<span class="var">q</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">q</span>[<span class="num">0</span>])   <span class="cm"># q[0]?!</span>
+    <span class="kw">for</span> <span class="var">o</span> <span class="kw">in</span> <span class="var">q</span>[<span class="num">2</span>]<span class="op">:</span>  <span class="cm"># q[2]?!</span>
+        <span class="fn">print</span>(<span class="var">o</span>)</pre>
+              </div>
+            </div>
+            <div>
+              <span class="rd-label rd-dict-lbl">Dict version</span>
+              <div class="code-block" style="margin-top:4px">
+                <pre style="font-size:12px"><span class="kw">def</span> <span class="fn">display_question</span>(<span class="var">q</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">q</span>[<span class="str">"question"</span>])
+    <span class="kw">for</span> <span class="var">o</span> <span class="kw">in</span> <span class="var">q</span>[<span class="str">"options"</span>]<span class="op">:</span>
+        <span class="fn">print</span>(<span class="var">o</span>)</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="sl" style="margin-top:10px">
+      <li>Take one question tuple from your Week 4 quiz and rewrite it as a dictionary with keys <code>"question"</code>, <code>"answer"</code>, and <code>"options"</code></li>
+      <li>Update your <code>display_question()</code> function to use <code>q["question"]</code> and <code>q["options"]</code> instead of indices</li>
+      <li>Update your <code>check_answer()</code> function to use <code>q["answer"]</code></li>
+      <li>Add a new field <code>"difficulty"</code> with value <code>"easy"</code>, <code>"medium"</code>, or <code>"hard"</code> to each question</li>
+      <li>Verify the quiz still runs correctly with the new dict-based questions</li>
+    </ol>
+    <div class="info" style="margin-top:10px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Connection to Lesson 20:</strong> This is the homework preview from the Week 4 project. Students who already did it can share their approach. Those who haven't will see immediately why dictionaries make the code cleaner — and want to refactor.</span></div>
+  </div>
+</div>
+
+<!-- PART2 END -->
+<!-- Access pattern guide -->
+<div class="sec">
+  <div class="sec-head">When to use d[key] vs d.get(key) — the complete guide</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="ap-table">
+      <thead><tr><th>Situation</th><th>Use this</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>d["name"]</td><td><span class="ap-good">✓ Use when certain key exists</span></td><td>Raises KeyError clearly if wrong — helps debugging</td></tr>
+        <tr><td>d.get("email")</td><td><span class="ap-good">✓ Use when key might be absent</span></td><td>Returns None safely — no crash, but easy to miss the missing key</td></tr>
+        <tr><td>d.get("age", 0)</td><td><span class="ap-good">✓ Use when you need a fallback value</span></td><td>Clean default — avoids None checks downstream</td></tr>
+        <tr><td>"key" in d</td><td><span class="ap-good">✓ Use before accessing uncertain key</span></td><td>Explicit check — then access with d["key"] confidently</td></tr>
+        <tr><td>d["email"] when unsure</td><td><span class="ap-bad">✗ Avoid — crashes with KeyError</span></td><td>If the key might not exist, use .get() or check with in first</td></tr>
+        <tr><td>d.get("name") when certain</td><td><span class="ap-bad">⚠ Works but hides bugs</span></td><td>If the key should always exist, d["name"] fails loudly if it doesn't</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Live sandbox: test key access -->
+<div class="sec">
+  <div class="sec-head">Live access sandbox — test d[key] vs d.get(key) on a real dict</div>
+  <div class="sandbox">
+    <div class="sb-head">
+      <span>Test dict: <code style="font-family:var(--font-mono);font-size:12px">{"name":"Aisha","age":15,"grade":"A","score":92}</code></span>
+    </div>
+    <div class="sb-body">
+      <div class="sb-row">
+        <span class="sb-label">Try key:</span>
+        <input class="sb-input" id="sb-key" placeholder='e.g. name  or  email' oninput="runSandbox()">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="sb-btn" onclick="sbMode('bracket')">d["key"]</button>
+        <button class="sb-btn" onclick="sbMode('get')">d.get("key")</button>
+        <button class="sb-btn" onclick="sbMode('get_default')">d.get("key","N/A")</button>
+        <button class="sb-btn" onclick="sbMode('in')">key in d</button>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Result:</div>
+      <div class="sb-result" id="sb-result" style="color:var(--color-text-secondary);font-style:italic">Type a key above and choose an access method</div>
+    </div>
+  </div>
+</div>
+
+<!-- Word frequency preview -->
+<div class="sec">
+  <div class="sec-head">Preview — using a dict to count word frequency</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">In Lesson 22 you'll use dict methods like <code>.keys()</code>, <code>.values()</code>, and <code>.items()</code> to loop through dictionaries. Here's a taste: a word counter built with a dict. Type any sentence and see how words map to counts — this is the pattern you'll write yourself next lesson.</p>
+  <div class="wf-tool">
+    <div class="wf-head">Word frequency counter — powered by a dictionary behind the scenes</div>
+    <div class="wf-body">
+      <textarea class="wf-ta" id="wf-input" rows="2" placeholder="Type a sentence to count word frequencies...">the cat sat on the mat the cat sat</textarea>
+      <button class="wf-btn" onclick="runWF()">Count words →</button>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500">Dictionary result — keys are words, values are counts:</div>
+      <div class="wf-output" id="wf-output"></div>
+      <div style="margin-top:10px" id="wf-code-wrap">
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">The Python code that builds this (preview — uses .get() you learned today):</div>
+        <div class="code-block" style="margin:0">
+          <pre style="font-size:12px"><span class="var">freq</span> = {}
+<span class="kw">for</span> <span class="var">word</span> <span class="kw">in</span> <span class="fn">input</span>()<span class="op">.</span><span class="fn">lower</span>()<span class="op">.</span><span class="fn">split</span>()<span class="op">:</span>
+    <span class="var">freq</span>[<span class="var">word</span>] = <span class="var">freq</span><span class="op">.</span><span class="fn">get</span>(<span class="var">word</span><span class="op">,</span> <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>
+<span class="cm"># freq.get(word, 0) returns current count or 0 if new word</span>
+<span class="cm"># +1 increments it — then stores back into freq[word]</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔮</span><span><strong>This one-liner uses .get():</strong> <code>freq.get(word, 0) + 1</code> — if the word is new, .get() returns 0, then adds 1. If it exists, .get() returns its current count, then adds 1. This is one of the most common and elegant dict patterns in Python. Students who understand .get() from today will find this natural tomorrow.</span></div>
+</div>
+
+<!-- Exit ticket -->
+<div class="sec">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="ck">
+    <div class="ck-q">Given <code>d = {"x": 10, "y": 20}</code>, what does <code>print(d.get("z", 99))</code> output?</div>
+    <div class="ck-opts">
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">A</span>KeyError — "z" is not in the dictionary</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">B</span><code>None</code> — .get() always returns None for missing keys</div>
+      <div class="ck-opt" onclick="ans(this,true)"><span class="opt-l">C</span><code>99</code> — "z" is missing so .get() returns the default value 99</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">D</span><code>0</code> — Python initialises missing numeric keys to 0</div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Given <code>item = {"title":"Python Book","price":850,"stock":12}</code>, write one line each to:<br>
+      (1) Print the title &nbsp;·&nbsp; (2) Reduce price by 50 &nbsp;·&nbsp; (3) Add a "category" key with value "programming" &nbsp;·&nbsp; (4) Safely get a "discount" key, defaulting to 0
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="sec">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vg">
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Dictionary</strong>A mutable collection of key-value pairs created with <code>{}</code>. Keys must be unique and immutable. Values can be any type.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Key</strong>The name used to look up a value in a dictionary. Usually a string. Must be unique within the dict.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Value</strong>The data associated with a key. Can be any Python type — string, int, list, even another dictionary.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">KeyError</strong>Raised when you try to access a key that doesn't exist using <code>d[key]</code>. Prevented by <code>.get()</code> or <code>in</code> check.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.get(key, default)</strong>Safe dictionary access. Returns the value if key exists, otherwise returns the default (or None if no default given).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.pop(key)</strong>Removes a key-value pair and returns the value. Unlike <code>del</code>, the value is accessible after removal.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="sec">
+  <div class="sec-head">Homework / self-study (before Lesson 22)</div>
+  <div class="hw">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Build a <code>contact_book</code> dictionary where keys are names and values are phone numbers. Write a program that: adds 5 contacts, looks one up by name, updates a number, safely checks for a contact that doesn't exist using .get(), then removes one contact with .pop() and prints the removed number.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Given a list of words <code>["apple","banana","apple","cherry","banana","apple"]</code>, use a dictionary to count how many times each word appears. Hint: use the pattern <code>freq[word] = freq.get(word, 0) + 1</code> in a for loop.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: what happens if you assign the same key twice when creating a dict literal — <code>{"a": 1, "a": 2}</code>? Does Python raise an error or silently pick one? Write your finding and explain why this behaviour makes sense.</span></div>
+  </div>
+</div>
+
+<!-- Week 5 preview -->
+<div class="sec">
+  <div class="sec-head">Looking ahead — Week 5 lessons</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Week 5: Dictionaries &amp; Tuples</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Today covered creating and accessing dictionaries. Next lesson introduces the three iteration methods — <code>.keys()</code>, <code>.values()</code>, <code>.items()</code> — that let you loop through every pair. These unlock the word counter pattern previewed above and make dicts as powerful as lists for data processing.</div>
+    <div class="w5-grid">
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L21 ✓</div><div style="color:var(--color-text-success)">Create &amp; access</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L22</div><div style="color:var(--color-text-secondary)">.keys() .values() .items()</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L23</div><div style="color:var(--color-text-secondary)">Tuples &amp; when to use them</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L24</div><div style="color:var(--color-text-secondary)">Nested data structures</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L25</div><div style="color:var(--color-text-success)">🛠 Contact book app</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="sec">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">KeyError is the #1 dictionary bug:</strong> Students who write <code>d["email"]</code> when the key might not exist will crash their programs. Run a live demo of the crash on the projector — then immediately show the .get() fix. The visual of the red error message is more memorable than any explanation.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common confusion — <code>in</code> checks keys not values:</strong> Students who expect <code>92 in scores</code> to return True because 92 is stored in the dict are confused by this. Show it live. Then say: "If you want to check values, that's <code>92 in scores.values()</code> — and we'll cover that in Lesson 22."</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Silent overwrite on duplicate keys:</strong> <code>d["name"] = "Aisha"</code> followed by <code>d["name"] = "Omar"</code> silently replaces Aisha with Omar — no error, no warning. Students who expect a duplicate-key error are often surprised. This becomes a real bug in the contact book homework if they add the same name twice.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Activity 2 timing:</strong> If students didn't complete the Week 4 quiz refactor homework, Activity 2 doubles as that exercise. Students who did it already can help neighbours — this is a good peer-learning moment. Don't skip it; the tuple-to-dict refactor is the clearest motivation for why dictionaries exist.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Word frequency preview:</strong> The <code>freq.get(word, 0) + 1</code> pattern in the preview section is worth a 2-minute live demonstration. Students can immediately see .get() in action with a real purpose — and it motivates Lesson 22's iteration methods perfectly.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button onclick="sendPrompt('Give me the detailed lesson plan for Lesson 22: Dictionary methods — keys, values, items')" style="font-size:13px;margin-right:8px">Next: Lesson 22 — Dictionary methods ↗</button>
+  <button onclick="sendPrompt('Give me 10 dictionary practice exercises for Lesson 21')" style="font-size:13px">More practice exercises ↗</button>
+</div>
+
+<script src="scripts.js"></script>
+<script>
+// Dict visualiser
+const dvData = [
+  {key:'name',   val:'"Aisha"', type:'str'},
+  {key:'age',    val:'15',      type:'int'},
+  {key:'grade',  val:'"A"',     type:'str'},
+  {key:'score',  val:'92.5',    type:'float'},
+  {key:'passed', val:'True',    type:'bool'},
+];
+function buildDV() {
+  const rows = document.getElementById('dv-rows');
+  rows.innerHTML = '';
+  dvData.forEach((d, i) => {
+    const row = document.createElement('div');
+    row.className = 'dv-row';
+    row.id = `dv-row-${i}`;
+    row.innerHTML = `<div class="dv-key">"${d.key}"</div><div class="dv-val">${d.val}</div><div class="dv-type">${d.type}</div>`;
+    row.onclick = () => {
+      document.querySelectorAll('.dv-row').forEach(r => r.style.opacity = '1');
+      row.style.opacity = '1';
+      row.style.boxShadow = '0 0 0 2px var(--color-border-info)';
+      setTimeout(() => row.style.boxShadow = '', 600);
+      document.getElementById('dv-info').textContent = `student["${d.key}"]  →  ${d.val}  (type: ${d.type})`;
+    };
+    rows.appendChild(row);
+  });
+}
+buildDV();
+
+// Dict explorer
+let exDict = {name:'Aisha', age:15, grade:'A', city:'Karachi'};
+function renderEx() {
+  const el = document.getElementById('ex-display');
+  el.innerHTML = '';
+  const keys = Object.keys(exDict);
+  if (keys.length === 0) {
+    el.innerHTML = '<div style="padding:12px;font-size:13px;color:var(--color-text-tertiary);font-style:italic">(empty dictionary)</div>';
+    return;
+  }
+  keys.forEach(k => {
+    const row = document.createElement('div');
+    row.className = 'ex-pair';
+    const valStr = typeof exDict[k] === 'string' ? `"${exDict[k]}"` : String(exDict[k]);
+    row.innerHTML = `<div class="ex-k">"${k}"</div><div class="ex-v">${valStr}</div>`;
+    el.appendChild(row);
+  });
+}
+function exLog(msg, color) {
+  const log = document.getElementById('ex-log');
+  const line = document.createElement('div');
+  line.style.color = color || 'var(--color-text-primary)';
+  line.textContent = msg;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+function exSet() {
+  const k = document.getElementById('ex-key').value.trim();
+  const v = document.getElementById('ex-val').value.trim();
+  if (!k || !v) { exLog('⚠ Enter both key and value.', 'var(--color-text-warning)'); return; }
+  const isNew = !(k in exDict);
+  const parsed = isNaN(v) ? (v === 'True' ? true : v === 'False' ? false : v) : Number(v);
+  exDict[k] = parsed;
+  const valStr = typeof parsed === 'string' ? `"${parsed}"` : String(parsed);
+  exLog(isNew ? `d["${k}"] = ${valStr}  →  key added` : `d["${k}"] = ${valStr}  →  value updated`, 'var(--color-text-success)');
+  document.getElementById('ex-key').value = '';
+  document.getElementById('ex-val').value = '';
+  renderEx();
+}
+function exDel() {
+  const k = document.getElementById('ex-del').value.trim();
+  if (!k) { exLog('⚠ Enter a key to delete.', 'var(--color-text-warning)'); return; }
+  if (!(k in exDict)) { exLog(`KeyError: "${k}" not in dict`, 'var(--color-text-danger)'); return; }
+  delete exDict[k];
+  exLog(`del d["${k}"]  →  key removed`, 'var(--color-text-danger)');
+  document.getElementById('ex-del').value = '';
+  renderEx();
+}
+function exGet() {
+  const k = document.getElementById('ex-get').value.trim();
+  if (!k) { exLog('⚠ Enter a key to get.', 'var(--color-text-warning)'); return; }
+  if (k in exDict) {
+    const v = exDict[k];
+    const valStr = typeof v === 'string' ? `"${v}"` : String(v);
+    exLog(`d["${k}"]  →  ${valStr}`, 'var(--color-text-info)');
+  } else {
+    exLog(`d.get("${k}")  →  None  (key does not exist)`, 'var(--color-text-secondary)');
+  }
+  document.getElementById('ex-get').value = '';
+}
+function exReset() {
+  exDict = {name:'Aisha', age:15, grade:'A', city:'Karachi'};
+  document.getElementById('ex-log').innerHTML = '';
+  exLog('Dictionary reset to initial state.', 'var(--color-text-secondary)');
+  renderEx();
+}
+renderEx();
+exLog('Initial dict: {name:"Aisha", age:15, grade:"A", city:"Karachi"}', 'var(--color-text-secondary)');
+
+// Riddle cards
+const riddleData = [
+  {expr:'p["name"]', answer:'→ "Zara"', hint:'key access', error:false},
+  {expr:'p["score"] + 10', answer:'→ 98', hint:'arithmetic on a dict value', error:false},
+  {expr:'p["email"]', answer:'→ KeyError: \'email\'', hint:'key does not exist', error:true},
+  {expr:'p.get("email", "N/A")', answer:'→ "N/A"', hint:'.get() with default', error:false},
+  {expr:'"age" in p', answer:'→ True', hint:'key membership check', error:false},
+  {expr:'16 in p', answer:'→ False', hint:'in checks KEYS not values', error:false},
+  {expr:'len(p)', answer:'→ 4', hint:'number of key-value pairs', error:false},
+  {expr:'p.pop("city")', answer:'→ "Lahore"  (and removes the key)', hint:'.pop() returns the value', error:false},
+];
+
+function buildRiddles() {
+  const grid = document.getElementById('riddle-grid');
+  riddleData.forEach((r, i) => {
+    const row = document.createElement('div');
+    row.className = 'riddle-row';
+    row.innerHTML = `
+      <div class="riddle-expr">${r.expr}</div>
+      <div class="riddle-hint">tap to reveal · ${r.hint}</div>
+      <div class="riddle-answer ${r.error ? 'riddle-error' : ''}">→ ${r.answer.replace('→ ', '')}</div>
+    `;
+    row.onclick = () => row.classList.toggle('revealed');
+    grid.appendChild(row);
+  });
+}
+buildRiddles();
+
+// Refactor demo tabs
+function rdTab(i) {
+  document.querySelectorAll('.rd-tab').forEach((t, j) => t.classList.toggle('active', j === i));
+  document.querySelectorAll('.rd-panel').forEach((p, j) => p.classList.toggle('show', j === i));
+}
+
+// sandbox
+let sbCurrentMode = 'bracket';
+const sbDict = {name:'Aisha', age:15, grade:'A', score:92};
+
+function sbMode(m) { sbCurrentMode = m; runSandbox(); }
+
+function runSandbox() {
+  const key = document.getElementById('sb-key').value.trim();
+  const res = document.getElementById('sb-result');
+  if (!key) { res.textContent = 'Type a key above and choose an access method'; res.style.color = 'var(--color-text-secondary)'; res.style.fontStyle = 'italic'; return; }
+  res.style.fontStyle = 'normal';
+  const val = sbDict[key];
+  const exists = key in sbDict;
+  const valStr = typeof val === 'string' ? `"${val}"` : String(val);
+  if (sbCurrentMode === 'bracket') {
+    if (exists) { res.textContent = `d["${key}"]  →  ${valStr}`; res.style.color = 'var(--color-text-success)'; }
+    else { res.textContent = `d["${key}"]  →  KeyError: '${key}'`; res.style.color = 'var(--color-text-danger)'; }
+  } else if (sbCurrentMode === 'get') {
+    res.textContent = exists ? `d.get("${key}")  →  ${valStr}` : `d.get("${key}")  →  None`;
+    res.style.color = exists ? 'var(--color-text-success)' : 'var(--color-text-secondary)';
+  } else if (sbCurrentMode === 'get_default') {
+    res.textContent = exists ? `d.get("${key}", "N/A")  →  ${valStr}` : `d.get("${key}", "N/A")  →  "N/A"`;
+    res.style.color = exists ? 'var(--color-text-success)' : 'var(--color-text-warning)';
+  } else if (sbCurrentMode === 'in') {
+    res.textContent = `"${key}" in d  →  ${exists}`;
+    res.style.color = exists ? 'var(--color-text-success)' : 'var(--color-text-danger)';
+  }
+}
+
+// Word frequency
+function runWF() {
+  const text = document.getElementById('wf-input').value.toLowerCase().trim();
+  if (!text) return;
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const freq = {};
+  words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+  const out = document.getElementById('wf-output');
+  out.innerHTML = '';
+  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+  sorted.forEach(([word, count]) => {
+    out.innerHTML += `<div class="wf-word">${word} <span class="wf-count">×${count}</span></div>`;
+  });
+}
+runWF();
+
+// Exit ticket
+function ans(el, correct) {
+  if (document.querySelector('.ck-opt.correct')) return;
+  document.querySelectorAll('.ck-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! .get(key, default) returns the default value when the key is absent — not None, not 0, but whatever default you pass. Here "z" is not in the dict so .get("z", 99) returns 99. This is why .get() with a default is so useful: you control what happens when a key is missing.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is C. .get(key, default) returns the default argument when the key does not exist. "z" is not in d, so Python returns 99. If no default is provided, .get() returns None — but here 99 was explicitly given as the fallback.';
+  }
+}
+
+</script>
+
+</body>
+</html>

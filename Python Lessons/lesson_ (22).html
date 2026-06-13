@@ -1,0 +1,1035 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="styles.css" rel="stylesheet">
+<style>
+/* iteration visualiser */
+.iter-vis{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.iv-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.iv-body{padding:14px}
+.iv-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.iv-tab{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.iv-tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500}
+.iv-dict-display{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.iv-pair{display:flex;align-items:stretch;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary);transition:all .2s}
+.iv-pair.highlighted{border-color:var(--color-border-info);box-shadow:0 0 0 2px var(--color-border-info)}
+.iv-k{font-family:var(--font-mono);font-size:12.5px;font-weight:500;padding:7px 12px;color:var(--color-text-info);background:color-mix(in srgb,var(--color-background-info) 30%,transparent);min-width:100px;border-right:0.5px solid var(--color-border-tertiary)}
+.iv-v{font-family:var(--font-mono);font-size:12.5px;padding:7px 12px;flex:1}
+.iv-highlight-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;margin-left:auto;align-self:center;margin-right:8px;min-width:80px;text-align:center}
+.ht-key{background:var(--color-background-info);color:var(--color-text-info)}
+.ht-val{background:var(--color-background-success);color:var(--color-text-success)}
+.ht-both{background:var(--color-background-warning);color:var(--color-text-warning)}
+.iv-output{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-family:var(--font-mono);font-size:12px;border:0.5px solid var(--color-border-tertiary);min-height:40px;line-height:1.9}
+.iv-nav{display:flex;gap:8px;margin-top:8px}
+.iv-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.iv-btn:hover{background:var(--color-background-primary)}
+.iv-btn:disabled{opacity:.4;cursor:not-allowed}
+/* word counter live */
+.wc-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.wc-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.wc-body{padding:14px}
+.wc-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none;margin-bottom:8px}
+.wc-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans);margin-bottom:10px}
+.wc-results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.wc-col{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
+.wc-col-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.wc-col-items{font-family:var(--font-mono);font-size:12px;line-height:1.9;max-height:140px;overflow-y:auto}
+/* grade reporter live */
+.grade-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.gt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.gt-body{padding:14px}
+.gt-add-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.gt-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono)}
+.gt-name{width:130px}
+.gt-score{width:80px}
+.gt-btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.gt-btn.danger{border-color:var(--color-border-danger);color:var(--color-text-danger);background:var(--color-background-danger)}
+.gt-table{width:100%;border-collapse:collapse;font-size:13px}
+.gt-table th{padding:7px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.gt-table td{padding:8px 12px;border-bottom:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);font-size:12.5px}
+.gt-table tr:last-child td{border-bottom:none}
+.gt-grade-A{color:var(--color-text-success);font-weight:500}
+.gt-grade-B{color:var(--color-text-info);font-weight:500}
+.gt-grade-C{color:var(--color-text-warning);font-weight:500}
+.gt-grade-F{color:var(--color-text-danger);font-weight:500}
+.gt-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.gt-stat{font-size:12px;padding:3px 10px;border-radius:10px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+/* update copy demo */
+.uc-demo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.uc-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.uc-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.uc-panel{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.uc-panel-head{padding:6px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.uc-dict{padding:8px 12px;font-family:var(--font-mono);font-size:12px;line-height:2;min-height:60px}
+.uc-dict-pair{display:flex;gap:8px}
+.uc-k{color:var(--color-text-info);min-width:80px}
+.uc-v{color:var(--color-text-primary)}
+.uc-new{color:var(--color-text-success);font-weight:500}
+.uc-changed{color:var(--color-text-warning);font-weight:500}
+.uc-btn{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);font-size:12px;cursor:pointer;font-family:var(--font-sans);color:var(--color-text-primary)}
+.uc-btn:hover{background:var(--color-background-primary)}
+.uc-log{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);margin-top:8px;font-style:italic;min-height:20px}
+/* riddle cards */
+.riddle-grid{display:flex;flex-direction:column;gap:8px}
+.riddle-row{display:flex;gap:10px;align-items:center;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .12s;flex-wrap:wrap}
+.riddle-row:hover{background:var(--color-background-primary)}
+.riddle-expr{font-family:var(--font-mono);font-size:13px;flex:1;min-width:220px}
+.riddle-hint{font-size:12px;color:var(--color-text-tertiary);font-style:italic}
+.riddle-answer{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-success);display:none}
+.riddle-error{color:var(--color-text-danger)}
+.riddle-row.revealed .riddle-answer{display:block}
+.riddle-row.revealed .riddle-hint{display:none}
+/* three method panels */
+.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.method-panel{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.mp-head{padding:8px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);text-align:center}
+.mp-keys .mp-head{background:var(--color-background-info);color:var(--color-text-info)}
+.mp-vals .mp-head{background:var(--color-background-success);color:var(--color-text-success)}
+.mp-items .mp-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.mp-body{padding:10px 12px;font-size:12px;color:var(--color-text-secondary)}
+.mp-code{font-family:var(--font-mono);font-size:11.5px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:6px 8px;margin:6px 0;border:0.5px solid var(--color-border-tertiary)}
+.mp-result{font-family:var(--font-mono);font-size:11px;color:var(--color-text-success)}
+/* method comparison */
+.method-table{width:100%;border-collapse:collapse;font-size:13px}
+.method-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.method-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.method-table tr:last-child td{border-bottom:none}
+.method-table td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info);white-space:nowrap}
+/* method chooser */
+.chooser{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.ch2-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.ch2-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.ch2-scenario{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-secondary)}
+.ch2-q{font-size:13px;margin-bottom:8px}
+.ch2-opts{display:flex;gap:6px;flex-wrap:wrap}
+.ch2-opt{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);font-family:var(--font-mono);transition:all .12s}
+.ch2-opt:hover{background:var(--color-background-secondary)}
+.ch2-opt.chosen-correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success);pointer-events:none}
+.ch2-opt.chosen-wrong{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger);pointer-events:none}
+.ch2-opt.reveal-correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success);pointer-events:none}
+.ch2-fb{font-size:12px;margin-top:6px;display:none;color:var(--color-text-secondary)}
+/* dict comprehension preview */
+.dc-preview{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.dc-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.dc-body{padding:14px}
+.dc-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dc-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.dc-col-head{padding:6px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.dc-verbose .dc-col-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.dc-concise .dc-col-head{background:var(--color-background-success);color:var(--color-text-success)}
+/* live sorted viewer */
+.sorted-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.st-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.st-body{padding:14px}
+.st-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none;margin-bottom:8px}
+.st-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.st-btn{padding:5px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.st-btn:hover{background:var(--color-background-primary)}
+.st-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.st-results{font-family:var(--font-mono);font-size:12.5px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);min-height:60px;line-height:1.9}
+/* w5 preview */
+.w5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.w5-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+
+</style>
+<div class="lp">
+  <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+    <button style="margin-top:12px; font-size:13px;" onclick="window.location.href='lesson_ (21).html'">Previous: Lesson 21 — Dictionaries</button>
+    <button style="margin-top:12px; font-size:13px; margin-left: auto; margin-right: auto;" onclick="window.location.href='index.html'">Home Page</button>
+    <button style="margin-top:12px; font-size:13px;" onclick="window.location.href='lesson_ (23).html'">Next: Lesson 23 — Tuples</button>
+  </div>
+  <hr style="margin:2rem 0;border-color:var(--color-border-secondary)">
+</div>
+</head>
+<body>
+
+<div class="lp">
+<h2>Lesson 22: Dictionary methods — keys, values, items - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 22: Dictionary methods — keys, values, items</p>
+      <p class="lp-hero-sub">Week 5 — Dictionaries &amp; Tuples · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">Dict create &amp; access</div></div>
+    <div class="meta-item"><div class="meta-label">New methods</div><div class="meta-val">.keys() .values() .items()</div></div>
+    <div class="meta-item"><div class="meta-label">Key skill</div><div class="meta-val">Iterating dicts</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="sec">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Use <code>.keys()</code>, <code>.values()</code>, and <code>.items()</code> to iterate over a dictionary</li>
+    <li>Unpack key-value tuples in a <code>for k, v in d.items()</code> loop</li>
+    <li>Use <code>.update()</code> to merge one dictionary into another</li>
+    <li>Use <code>.copy()</code> to create an independent shallow copy of a dictionary</li>
+    <li>Build a word frequency counter and a grade reporter using iteration</li>
+    <li>Decide which iteration method to use for a given task</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="sec">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The problem .items() solves (4 min)</div>
+        <div class="tl-desc">Show a dict of student scores: <code>{"Aisha":92,"Omar":78,"Zara":95}</code>. Ask: "How do we print every student's name AND score in one loop?" Students who have only seen lists will try <code>for x in d</code> — run it and show it only gives keys. Then show the three tools that unlock full iteration: <code>.keys()</code>, <code>.values()</code>, <code>.items()</code>. Land the insight: <strong>a dict has three views — keys only, values only, or both together.</strong></div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">.keys(), .values(), .items() (10 min)</div>
+        <div class="tl-desc">Show Examples 1–3. Use the interactive iteration visualiser below — step through each method one pair at a time, watching which parts of each dict entry are highlighted. Emphasise: <code>.items()</code> yields tuples of <code>(key, value)</code> which unpack into two variables in the for loop header.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">The word frequency counter pattern (6 min)</div>
+        <div class="tl-desc">Show Example 4 — the <code>freq.get(word, 0) + 1</code> idiom previewed in Lesson 21. Students built a version with lists in Lesson 13; now they see how a dict makes it cleaner and faster. Use the live word counter tool below.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:20</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">.update() and .copy() (5 min)</div>
+        <div class="tl-desc">Show Example 5. <code>.update()</code> merges another dict in — existing keys are overwritten, new keys are added. <code>.copy()</code> returns an independent shallow copy — modifying the copy does not modify the original. Connect the copy pitfall to the list aliasing surprise from Week 3.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Grade reporter (13 min)</div>
+        <div class="tl-desc">Students build a grade reporter using <code>.items()</code> to loop through a scores dict and print a formatted table with grades, using all three iteration methods at different points.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:38</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Word frequency counter (10 min)</div>
+        <div class="tl-desc">Students build the complete word counter from scratch and use <code>.items()</code> to display results sorted by frequency.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Live tool + exit ticket (7–10 min)</div>
+        <div class="tl-desc">Students test the interactive word counter below and verify their output. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Three methods panel -->
+<div class="sec">
+  <div class="sec-head">The three iteration methods — display on projector</div>
+  <div class="method-grid">
+    <div class="method-panel mp-keys">
+      <div class="mp-head">.keys() — loop through keys</div>
+      <div class="mp-body">
+        <div>Use when you only need the keys — e.g. to check membership or build a list of field names.</div>
+        <div class="mp-code">for k in d.keys():<br>    print(k)</div>
+        <div class="mp-result">→ "name" "age" "grade"</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary)">Note: <code>for k in d</code> also iterates keys — .keys() makes intent explicit.</div>
+      </div>
+    </div>
+    <div class="method-panel mp-vals">
+      <div class="mp-head">.values() — loop through values</div>
+      <div class="mp-body">
+        <div>Use when you only need the values — e.g. to sum scores, find max, or check if a value exists.</div>
+        <div class="mp-code">for v in d.values():<br>    print(v)</div>
+        <div class="mp-result">→ "Aisha" 15 "A"</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary)">Also: <code>92 in d.values()</code> — checks values, not keys.</div>
+      </div>
+    </div>
+    <div class="method-panel mp-items">
+      <div class="mp-head">.items() — key + value together</div>
+      <div class="mp-body">
+        <div>Use when you need both — the most common iteration method. Unpacks into two variables.</div>
+        <div class="mp-code">for k, v in d.items():<br>    print(k, v)</div>
+        <div class="mp-result">→ name Aisha / age 15 / grade A</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary)">Each iteration gives a (key, value) tuple that unpacks automatically.</div>
+      </div>
+    </div>
+  </div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Decision rule to put on the board:</strong> Need keys only → <code>.keys()</code> or plain <code>for k in d</code>. Need values only → <code>.values()</code>. Need both → <code>.items()</code>. In practice, <code>.items()</code> is used 80% of the time because you usually want both.</span></div>
+</div>
+
+<!-- Iteration visualiser -->
+<div class="sec">
+  <div class="sec-head">Interactive iteration visualiser — step through each method</div>
+  <div class="iter-vis">
+    <div class="iv-head">
+      <span>scores = {"Aisha":92, "Omar":78, "Zara":95, "Bilal":65}</span>
+      <div style="display:flex;gap:6px">
+        <button class="iv-btn" id="iv-prev" onclick="ivStep(-1)" disabled>← Prev</button>
+        <button class="iv-btn" id="iv-next" onclick="ivStep(1)">Next →</button>
+        <button class="iv-btn" onclick="ivReset()">Reset</button>
+      </div>
+    </div>
+    <div class="iv-body">
+      <div class="iv-tabs">
+        <button class="iv-tab active" onclick="ivSetMethod('keys')">for k in .keys()</button>
+        <button class="iv-tab" onclick="ivSetMethod('values')">for v in .values()</button>
+        <button class="iv-tab" onclick="ivSetMethod('items')">for k,v in .items()</button>
+      </div>
+      <div class="iv-dict-display" id="iv-dict"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Loop output so far:</div>
+      <div class="iv-output" id="iv-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Live word counter tool -->
+<div class="sec">
+  <div class="sec-head">Live word frequency counter — powered by a dictionary</div>
+  <div class="wc-tool">
+    <div class="wc-head">Type any sentence — see keys, values, and items views simultaneously</div>
+    <div class="wc-body">
+      <textarea class="wc-ta" id="wc-input" rows="2" placeholder="Type a sentence...">the cat sat on the mat the cat sat</textarea>
+      <button class="wc-btn" onclick="runWC()">Count →</button>
+      <div class="wc-results" id="wc-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demos -->
+<div class="sec">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — .keys(), .values(), .items() basics</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">student</span> = {<span class="str">"name"</span><span class="op">:</span><span class="str">"Aisha"</span><span class="op">,</span> <span class="str">"age"</span><span class="op">:</span><span class="num">15</span><span class="op">,</span> <span class="str">"grade"</span><span class="op">:</span><span class="str">"A"</span>}
+
+<span class="cm"># .keys() — view of all keys</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">keys</span>())     <span class="cm"># dict_keys(['name', 'age', 'grade'])</span>
+<span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="var">student</span><span class="op">.</span><span class="fn">keys</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">k</span>)               <span class="cm"># name  age  grade</span>
+
+<span class="cm"># .values() — view of all values</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">values</span>())   <span class="cm"># dict_values(['Aisha', 15, 'A'])</span>
+<span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">student</span><span class="op">.</span><span class="fn">values</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">v</span>)               <span class="cm"># Aisha  15  A</span>
+
+<span class="cm"># .items() — (key, value) pairs</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">items</span>())    <span class="cm"># dict_items([('name','Aisha'),...])</span>
+<span class="kw">for</span> <span class="var">k</span><span class="op">,</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">student</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  {k}: {v}"</span>)   <span class="cm"># name: Aisha  age: 15  grade: A</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">dict_keys(['name', 'age', 'grade'])<br>name<br>age<br>grade<br>dict_values(['Aisha', 15, 'A'])<br>Aisha<br>15<br>A<br>dict_items([('name', 'Aisha'), ('age', 15), ('grade', 'A')])<br>  name: Aisha<br>  age: 15<br>  grade: A</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>dict_keys, dict_values, dict_items are view objects</strong> — not lists. They update automatically when the dict changes. You can convert them to lists with <code>list(d.keys())</code> if you need a real list, but usually you just loop through them directly.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Practical use of .items(): grade report</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span> = {<span class="str">"Aisha"</span><span class="op">:</span><span class="num">92</span><span class="op">,</span> <span class="str">"Omar"</span><span class="op">:</span><span class="num">78</span><span class="op">,</span> <span class="str">"Zara"</span><span class="op">:</span><span class="num">95</span><span class="op">,</span> <span class="str">"Bilal"</span><span class="op">:</span><span class="num">65</span>}
+
+<span class="kw">def</span> <span class="fn">get_grade</span>(<span class="var">s</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span> <span class="kw">return</span> <span class="str">"A"</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span> <span class="kw">return</span> <span class="str">"B"</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">60</span><span class="op">:</span> <span class="kw">return</span> <span class="str">"C"</span>
+    <span class="kw">return</span> <span class="str">"F"</span>
+
+<span class="fn">print</span>(<span class="str">f"{'Name':<span class="num">10</span>} {'Score':>6} {'Grade':>6}"</span>)
+<span class="fn">print</span>(<span class="str">"-" * 24</span>)
+<span class="kw">for</span> <span class="var">name</span><span class="op">,</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="var">grade</span> = <span class="fn">get_grade</span>(<span class="var">score</span>)
+    <span class="fn">print</span>(<span class="str">f"{name:<span class="num">10</span>} {score:>6} {grade:>6}"</span>)
+
+<span class="cm"># Use .values() for stats</span>
+<span class="var">all_scores</span> = <span class="fn">list</span>(<span class="var">scores</span><span class="op">.</span><span class="fn">values</span>())
+<span class="fn">print</span>(<span class="str">f"\nAverage: {sum(all_scores)/len(all_scores):.1f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Highest: {max(all_scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Lowest : {min(all_scores)}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Name        Score  Grade<br>------------------------<br>Aisha          92      A<br>Omar           78      B<br>Zara           95      A<br>Bilal          65      C<br><br>Average: 82.5<br>Highest: 95<br>Lowest : 65</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Checking values with .values()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">inventory</span> = {<span class="str">"apples"</span><span class="op">:</span><span class="num">50</span><span class="op">,</span> <span class="str">"bananas"</span><span class="op">:</span><span class="num">0</span><span class="op">,</span>
+              <span class="str">"oranges"</span><span class="op">:</span><span class="num">30</span><span class="op">,</span> <span class="str">"mangoes"</span><span class="op">:</span><span class="num">0</span>}
+
+<span class="cm"># Check if a VALUE exists</span>
+<span class="fn">print</span>(<span class="num">0</span> <span class="kw">in</span> <span class="var">inventory</span><span class="op">.</span><span class="fn">values</span>())       <span class="cm"># True — some items out of stock</span>
+<span class="fn">print</span>(<span class="num">50</span> <span class="kw">in</span> <span class="var">inventory</span><span class="op">.</span><span class="fn">values</span>())      <span class="cm"># True</span>
+
+<span class="cm"># Find items out of stock using .items()</span>
+<span class="fn">print</span>(<span class="str">"\nOut of stock:"</span>)
+<span class="kw">for</span> <span class="var">item</span><span class="op">,</span> <span class="var">qty</span> <span class="kw">in</span> <span class="var">inventory</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">qty</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"  ✗ {item}"</span>)
+
+<span class="cm"># Total stock using .values()</span>
+<span class="fn">print</span>(<span class="str">f"\nTotal items: {sum(inventory.values())}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">True<br>True<br><br>Out of stock:<br>  ✗ bananas<br>  ✗ mangoes<br><br>Total items: 80</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — Word frequency counter with .items()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">text</span>  = <span class="str">"the cat sat on the mat the cat sat"</span>
+<span class="var">words</span> = <span class="var">text</span><span class="op">.</span><span class="fn">lower</span>()<span class="op">.</span><span class="fn">split</span>()
+<span class="var">freq</span>  = {}
+
+<span class="cm"># Build the frequency dict</span>
+<span class="kw">for</span> <span class="var">word</span> <span class="kw">in</span> <span class="var">words</span><span class="op">:</span>
+    <span class="var">freq</span>[<span class="var">word</span>] = <span class="var">freq</span><span class="op">.</span><span class="fn">get</span>(<span class="var">word</span><span class="op">,</span> <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>
+
+<span class="cm"># Print using .items()</span>
+<span class="fn">print</span>(<span class="str">"Word frequencies:"</span>)
+<span class="kw">for</span> <span class="var">word</span><span class="op">,</span> <span class="var">count</span> <span class="kw">in</span> <span class="var">freq</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  {word:<span class="num">10</span>} × {count}"</span>)
+
+<span class="cm"># Most frequent word using .items()</span>
+<span class="var">top</span> = <span class="fn">max</span>(<span class="var">freq</span><span class="op">.</span><span class="fn">items</span>()<span class="op">,</span> <span class="var">key</span><span class="op">=</span><span class="kw">lambda</span> <span class="var">x</span><span class="op">:</span> <span class="var">x</span>[<span class="num">1</span>])
+<span class="fn">print</span>(<span class="str">f"\nMost common: '{top[0]}' ({top[1]} times)"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Word frequencies:<br>  the        × 3<br>  cat        × 2<br>  sat        × 2<br>  on         × 1<br>  mat        × 1<br><br>Most common: 'the' (3 times)</div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Connection to Lesson 13:</strong> Students built a word counter using <code>.count()</code> in a list loop — 5+ lines, O(n²) performance. The dict version is 2 lines and lightning fast. Ask: "Which would you use for a 10,000 word document?" The answer is always the dict.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — .update() and .copy()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># .update() — merge another dict in</span>
+<span class="var">base</span>   = {<span class="str">"name"</span><span class="op">:</span> <span class="str">"Aisha"</span><span class="op">,</span> <span class="str">"age"</span><span class="op">:</span> <span class="num">15</span>}
+<span class="var">extras</span> = {<span class="str">"city"</span><span class="op">:</span> <span class="str">"Karachi"</span><span class="op">,</span> <span class="str">"age"</span><span class="op">:</span> <span class="num">16</span>}  <span class="cm"># age will overwrite</span>
+<span class="var">base</span><span class="op">.</span><span class="fn">update</span>(<span class="var">extras</span>)
+<span class="fn">print</span>(<span class="var">base</span>)
+<span class="cm"># {'name':'Aisha','age':16,'city':'Karachi'}</span>
+
+<span class="cm"># .copy() — independent shallow copy</span>
+<span class="var">original</span> = {<span class="str">"score"</span><span class="op">:</span> <span class="num">92</span><span class="op">,</span> <span class="str">"grade"</span><span class="op">:</span> <span class="str">"A"</span>}
+<span class="var">backup</span>   = <span class="var">original</span><span class="op">.</span><span class="fn">copy</span>()
+
+<span class="var">original</span>[<span class="str">"score"</span>] = <span class="num">50</span>   <span class="cm"># modify original</span>
+<span class="fn">print</span>(<span class="var">original</span>[<span class="str">"score"</span>])  <span class="cm"># 50 — changed</span>
+<span class="fn">print</span>(<span class="var">backup</span>[<span class="str">"score"</span>])    <span class="cm"># 92 — unchanged!</span>
+
+<span class="cm"># ✗ Without .copy() — alias, not copy</span>
+<span class="var">alias</span> = <span class="var">original</span>          <span class="cm"># both names point to same dict</span>
+<span class="var">alias</span>[<span class="str">"score"</span>] = <span class="num">0</span>
+<span class="fn">print</span>(<span class="var">original</span>[<span class="str">"score"</span>])  <span class="cm"># 0 — original changed too!</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">{'name': 'Aisha', 'age': 16, 'city': 'Karachi'}<br>50<br>92<br>0</div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>alias ≠ copy:</strong> <code>b = a</code> makes both names point to the same dict — changing b also changes a. <code>b = a.copy()</code> creates a genuinely independent copy. This is the same trap as list aliasing in Lesson 12 — connect to it explicitly.</span></div>
+</div>
+
+<!-- .update() and .copy() interactive demo -->
+<div class="sec">
+  <div class="sec-head">Interactive .update() demo — see what overwrites and what's new</div>
+  <div class="uc-demo">
+    <div class="uc-head">
+      <span>Click a button to apply operations and watch both dicts update</span>
+      <button class="uc-btn" onclick="ucReset()">Reset</button>
+    </div>
+    <div class="uc-body">
+      <div class="uc-panel">
+        <div class="uc-panel-head">base dict</div>
+        <div class="uc-dict" id="uc-base"></div>
+      </div>
+      <div class="uc-panel">
+        <div class="uc-panel-head">backup (copy)</div>
+        <div class="uc-dict" id="uc-backup"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-top:0.5px solid var(--color-border-tertiary)">
+      <button class="uc-btn" onclick="ucUpdate()">base.update({"city":"Lahore","age":16})</button>
+      <button class="uc-btn" onclick="ucModify()">base["score"] = 50</button>
+      <button class="uc-btn" onclick="ucShowAlias()">Show alias danger</button>
+    </div>
+    <div class="uc-log" id="uc-log" style="padding:8px 14px;border-top:0.5px solid var(--color-border-tertiary)"></div>
+  </div>
+</div>
+
+<!-- Methods reference -->
+<div class="sec">
+  <div class="sec-head">Dictionary methods reference table</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="method-table">
+      <thead><tr><th>Method</th><th>What it does</th><th>Use when</th></tr></thead>
+      <tbody>
+        <tr><td>d.keys()</td><td>Returns a view of all keys</td><td>You need keys only — checking fields, building a list of names</td></tr>
+        <tr><td>d.values()</td><td>Returns a view of all values</td><td>You need values only — summing scores, finding max/min, checking if a value exists</td></tr>
+        <tr><td>d.items()</td><td>Returns (key, value) pairs</td><td>You need both — printing reports, building new structures, filtering</td></tr>
+        <tr><td>d.update(other)</td><td>Merges other dict in; overwrites existing keys</td><td>Combining two dicts; applying a batch of changes</td></tr>
+        <tr><td>d.copy()</td><td>Returns an independent shallow copy</td><td>When you need to modify a dict without changing the original</td></tr>
+        <tr><td>d.clear()</td><td>Removes all key-value pairs</td><td>Resetting a dict to empty without creating a new one</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Predict the output riddles -->
+<div class="sec">
+  <div class="sec-head">Predict the output — tap each card to reveal</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Given: <code>inv = {"apples":10, "bananas":5, "oranges":8}</code></p>
+  <div class="riddle-grid" id="riddle-grid2"></div>
+</div>
+
+<!-- Grade reporter live tool -->
+<div class="sec">
+  <div class="sec-head">Live grade reporter — add students and see .items() at work</div>
+  <div class="grade-tool">
+    <div class="gt-head">
+      <span>Add students — the reporter uses .items() to loop and .values() for stats</span>
+      <button class="uc-btn" onclick="gtReset()">Reset</button>
+    </div>
+    <div class="gt-body">
+      <div class="gt-add-row">
+        <input class="gt-input gt-name" id="gt-name" placeholder="Student name" onkeydown="if(event.key==='Enter')gtAdd()">
+        <input class="gt-input gt-score" id="gt-score" type="number" placeholder="Score 0-100" onkeydown="if(event.key==='Enter')gtAdd()">
+        <button class="gt-btn" onclick="gtAdd()">Add</button>
+      </div>
+      <table class="gt-table" id="gt-table">
+        <thead><tr><th>Name</th><th>Score</th><th>Grade</th></tr></thead>
+        <tbody id="gt-tbody"></tbody>
+      </table>
+      <div class="gt-stats" id="gt-stats"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="sec">
+  <div class="sec-head">Activity 1 — Grade reporter using .items()</div>
+  <div class="act-card">
+    <div class="act-num">Activity 1 · 13 minutes · Individual</div>
+    <div class="act-title">Build a full grade reporter using all three iteration methods</div>
+    <div class="act-desc">Students write a program that stores scores in a dict, iterates with all three methods for different purposes, and prints a complete formatted report.</div>
+    <ol class="sl">
+      <li>Create a <code>scores</code> dict with at least 5 name-score pairs</li>
+      <li>Use <code>.keys()</code> to print a list of all student names (no scores)</li>
+      <li>Use <code>.values()</code> to compute and print average, highest, and lowest score</li>
+      <li>Use <code>.items()</code> to print a formatted table with name, score, and grade</li>
+      <li>Use a list comprehension with <code>.items()</code> to build a list of names of students who passed (≥50)</li>
+      <li>Extension: sort the table by score descending using <code>sorted(scores.items(), key=lambda x: x[1], reverse=True)</code></li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Expected output shape</div>
+    <div class="out">Students: ['Aisha', 'Omar', 'Zara', 'Bilal', 'Sara']<br><br>Stats — Average: 80.2  Highest: 95  Lowest: 62<br><br>Name       Score  Grade<br>--------------------------<br>Aisha         92      A<br>Omar          78      B<br>Zara          95      A<br>Bilal         65      C<br>Sara          71      C<br><br>Passing: ['Aisha', 'Omar', 'Zara', 'Bilal', 'Sara']</div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="sec">
+  <div class="sec-head">Activity 2 — Word frequency counter</div>
+  <div class="act-card">
+    <div class="act-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="act-title">Build a complete word frequency counter and display results sorted by count</div>
+    <div class="act-desc">Students implement the word counter from scratch using the <code>freq.get(word, 0) + 1</code> pattern and display results using <code>.items()</code>.</div>
+    <ol class="sl">
+      <li>Ask the user for a sentence using <code>input()</code></li>
+      <li>Convert to lowercase and split into words</li>
+      <li>Build a <code>freq</code> dict using the <code>.get()</code> increment pattern</li>
+      <li>Print all word-count pairs using <code>.items()</code></li>
+      <li>Find and print the most common word using <code>max(freq, key=freq.get)</code></li>
+      <li>Extension: filter out common words ("the", "a", "on", "in") before counting</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">text</span>  = <span class="fn">input</span>(<span class="str">"Enter a sentence: "</span>)<span class="op">.</span><span class="fn">lower</span>()
+<span class="var">words</span> = <span class="var">text</span><span class="op">.</span><span class="fn">split</span>()
+<span class="var">freq</span>  = {}
+
+<span class="kw">for</span> <span class="var">word</span> <span class="kw">in</span> <span class="var">words</span><span class="op">:</span>
+    <span class="var">freq</span>[<span class="var">word</span>] = <span class="var">freq</span><span class="op">.</span><span class="fn">get</span>(<span class="var">word</span><span class="op">,</span> <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">f"\n{len(freq)} unique words:"</span>)
+<span class="kw">for</span> <span class="var">word</span><span class="op">,</span> <span class="var">count</span> <span class="kw">in</span> <span class="var">freq</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  {word:<span class="num">12</span>} × {count}"</span>)
+
+<span class="var">top</span> = <span class="fn">max</span>(<span class="var">freq</span><span class="op">,</span> <span class="var">key</span><span class="op">=</span><span class="var">freq</span><span class="op">.</span><span class="fn">get</span>)
+<span class="fn">print</span>(<span class="str">f"\nMost common: '{top}' ({freq[top]} times)"</span>)</pre>
+    </div>
+    <div class="tip" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>max(freq, key=freq.get):</strong> This finds the key with the largest value. <code>max()</code> iterates over the keys; <code>key=freq.get</code> tells it to compare by looking up each key's value. Students who are curious get a deeper explanation; others just use the pattern.</span></div>
+  </div>
+</div>
+
+<!-- PART2 END -->
+<!-- Method chooser activity -->
+<div class="sec">
+  <div class="sec-head">Which method would you use? — click the right answer for each scenario</div>
+  <div class="chooser">
+    <div class="ch2-head">Given a dict d — choose .keys(), .values(), or .items() for each task</div>
+    <div class="ch2-body" id="chooser-body"></div>
+  </div>
+</div>
+
+<!-- Sorted .items() live tool -->
+<div class="sec">
+  <div class="sec-head">Live sorted word counter — see .items() with sorted() in action</div>
+  <div class="sorted-tool">
+    <div class="st-head">
+      <span>Type text — then sort by word or by count</span>
+    </div>
+    <div class="st-body">
+      <textarea class="st-ta" id="st-input" rows="2" placeholder="Type a sentence...">to be or not to be that is the question to be</textarea>
+      <div class="st-controls">
+        <span style="font-size:12px;color:var(--color-text-secondary)">Sort by:</span>
+        <button class="st-btn active" id="st-alpha" onclick="stSort('alpha')">Alphabetical</button>
+        <button class="st-btn" id="st-freq-asc" onclick="stSort('freq-asc')">Count ↑</button>
+        <button class="st-btn" id="st-freq-desc" onclick="stSort('freq-desc')">Count ↓ (most common first)</button>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Output (using sorted(freq.items(), key=...)):</div>
+      <div class="st-results" id="st-results"></div>
+    </div>
+  </div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>sorted(freq.items(), key=lambda x: x[1], reverse=True)</strong> — this one line sorts all key-value pairs by value (the count), highest first. The <code>lambda x: x[1]</code> tells sorted to compare items by their second element (the count). Students don't need to fully understand lambdas yet — just recognise the pattern.</span></div>
+</div>
+
+<!-- Dict comprehension preview -->
+<div class="sec">
+  <div class="sec-head">Preview — dict comprehensions (Lesson 24)</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">Just as list comprehensions compress filter loops into one line, dict comprehensions compress dict-building loops. Here's a taste — you'll build these properly in Lesson 24.</p>
+  <div class="dc-preview">
+    <div class="dc-head">Building a "name → grade" dict from a scores dict — verbose vs comprehension</div>
+    <div class="dc-body">
+      <div class="dc-compare">
+        <div class="dc-col dc-verbose">
+          <div class="dc-col-head">⚠ Verbose — 4 lines</div>
+          <div class="code-block" style="margin:0;border:none;border-radius:0">
+            <pre style="font-size:12px"><span class="var">grades</span> = {}
+<span class="kw">for</span> <span class="var">name</span>, <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">.</span><span class="fn">items</span>()<span class="op">:</span>
+    <span class="var">grades</span>[<span class="var">name</span>] = <span class="fn">get_grade</span>(<span class="var">score</span>)
+<span class="fn">print</span>(<span class="var">grades</span>)</pre>
+          </div>
+        </div>
+        <div class="dc-col dc-concise">
+          <div class="dc-col-head">✓ Dict comprehension — 1 line</div>
+          <div class="code-block" style="margin:0;border:none;border-radius:0">
+            <pre style="font-size:12px"><span class="var">grades</span> = {<span class="var">name</span><span class="op">:</span> <span class="fn">get_grade</span>(<span class="var">score</span>)
+           <span class="kw">for</span> <span class="var">name</span>, <span class="var">score</span>
+           <span class="kw">in</span> <span class="var">scores</span><span class="op">.</span><span class="fn">items</span>()}
+<span class="fn">print</span>(<span class="var">grades</span>)</pre>
+          </div>
+        </div>
+      </div>
+      <div class="info" style="margin-top:10px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔮</span><span><strong>Same result, one line.</strong> The structure is <code>{key_expr: value_expr for k, v in d.items()}</code>. Students who understood list comprehensions (Lesson 14) will find this very natural. Coming in Lesson 24.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="sec">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="ck">
+    <div class="ck-q">What does <code>for k, v in d.items()</code> give you on each iteration?</div>
+    <div class="ck-opts">
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">A</span>Only the keys — <code>k</code> is the key, <code>v</code> is just the loop counter</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">B</span>Only the values — .items() is another name for .values()</div>
+      <div class="ck-opt" onclick="ans(this,true)"><span class="opt-l">C</span>Both the key and the value — .items() yields (key, value) tuples that unpack into k and v</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">D</span>The index and key — like enumerate() does for lists</div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Given <code>prices = {"apple":50, "banana":30, "mango":120}</code>, write one line each using the correct iteration method to:<br>
+      (1) Print all fruit names &nbsp;·&nbsp; (2) Calculate total cost of all items &nbsp;·&nbsp;
+      (3) Print each item and its price with f-strings &nbsp;·&nbsp; (4) Find the most expensive fruit
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="sec">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vg">
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.keys()</strong>Returns a view object of all keys in the dictionary. Iterable. Use when you only need the key names.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.values()</strong>Returns a view object of all values. Use when you only need the values — summing, finding max, checking membership.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.items()</strong>Returns (key, value) tuples. The most common iteration method — use when you need both key and value.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Tuple unpacking in for loop</strong><code>for k, v in d.items()</code> — Python automatically unpacks each (key, value) pair into two variables.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.update(other)</strong>Merges another dict into this one. Existing keys are overwritten; new keys are added.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">.copy()</strong>Returns an independent shallow copy. Changes to the copy do not affect the original — unlike assignment aliasing.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="sec">
+  <div class="sec-head">Homework / self-study (before Lesson 23)</div>
+  <div class="hw">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Build an inventory tracker: a dict of item → quantity. Write functions using each method: <code>show_items()</code> using <code>.keys()</code>, <code>total_stock()</code> using <code>.values()</code>, <code>print_report()</code> using <code>.items()</code>. Then use <code>.update()</code> to merge a "restock" dict and verify with <code>.copy()</code> that the original is preserved.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Extend the word frequency counter: after counting, use <code>sorted(freq.items(), key=lambda x: x[1], reverse=True)</code> to print words from most to least frequent. Then filter out words shorter than 3 characters using a comprehension on <code>.items()</code>.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Research: what is a "dict view object" and how is it different from a list? What happens if you modify the original dict after getting <code>d.keys()</code> — does the view update? Test it and write your findings.</span></div>
+  </div>
+</div>
+
+<!-- Week 5 preview -->
+<div class="sec">
+  <div class="sec-head">Looking ahead — Lesson 23: Tuples</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Lesson 23: Tuples &amp; when to use them</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Tuples are Python's immutable sequences — like lists that can never be changed. Students have already used them without knowing it: <code>.items()</code> yields tuples, function multiple-return values are tuples, and the quiz questions in Week 4 were stored as tuples. Lesson 23 makes this explicit and teaches when to choose tuples over lists.</div>
+    <div class="w5-grid">
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L21 ✓</div><div style="color:var(--color-text-success)">Create &amp; access</div></div>
+      <div class="w5-card" style="border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L22 ✓</div><div style="color:var(--color-text-success)">.keys .values .items</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L23</div><div style="color:var(--color-text-secondary)">Tuples</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L24</div><div style="color:var(--color-text-secondary)">Nested data</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L25</div><div style="color:var(--color-text-success)">🛠 Contact book</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="sec">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">for k in d vs for k in d.keys():</strong> Both iterate keys. The explicit <code>.keys()</code> makes intent clearer and is preferred in teaching. Some students will try <code>for item in d.items()</code> and print the tuple directly — that works, but show them the unpacking form <code>for k, v in d.items()</code> as the clean version.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">dict_keys is not a list:</strong> Students who try to index <code>d.keys()[0]</code> get a TypeError — dict view objects don't support indexing. If they need the first key, they must convert: <code>list(d.keys())[0]</code>. Show this when it comes up rather than pre-emptively.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">.update() silently overwrites:</strong> Students who call <code>d.update(other)</code> expecting a conflict warning will get none — existing keys are silently overwritten. Point out the interactive demo where "age" changes from 15 to 16 without any error. This is by design but surprises beginners.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Word frequency counter is the star activity:</strong> Students who did the Lesson 13 list-based word counter will feel the contrast immediately. The dict version is half the lines and vastly more readable. If time allows, show both side by side and ask which they'd rather maintain.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Lesson 23 bridge:</strong> Close by asking: "When .items() gave us (key, value) pairs in the loop — what type is each pair?" The answer is tuple. Students have been using tuples all lesson. Lesson 23 makes that explicit and shows when immutability is useful.</span></div>
+  </div>
+</div>
+<hr style="margin:2rem 0;border-color:var(--color-border-secondary)">
+<div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+  <button style="margin-top:12px; font-size:13px;" onclick="window.location.href='lesson_ (21).html'">Previous: Lesson 21 — Dictionaries</button>
+  <button style="margin-top:12px; font-size:13px; margin-left: auto; margin-right: auto;" onclick="window.location.href='index.html'">Home Page</button>
+  <button style="margin-top:12px; font-size:13px;" onclick="window.location.href='lesson_ (23).html'">Next: Lesson 23 — Tuples</button>
+</div>
+
+  
+
+<script src="scripts.js">  </script>
+<script>
+// Iteration visualiser
+const ivData = [
+  {k:'Aisha', v:92},
+  {k:'Omar',  v:78},
+  {k:'Zara',  v:95},
+  {k:'Bilal', v:65},
+];
+let ivMethod = 'keys';
+let ivCurrent = -1;
+let ivOutputLines = [];
+
+function ivSetMethod(m) {
+  ivMethod = m;
+  document.querySelectorAll('.iv-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['keys','values','items'][i] === m);
+  });
+  ivReset();
+}
+
+function ivReset() {
+  ivCurrent = -1;
+  ivOutputLines = [];
+  renderIV();
+  document.getElementById('iv-prev').disabled = true;
+  document.getElementById('iv-next').disabled = false;
+}
+
+function renderIV() {
+  // dict display
+  const dictEl = document.getElementById('iv-dict');
+  dictEl.innerHTML = '';
+  ivData.forEach((pair, i) => {
+    const row = document.createElement('div');
+    row.className = 'iv-pair' + (i === ivCurrent ? ' highlighted' : '');
+    let tag = '', tagClass = '';
+    if (i === ivCurrent) {
+      if (ivMethod === 'keys')   { tag = 'k = "' + pair.k + '"'; tagClass = 'ht-key'; }
+      if (ivMethod === 'values') { tag = 'v = ' + pair.v;        tagClass = 'ht-val'; }
+      if (ivMethod === 'items')  { tag = 'k="'+pair.k+'" v='+pair.v; tagClass = 'ht-both'; }
+    }
+    row.innerHTML = `<div class="iv-k">"${pair.k}"</div><div class="iv-v">${pair.v}</div>${tag ? `<span class="iv-highlight-tag ${tagClass}">${tag}</span>` : ''}`;
+    dictEl.appendChild(row);
+  });
+  // output
+  const outEl = document.getElementById('iv-output');
+  if (ivOutputLines.length === 0) { outEl.textContent = '(loop not started)'; return; }
+  outEl.textContent = ivOutputLines.join('\n');
+}
+
+function ivStep(dir) {
+  if (dir > 0) {
+    if (ivCurrent < ivData.length - 1) {
+      ivCurrent++;
+      const p = ivData[ivCurrent];
+      if (ivMethod === 'keys')   ivOutputLines.push(p.k);
+      if (ivMethod === 'values') ivOutputLines.push(String(p.v));
+      if (ivMethod === 'items')  ivOutputLines.push(`("${p.k}", ${p.v})`);
+    }
+  } else {
+    if (ivCurrent >= 0) {
+      ivOutputLines.pop();
+      ivCurrent--;
+    }
+  }
+  document.getElementById('iv-prev').disabled = ivCurrent < 0;
+  document.getElementById('iv-next').disabled = ivCurrent >= ivData.length - 1;
+  renderIV();
+}
+
+// Word counter
+function runWC() {
+  const text = document.getElementById('wc-input').value.toLowerCase().trim();
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const freq = {};
+  words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+  const res = document.getElementById('wc-results');
+  res.innerHTML = '';
+  // keys col
+  const kc = document.createElement('div'); kc.className = 'wc-col';
+  kc.innerHTML = `<div class="wc-col-label" style="color:var(--color-text-info)">.keys()</div><div class="wc-col-items">${sorted.map(([w])=>`<div>"${w}"</div>`).join('')}</div>`;
+  // values col
+  const vc = document.createElement('div'); vc.className = 'wc-col';
+  vc.innerHTML = `<div class="wc-col-label" style="color:var(--color-text-success)">.values()</div><div class="wc-col-items">${sorted.map(([,c])=>`<div>${c}</div>`).join('')}</div>`;
+  // items col
+  const ic = document.createElement('div'); ic.className = 'wc-col';
+  ic.innerHTML = `<div class="wc-col-label" style="color:var(--color-text-warning)">.items()</div><div class="wc-col-items">${sorted.map(([w,c])=>`<div>("${w}", ${c})</div>`).join('')}</div>`;
+  res.appendChild(kc); res.appendChild(vc); res.appendChild(ic);
+}
+
+runWC();
+ivReset();
+
+// Update/copy demo
+let ucBase = {name:'Aisha', age:15, score:92};
+let ucBackup = {...ucBase};
+let ucAliased = false;
+
+function ucRenderDict(id, data, highlights) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  Object.entries(data).forEach(([k, v]) => {
+    const row = document.createElement('div');
+    row.className = 'uc-dict-pair';
+    const hl = highlights && highlights[k];
+    const vStr = typeof v === 'string' ? `"${v}"` : String(v);
+    row.innerHTML = `<span class="uc-k">"${k}":</span><span class="uc-v ${hl || ''}">${vStr}</span>`;
+    el.appendChild(row);
+  });
+}
+
+function ucLog(msg) {
+  const el = document.getElementById('uc-log');
+  el.textContent = msg;
+}
+
+function ucReset() {
+  ucBase = {name:'Aisha', age:15, score:92};
+  ucBackup = {...ucBase};
+  ucAliased = false;
+  ucRenderDict('uc-base', ucBase, {});
+  ucRenderDict('uc-backup', ucBackup, {});
+  ucLog('Reset — base has 3 keys, backup is an independent copy.');
+}
+
+function ucUpdate() {
+  const extras = {city:'Lahore', age:16};
+  const highlights = {};
+  Object.keys(extras).forEach(k => {
+    highlights[k] = k in ucBase ? 'uc-changed' : 'uc-new';
+    ucBase[k] = extras[k];
+  });
+  ucRenderDict('uc-base', ucBase, highlights);
+  ucRenderDict('uc-backup', ucBackup, {});
+  ucLog('base.update({"city":"Lahore","age":16}) — "age" overwritten (orange), "city" added (green). Backup unchanged.');
+}
+
+function ucModify() {
+  ucBase['score'] = 50;
+  ucRenderDict('uc-base', ucBase, {score:'uc-changed'});
+  ucRenderDict('uc-backup', ucBackup, {});
+  ucLog('base["score"] = 50 — backup still has score:92 because .copy() made it independent.');
+}
+
+function ucShowAlias() {
+  const alias = ucBase;
+  alias['score'] = 0;
+  ucRenderDict('uc-base', ucBase, {score:'uc-changed'});
+  ucLog('alias = base (no .copy!) then alias["score"] = 0 — BOTH base and alias changed! Same dict object.');
+}
+
+ucReset();
+
+// Riddle cards
+const riddles2 = [
+  {expr:'list(inv.keys())', answer:"['apples', 'bananas', 'oranges']", hint:'.keys() converted to list', error:false},
+  {expr:'list(inv.values())', answer:'[10, 5, 8]', hint:'.values() — order matches insertion', error:false},
+  {expr:'sum(inv.values())', answer:'23', hint:'sum all stock quantities', error:false},
+  {expr:'max(inv, key=inv.get)', answer:'"apples"', hint:'key with the largest value', error:false},
+  {expr:'"oranges" in inv.values()', answer:'False', hint:'"oranges" is a key, not a value', error:false},
+  {expr:'8 in inv.values()', answer:'True', hint:'8 is the value for "oranges"', error:false},
+  {expr:'for k,v in inv.items(): print(k,v)', answer:'apples 10 / bananas 5 / oranges 8', hint:'.items() unpacking', error:false},
+];
+
+function buildRiddles2() {
+  const grid = document.getElementById('riddle-grid2');
+  riddles2.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'riddle-row';
+    row.innerHTML = `<div class="riddle-expr">${r.expr}</div><div class="riddle-hint">tap to reveal · ${r.hint}</div><div class="riddle-answer ${r.error?'riddle-error':''}">→ ${r.answer}</div>`;
+    row.onclick = () => row.classList.toggle('revealed');
+    grid.appendChild(row);
+  });
+}
+buildRiddles2();
+
+// Grade reporter tool
+let gtScores = {Aisha:92, Omar:78, Zara:95, Bilal:65};
+
+function gtGrade(s) {
+  if (s>=90) return ['A','gt-grade-A'];
+  if (s>=75) return ['B','gt-grade-B'];
+  if (s>=60) return ['C','gt-grade-C'];
+  return ['F','gt-grade-F'];
+}
+
+function gtRender() {
+  const tbody = document.getElementById('gt-tbody');
+  tbody.innerHTML = '';
+  Object.entries(gtScores).forEach(([n, s]) => {
+    const [g, cls] = gtGrade(s);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${n}</td><td>${s}</td><td class="${cls}">${g}</td>`;
+    tbody.appendChild(tr);
+  });
+  const vals = Object.values(gtScores);
+  const stats = document.getElementById('gt-stats');
+  if (vals.length > 0) {
+    const avg = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
+    stats.innerHTML = `<span class="gt-stat">Count: ${vals.length}</span><span class="gt-stat">Average: ${avg}</span><span class="gt-stat">Highest: ${Math.max(...vals)}</span><span class="gt-stat">Lowest: ${Math.min(...vals)}</span>`;
+  } else {
+    stats.innerHTML = '';
+  }
+}
+
+function gtAdd() {
+  const name = document.getElementById('gt-name').value.trim();
+  const score = parseInt(document.getElementById('gt-score').value);
+  if (!name || isNaN(score) || score < 0 || score > 100) return;
+  gtScores[name] = score;
+  document.getElementById('gt-name').value = '';
+  document.getElementById('gt-score').value = '';
+  gtRender();
+}
+
+function gtReset() {
+  gtScores = {Aisha:92, Omar:78, Zara:95, Bilal:65};
+  gtRender();
+}
+
+gtRender();
+
+// Method chooser
+const chooserScenarios = [
+  { q: 'Print a list of all field names in a student profile dict', correct: '.keys()', opts: ['.keys()', '.values()', '.items()'] },
+  { q: 'Calculate the average of all exam scores stored in a dict', correct: '.values()', opts: ['.keys()', '.values()', '.items()'] },
+  { q: 'Print each student\'s name alongside their score in a formatted table', correct: '.items()', opts: ['.keys()', '.values()', '.items()'] },
+  { q: 'Check whether the value 0 exists anywhere in an inventory dict', correct: '.values()', opts: ['.keys()', '.values()', '.items()'] },
+  { q: 'Build a list of names of students who scored above 80', correct: '.items()', opts: ['.keys()', '.values()', '.items()'] },
+  { q: 'Find the total number of unique words in a frequency dict', correct: '.keys()', opts: ['.keys()', '.values()', '.items()'] },
+];
+
+const feedbackText = {
+  '.keys()': 'Keys only — gives you the name of each field without touching the values.',
+  '.values()': 'Values only — perfect for numeric operations like sum(), max(), min().',
+  '.items()': 'Both key and value — unpack into two variables for full access to each pair.',
+};
+
+function buildChooser() {
+  const body = document.getElementById('chooser-body');
+  chooserScenarios.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'ch2-scenario';
+    div.innerHTML = `<div class="ch2-q">${i+1}. ${s.q}</div>
+      <div class="ch2-opts">${s.opts.map(o => `<button class="ch2-opt" onclick="chooseMethod(this, '${o}', '${s.correct}', ${i})">${o}</button>`).join('')}</div>
+      <div class="ch2-fb" id="ch2-fb-${i}"></div>`;
+    body.appendChild(div);
+  });
+}
+
+function chooseMethod(btn, chosen, correct, i) {
+  const opts = btn.parentElement.querySelectorAll('.ch2-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const fb = document.getElementById(`ch2-fb-${i}`);
+  if (chosen === correct) {
+    btn.classList.add('chosen-correct');
+    fb.textContent = `✓ Correct! ${feedbackText[correct]}`;
+    fb.style.color = 'var(--color-text-success)';
+  } else {
+    btn.classList.add('chosen-wrong');
+    opts.forEach(o => { if (o.textContent === correct) o.classList.add('reveal-correct'); });
+    fb.textContent = `✗ Better choice: ${correct} — ${feedbackText[correct]}`;
+    fb.style.color = 'var(--color-text-danger)';
+  }
+  fb.style.display = 'block';
+}
+
+buildChooser();
+
+// Sorted word counter
+let stMode = 'alpha';
+function stSort(mode) {
+  stMode = mode;
+  ['st-alpha','st-freq-asc','st-freq-desc'].forEach(id => {
+    document.getElementById(id).classList.toggle('active', id === 'st-' + mode);
+  });
+  runST();
+}
+
+function runST() {
+  const text = document.getElementById('st-input').value.toLowerCase().trim();
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  const freq = {};
+  words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+  let entries = Object.entries(freq);
+  if (stMode === 'alpha') entries.sort((a, b) => a[0].localeCompare(b[0]));
+  else if (stMode === 'freq-asc') entries.sort((a, b) => a[1] - b[1]);
+  else entries.sort((a, b) => b[1] - a[1]);
+  const res = document.getElementById('st-results');
+  if (entries.length === 0) { res.textContent = '(type text above)'; return; }
+  res.innerHTML = entries.map(([w, c]) =>
+    `<div style="display:flex;gap:12px"><span style="color:var(--color-text-info);min-width:100px">"${w}"</span><span style="color:var(--color-text-secondary)">×${c}</span>${c > 1 ? `<span style="color:var(--color-text-success);font-size:11px">${'█'.repeat(c)}</span>` : ''}</div>`
+  ).join('');
+}
+
+document.getElementById('st-input').addEventListener('input', runST);
+runST();
+
+// Exit ticket
+function ans(el, correct) {
+  if (document.querySelector('.ck-opt.correct')) return;
+  document.querySelectorAll('.ck-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! .items() produces (key, value) tuples on each iteration. Writing "for k, v in d.items()" unpacks each tuple into two variables automatically — k gets the key and v gets the value. This is the most versatile iteration method and the one you\'ll use most often.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is C. .items() yields (key, value) pairs as tuples. The "for k, v in" syntax unpacks each tuple automatically. This is not the same as enumerate() — there is no integer index, just the actual key and value from the dictionary.';
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link  href="styles.css" rel="stylesheet">
+<style>
+/* anatomy panel */
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.anatomy-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.anatomy-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.anatomy-code{font-family:var(--font-mono);font-size:13px;line-height:2.2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.anatomy-labels{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* call trace */
+.call-trace{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.ct-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ct-body{padding:14px}
+.ct-step-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
+.ct-line-num{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary);min-width:24px;margin-top:3px}
+.ct-code{font-family:var(--font-mono);font-size:12.5px;flex:1;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);cursor:pointer;transition:all .15s}
+.ct-code.active{background:var(--color-background-info);border-color:var(--color-border-info)}
+.ct-code.executed{background:var(--color-background-success);border-color:var(--color-border-success);opacity:.7}
+.ct-explanation{font-size:12px;color:var(--color-text-secondary);flex:1;padding-top:4px}
+.ct-arrow{font-size:16px;flex-shrink:0;margin-top:2px}
+.ct-nav{display:flex;gap:8px;margin-top:10px}
+.ct-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.ct-btn:hover{background:var(--color-background-primary)}
+.ct-btn:disabled{opacity:.4;cursor:not-allowed}
+.ct-output-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-family:var(--font-mono);font-size:12px;border:0.5px solid var(--color-border-tertiary);min-height:28px;margin-top:8px;color:var(--color-text-success)}
+/* dry compare */
+.dry-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.dry-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.dry-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.dry-bad .dry-head{background:var(--color-background-danger);color:var(--color-text-danger)}
+.dry-good .dry-head{background:var(--color-background-success);color:var(--color-text-success)}
+/* docstring demo */
+.docstring-demo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.dd-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.dd-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 16: Defining &amp; calling functions — Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 16: Defining &amp; calling functions</p>
+      <p class="hero-sub">Week 4 — Functions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">All of weeks 1–3</div></div>
+    <div class="meta-item"><div class="meta-label">New keywords</div><div class="meta-val">def · return · docstring</div></div>
+    <div class="meta-item"><div class="meta-label">Key principle</div><div class="meta-val">DRY — Don't Repeat Yourself</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Explain what a function is and why programs need them (DRY principle)</li>
+    <li>Define a function using <code>def</code>, a name, parentheses, a colon, and an indented body</li>
+    <li>Call a function by name and trace program execution into and out of it</li>
+    <li>Write a docstring to document what a function does</li>
+    <li>Understand that a function definition does nothing until the function is called</li>
+    <li>Refactor repeated code into a reusable function</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The recipe analogy (5 min)</div>
+        <div class="tl-desc">Say: "A recipe is a set of steps with a name — 'Make Tea'. You write the recipe once. Every time someone wants tea, you say 'Make Tea' — you don't rewrite all the steps. A function is exactly that: a named recipe that can be called whenever you need it." Then show the repeated-code example on the board (the DRY panel below). Ask students: "How many times is this banner-printing code repeated?" Count them. Then say: "What if we need to change the banner width? How many places do we fix?" Land the insight — <strong>functions exist to write code once and use it many times</strong>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Function anatomy + def keyword (8 min)</div>
+        <div class="tl-desc">Show the anatomy panel. Walk through each part: <code>def</code>, the name, the empty parentheses, the colon, the indented body, and how calling the function jumps execution into it. Use the call trace tool to step through execution line by line — visually show the "jump to function, run body, return to caller" flow. Emphasise: the <code>def</code> block just <em>defines</em> the recipe — nothing runs until the function is <em>called</em>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:13</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Calling functions + execution order (7 min)</div>
+        <div class="tl-desc">Run Examples 1–2 on the projector. Before running each one, ask: "What will print, and in what order?" Trace the execution path with your finger. Show that calling the same function multiple times is the whole point — change one line inside it and the change propagates everywhere it's called. Show also that calling a function before defining it causes a <code>NameError</code>.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:20</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Docstrings + the DRY refactor (7 min)</div>
+        <div class="tl-desc">Show Example 3 — the repeated banner code from Week 3 projects, then its refactored version with a function and docstring. Point out <code>"""..."""</code> syntax. Show that calling <code>help(function_name)</code> in Python displays the docstring. Then show the Week 3 project's <code>show_tasks()</code> function as a live example students have already seen.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Reusable greeter (10 min)</div>
+        <div class="tl-desc">Students convert repeated greeting code into a clean function and call it multiple times with different inputs. Cements define-once, call-many.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — DRY refactor challenge (10 min)</div>
+        <div class="tl-desc">Students receive a messy 30-line program full of repeated blocks and refactor it into clean functions. Tests recognition of repetition and ability to extract it.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Call trace tool + exit ticket (8–10 min)</div>
+        <div class="tl-desc">Students step through an execution trace in the interactive tool. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy panel -->
+<div class="section">
+  <div class="sec-head">Anatomy of a function — display on projector</div>
+  <div class="anatomy">
+    <div class="anatomy-head">Every function has five components — definitions do nothing; only calls run code</div>
+    <div class="anatomy-body">
+      <div class="anatomy-code"><span style="color:#C678DD">def</span> <span style="color:#61AFEF">greet</span>()<span style="color:#ABB2BF">:</span>
+    <span style="color:#98C379">"""Prints a friendly greeting."""</span>
+    <span style="color:#61AFEF">print</span>(<span style="color:#98C379">"Hello, World!"</span>)
+
+<span style="color:#7F848E;font-style:italic"># Nothing has run yet — only defined</span>
+
+<span style="color:#61AFEF">greet</span>()   <span style="color:#7F848E;font-style:italic"># ← this runs the body</span>
+<span style="color:#61AFEF">greet</span>()   <span style="color:#7F848E;font-style:italic"># ← called again</span></div>
+      <div class="anatomy-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>def</strong> — keyword that says "I am defining a function"</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>greet</strong> — the function name; used to call it later. Snake_case, descriptive verb.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div><strong>()</strong> — parentheses; empty for now (parameters come in Lesson 17)</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div><strong>indented body</strong> — everything indented under def is part of the function. Not run until called.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:#8B5CF6"></div><div><strong>greet()</strong> — the call. This is what actually runs the body. Call it as many times as you like.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>Defining a function does NOT run it.</strong> Students constantly write a <code>def</code> block and wonder why nothing happens. The <code>def</code> just stores the recipe. You must call the function by name with <code>()</code> to execute it. This is the single most important point of Lesson 16.</span></div>
+</div>
+
+<!-- DRY comparison -->
+<div class="section">
+  <div class="sec-head">DRY principle — Don't Repeat Yourself</div>
+  <div class="dry-compare">
+    <div class="dry-col dry-bad">
+      <div class="dry-head">✗ WET code — copy-pasted 3 times</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="cm"># Banner for section 1</span>
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)
+<span class="fn">print</span>(<span class="str">"  SECTION 1"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)
+
+<span class="cm"># Banner for section 2</span>
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)
+<span class="fn">print</span>(<span class="str">"  SECTION 2"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)
+
+<span class="cm"># Banner for section 3</span>
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)
+<span class="fn">print</span>(<span class="str">"  SECTION 3"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 30</span>)</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-danger)">9 lines. Want to change the width? Edit 6 places. Want to change <code>=</code> to <code>-</code>? Edit 6 places.</div>
+    </div>
+    <div class="dry-col dry-good">
+      <div class="dry-head">✓ DRY code — define once, call anywhere</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">def</span> <span class="fn">print_banner</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"=" * 30</span>)
+
+<span class="fn">print_banner</span>()
+<span class="fn">print</span>(<span class="str">"  SECTION 1"</span>)
+<span class="fn">print_banner</span>()
+
+<span class="fn">print_banner</span>()
+<span class="fn">print</span>(<span class="str">"  SECTION 2"</span>)
+<span class="fn">print_banner</span>()
+
+<span class="fn">print_banner</span>()
+<span class="fn">print</span>(<span class="str">"  SECTION 3"</span>)
+<span class="fn">print_banner</span>()</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success)">Change the width in ONE place — all 6 calls update instantly.</div>
+    </div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>The DRY rule of thumb:</strong> If you find yourself writing the same (or nearly the same) code more than twice — stop. Give it a name. Make it a function. Every time you copy-paste code, you create a maintenance debt.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Define once, call many times</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">say_hello</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Hello!"</span>)
+    <span class="fn">print</span>(<span class="str">"How are you today?"</span>)
+
+<span class="fn">print</span>(<span class="str">"Before first call"</span>)
+<span class="fn">say_hello</span>()
+<span class="fn">print</span>(<span class="str">"Between calls"</span>)
+<span class="fn">say_hello</span>()
+<span class="fn">print</span>(<span class="str">"After second call"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output — predict order before running</div>
+  <div class="out">Before first call<br>Hello!<br>How are you today?<br>Between calls<br>Hello!<br>How are you today?<br>After second call</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Ask before running:</strong> "What prints first? What prints between the two calls? How many lines does the function body have?" Let students answer, then run. Trace execution with your cursor — leave the function, return to main code, leave again.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Definition before call; calling before defining</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ✓ Correct — define first, then call</span>
+<span class="kw">def</span> <span class="fn">show_border</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"-" * 20</span>)
+
+<span class="fn">show_border</span>()   <span class="cm"># works fine</span>
+
+<span class="cm"># ✗ Wrong — call before define</span>
+<span class="fn">wave</span>()          <span class="cm"># NameError: name 'wave' is not defined</span>
+
+<span class="kw">def</span> <span class="fn">wave</span>()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"👋"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">--------------------<br>NameError: name 'wave' is not defined</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Rule to write on the board:</strong> Define before you call. Python reads files top to bottom. A function must exist in memory before you can use it. Convention: put all <code>def</code> blocks at the top of the file, calls at the bottom.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Docstrings and the DRY refactor</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">print_banner</span>()<span class="op">:</span>
+    <span class="str">"""Print a decorative section separator line."""</span>
+    <span class="fn">print</span>(<span class="str">"=" * 40</span>)
+
+<span class="kw">def</span> <span class="fn">show_welcome</span>()<span class="op">:</span>
+    <span class="str">"""Display the app welcome screen."""</span>
+    <span class="fn">print_banner</span>()
+    <span class="fn">print</span>(<span class="str">"  Welcome to the Student Portal"</span>)
+    <span class="fn">print_banner</span>()
+
+<span class="kw">def</span> <span class="fn">show_goodbye</span>()<span class="op">:</span>
+    <span class="str">"""Display the app goodbye screen."""</span>
+    <span class="fn">print_banner</span>()
+    <span class="fn">print</span>(<span class="str">"  See you next time!"</span>)
+    <span class="fn">print_banner</span>()
+
+<span class="cm"># --- Main program ---</span>
+<span class="fn">show_welcome</span>()
+<span class="fn">print</span>(<span class="str">"  (app runs here...)"</span>)
+<span class="fn">show_goodbye</span>()
+
+<span class="cm"># Access the docstring</span>
+<span class="fn">print</span>(<span class="fn">help</span>(<span class="fn">print_banner</span>))</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">========================================<br>  Welcome to the Student Portal<br>========================================<br>  (app runs here...)<br>========================================<br>  See you next time!<br>========================================<br>Help on function print_banner:<br>  print_banner() — Print a decorative section separator line.</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Functions calling other functions:</strong> Point out that <code>show_welcome()</code> calls <code>print_banner()</code> inside its body. This is completely normal and very powerful. A function can call any other function that has already been defined above it.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — The main() pattern</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — the professional structure</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">draw_title</span>()<span class="op">:</span>
+    <span class="str">"""Draw the app title block."""</span>
+    <span class="fn">print</span>(<span class="str">"*" * 30</span>)
+    <span class="fn">print</span>(<span class="str">"     MY APP"</span>)
+    <span class="fn">print</span>(<span class="str">"*" * 30</span>)
+
+<span class="kw">def</span> <span class="fn">run_menu</span>()<span class="op">:</span>
+    <span class="str">"""Show the main menu options."""</span>
+    <span class="fn">print</span>(<span class="str">"1. Start"</span>)
+    <span class="fn">print</span>(<span class="str">"2. Help"</span>)
+    <span class="fn">print</span>(<span class="str">"3. Quit"</span>)
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Entry point — orchestrates the whole app."""</span>
+    <span class="fn">draw_title</span>()
+    <span class="fn">run_menu</span>()
+
+<span class="fn">main</span>()   <span class="cm"># the only line that runs at global level</span></pre>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🏗</span><span><strong>The main() pattern:</strong> Professional Python programs define all logic in functions and call only <code>main()</code> at the bottom. This makes code testable, readable, and easy to navigate. Start using it — students who adopt it now build better programs in every future lesson.</span></div>
+</div>
+
+<!-- Interactive call trace -->
+<div class="section">
+  <div class="sec-head">Interactive call trace — step through execution</div>
+  <div class="call-trace">
+    <div class="ct-head">
+      <span>Click each line to step through — see where execution jumps</span>
+      <div style="display:flex;gap:6px">
+        <button class="ct-btn" id="ct-prev" onclick="ctStep(-1)" disabled>← Prev</button>
+        <button class="ct-btn" id="ct-next" onclick="ctStep(1)">Next →</button>
+        <button class="ct-btn" onclick="ctReset()">Reset</button>
+      </div>
+    </div>
+    <div class="ct-body">
+      <div id="ct-steps"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:10px;font-weight:500">Current output:</div>
+      <div class="ct-output-box" id="ct-output">(nothing printed yet)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Reusable greeter</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Individual</div>
+    <div class="activity-title">Convert copy-pasted greeting code into a clean reusable function</div>
+    <div class="activity-desc">Students start with a messy program that repeats the same greeting logic three times. They extract it into a single function, write a docstring, and call it three times. This cements the core lesson: define once, use many times.</div>
+    <ol class="steps-list">
+      <li>Look at the starter code below — identify the repeated block</li>
+      <li>Define a function <code>print_greeting()</code> with a docstring explaining what it does</li>
+      <li>Move the repeated logic inside the function body</li>
+      <li>Replace each of the three repeated blocks with a single function call</li>
+      <li>Verify the output is identical to the original</li>
+      <li>Extension: add a second function <code>print_farewell()</code> and a <code>main()</code> that calls both</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code — find and extract the repeated block</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — before refactor (WET)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># Student 1</span>
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+<span class="fn">print</span>(<span class="str">"  Good morning!"</span>)
+<span class="fn">print</span>(<span class="str">"  Welcome to Python class."</span>)
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+
+<span class="cm"># Student 2</span>
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+<span class="fn">print</span>(<span class="str">"  Good morning!"</span>)
+<span class="fn">print</span>(<span class="str">"  Welcome to Python class."</span>)
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+
+<span class="cm"># Student 3</span>
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+<span class="fn">print</span>(<span class="str">"  Good morning!"</span>)
+<span class="fn">print</span>(<span class="str">"  Welcome to Python class."</span>)
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Target output — identical, but produced by calling a function 3 times</div>
+    <div class="out">=========================<br>  Good morning!<br>  Welcome to Python class.<br>=========================<br>=========================<br>  Good morning!<br>  Welcome to Python class.<br>=========================<br>=========================<br>  Good morning!<br>  Welcome to Python class.<br>=========================</div>
+    <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>After students finish:</strong> Ask them to change the banner character from <code>=</code> to <code>★</code>. With the function version, it's one edit. With the original, it's six. Let them feel the difference.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — DRY refactor challenge</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="activity-title">Refactor a 30-line messy program into clean functions</div>
+    <div class="activity-desc">Students receive a program that does three distinct things — each repeated or scattered across the file. They identify the repeating patterns, name them, extract them into functions with docstrings, and produce a clean version with a <code>main()</code> entry point.</div>
+    <ol class="steps-list">
+      <li>Read the starter code and identify three distinct logical blocks</li>
+      <li>Give each block a descriptive function name (verb + noun, e.g. <code>show_menu</code>, <code>print_score</code>)</li>
+      <li>Define each function above <code>main()</code> with a docstring</li>
+      <li>Write <code>main()</code> that calls them in the right order</li>
+      <li>Run both versions — confirm output is identical</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code — identify the three logical blocks</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — messy version to refactor</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># A messy program — refactor into 3 functions + main()</span>
+
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)
+<span class="fn">print</span>(<span class="str">"     STUDENT GRADE REPORTER"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)
+
+<span class="var">scores</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">67</span>, <span class="num">74</span>, <span class="num">90</span>]
+<span class="var">total</span>  = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">s</span>
+<span class="var">avg</span> = <span class="var">total</span> <span class="op">/</span> <span class="fn">len</span>(<span class="var">scores</span>)
+<span class="fn">print</span>(<span class="str">f"  Scores  : {scores}"</span>)
+<span class="fn">print</span>(<span class="str">f"  Average : {avg:.1f}"</span>)
+<span class="fn">print</span>(<span class="str">f"  Highest : {max(scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"  Lowest  : {min(scores)}"</span>)
+
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)
+<span class="fn">print</span>(<span class="str">"     PASS / FAIL SUMMARY"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)
+
+<span class="var">passing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span> <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span>]
+<span class="var">failing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span> <span class="kw">if</span> <span class="var">s</span> <span class="op">&lt;</span> <span class="num">50</span>]
+<span class="fn">print</span>(<span class="str">f"  Passing ({len(passing)}): {passing}"</span>)
+<span class="fn">print</span>(<span class="str">f"  Failing ({len(failing)}): {failing}"</span>)
+
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)
+<span class="fn">print</span>(<span class="str">"       END OF REPORT"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 35</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Target structure after refactor</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — clean refactored version</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">print_header</span>(<span class="var">title</span>)<span class="op">:</span>
+    <span class="str">"""Print a formatted section header."""</span>
+    <span class="fn">print</span>(<span class="str">"=" * 35</span>)
+    <span class="fn">print</span>(<span class="str">f"     {title}"</span>)
+    <span class="fn">print</span>(<span class="str">"=" * 35</span>)
+
+<span class="kw">def</span> <span class="fn">show_stats</span>(<span class="var">scores</span>)<span class="op">:</span>
+    <span class="str">"""Print score statistics for a list of scores."""</span>
+    <span class="var">avg</span> = <span class="fn">sum</span>(<span class="var">scores</span>) <span class="op">/</span> <span class="fn">len</span>(<span class="var">scores</span>)
+    <span class="fn">print</span>(<span class="str">f"  Scores  : {scores}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Average : {avg:.1f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Highest : {max(scores)}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Lowest  : {min(scores)}"</span>)
+
+<span class="kw">def</span> <span class="fn">show_pass_fail</span>(<span class="var">scores</span>)<span class="op">:</span>
+    <span class="str">"""Print pass/fail breakdown for a list of scores."""</span>
+    <span class="var">passing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span> <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span>]
+    <span class="var">failing</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span> <span class="kw">if</span> <span class="var">s</span> <span class="op">&lt;</span> <span class="num">50</span>]
+    <span class="fn">print</span>(<span class="str">f"  Passing ({len(passing)}): {passing}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Failing ({len(failing)}): {failing}"</span>)
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Run the grade reporter."""</span>
+    <span class="var">scores</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">67</span>, <span class="num">74</span>, <span class="num">90</span>]
+    <span class="fn">print_header</span>(<span class="str">"STUDENT GRADE REPORTER"</span>)
+    <span class="fn">show_stats</span>(<span class="var">scores</span>)
+    <span class="fn">print_header</span>(<span class="str">"PASS / FAIL SUMMARY"</span>)
+    <span class="fn">show_pass_fail</span>(<span class="var">scores</span>)
+    <span class="fn">print_header</span>(<span class="str">"END OF REPORT"</span>)
+
+<span class="fn">main</span>()</pre>
+    </div>
+    <div class="tip-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Notice:</strong> The refactored version is slightly longer in total lines, but far more readable — and the <code>print_header()</code> function now accepts a <code>title</code> argument (a preview of Lesson 17). Students who notice this are ready to think about parameters.</span></div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">A student writes a function definition at the top of their file but the program prints nothing. What is the most likely cause?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>The <code>def</code> keyword has a typo — Python can't read the function</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span>The function body needs a <code>return</code> statement to run</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span>The function was defined but never called — a <code>def</code> block only stores the recipe; you must call the function with <code>function_name()</code> to run it</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>The print statements inside the function need to be at the top level, not indented</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Write a function called <code>draw_line()</code> with a docstring that says "Prints a line of dashes." The body should print 20 dashes. Then write two lines that call it — so two lines appear in the output.
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Function</strong>A named, reusable block of code. Defined with <code>def</code>, executed only when called by name with <code>()</code>.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">def</strong>The keyword that begins a function definition. Followed by the name, parentheses, and a colon.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Function call</strong>Invoking a function by writing its name followed by <code>()</code>. This is what actually runs the body.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Docstring</strong>A string literal immediately after the <code>def</code> line, between <code>"""</code> triple quotes. Documents what the function does.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">DRY principle</strong>"Don't Repeat Yourself" — if the same code appears more than twice, extract it into a function.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">main()</strong>A conventional function name for the program entry point. Called once at the bottom of the file.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 17)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Take your Week 3 to-do list app and refactor it: extract the task display code into a <code>show_tasks()</code> function, the menu printing into a <code>show_menu()</code> function, and wrap everything in <code>main()</code>. The output should be identical.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Write three small functions: <code>print_stars()</code> prints 10 stars, <code>print_numbers()</code> prints 1–5, and <code>print_both()</code> calls the other two. Write a <code>main()</code> that calls <code>print_both()</code> twice. Predict the output before running.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Research: what is the difference between defining and calling a function? Write a two-sentence explanation in your own words, with a one-line code example of each.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">The #1 mistake of Lesson 16:</strong> Students who write a <code>def</code> block and then wonder why nothing happens. They defined the recipe but never made the tea. Every time this happens, ask: "Did you call it? Show me the line where you call the function." A missing <code>function_name()</code> line at the bottom is the cause 95% of the time.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — calling before defining:</strong> Students who put the function call before the <code>def</code> block get a <code>NameError</code>. The fix is simple: move the <code>def</code> above the call. Reinforce the rule: <em>Python reads top to bottom. Define before you use.</em></span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common confusion — indentation:</strong> Students who put code outside the function body by mis-indenting think it's inside the function. Use the same coloured indentation visualiser mental model from Lesson 8. "Is this line indented under the def? If not, it's not part of the function."</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Connect to Week 3 project:</strong> Start the lesson by opening the teacher solution from Lesson 15 and pointing to <code>show_tasks()</code>. Students have already seen a function in context. Say: "Today we learn to write these ourselves." This gives them a familiar anchor.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Lesson 17 preview:</strong> Both activities in this lesson use functions without parameters — the function does the same thing every time. After Activity 1, say: "What if we wanted the banner to say different things? We'd need to pass information into the function. That's what parameters are — and that's tomorrow." The refactored code in Activity 2 already uses a <code>title</code> parameter as a preview.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (17).html'">Next: Lesson 17 — Parameters &amp; return</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Call trace
+const ctSteps=[
+  {line:'def say_hi():',note:'Python reads the def — stores the function in memory. Nothing runs.',output:'',phase:'define'},
+  {line:'    print("Hi there!")',note:'This is inside the function body — skipped for now.',output:'',phase:'define'},
+  {line:'    print("Nice to meet you.")',note:'Also inside the body — skipped.',output:'',phase:'define'},
+  {line:'print("Before call")',note:'This is at the top level — runs immediately.',output:'Before call',phase:'run'},
+  {line:'say_hi()',note:'Function call! Execution jumps INTO the function body.',output:'',phase:'call'},
+  {line:'    print("Hi there!")',note:'Now inside say_hi() — this runs.',output:'Hi there!',phase:'inside'},
+  {line:'    print("Nice to meet you.")',note:'Second line inside say_hi() — runs.',output:'Nice to meet you.',phase:'inside'},
+  {line:'← returns here',note:'Function body finished. Execution returns to where the call was made.',output:'',phase:'return'},
+  {line:'print("After call")',note:'Back at top level — runs.',output:'After call',phase:'run'},
+];
+let ctCurrent=0;
+let ctOutput=[];
+function renderCT(){
+  const steps=document.getElementById('ct-steps');
+  steps.innerHTML='';
+  ctSteps.forEach((s,i)=>{
+    const row=document.createElement('div');
+    row.className='ct-step-row';
+    const phaseColors={'define':'var(--color-text-secondary)','run':'var(--color-text-success)','call':'var(--color-text-warning)','inside':'var(--color-text-info)','return':'var(--color-text-warning)'};
+    const isActive=i===ctCurrent;
+    const isExec=i<ctCurrent;
+    const codeEl=document.createElement('div');
+    codeEl.className='ct-code'+(isActive?' active':isExec?' executed':'');
+    codeEl.style.color=isActive?phaseColors[s.phase]:(isExec?'var(--color-text-tertiary)':'');
+    codeEl.textContent=s.line;
+    const expEl=document.createElement('div');
+    expEl.className='ct-explanation';
+    expEl.textContent=isActive?s.note:'';
+    row.innerHTML='';
+    const numEl=document.createElement('div');
+    numEl.className='ct-line-num';
+    numEl.textContent=i+1;
+    row.appendChild(numEl);
+    row.appendChild(codeEl);
+    row.appendChild(expEl);
+    steps.appendChild(row);
+  });
+  const outLines=ctSteps.slice(0,ctCurrent+1).filter(s=>s.output).map(s=>s.output);
+  document.getElementById('ct-output').textContent=outLines.length?outLines.join('\n'):'(nothing printed yet)';
+  document.getElementById('ct-prev').disabled=ctCurrent===0;
+  document.getElementById('ct-next').disabled=ctCurrent===ctSteps.length-1;
+}
+function ctStep(dir){ctCurrent=Math.max(0,Math.min(ctSteps.length-1,ctCurrent+dir));renderCT();}
+function ctReset(){ctCurrent=0;renderCT();}
+renderCT();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! A def block stores the function definition — it does not run the code inside. You must call the function by writing its name followed by () somewhere in your program. No call = no execution.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. Defining a function with def only stores it in memory. The body never runs until the function is explicitly called with function_name(). This is one of the most important things to understand about functions.';
+  }
+}
+
+</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* Concept compare styling */
+.concept-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.concept-col { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; }
+.concept-col-head { padding: 7px 12px; font-size: 12px; font-weight: 500; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.concept-col-body { padding: 10px 12px; font-size: 13px; color: var(--color-text-secondary); }
+.col-old { background: var(--color-background-secondary); }
+.col-new { background: var(--color-background-success); }
+.col-old .concept-col-head { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+.col-new .concept-col-head { background: var(--color-background-success); color: var(--color-text-success); }
+.sandbox { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; margin: 10px 0; }
+.sandbox-head { padding: 8px 14px; font-size: 12px; font-weight: 500; background: var(--color-background-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; color: var(--color-text-secondary); }
+.sandbox-body { padding: 12px 14px; }
+.sandbox-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+.sandbox-label { font-size: 13px; min-width: 70px; color: var(--color-text-secondary); }
+.sandbox-input { flex: 1; min-width: 100px; font-size: 13px; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
+.sandbox-result { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; margin-top: 4px; min-height: 36px; font-family: var(--font-mono); color: var(--color-text-success); border: 0.5px solid var(--color-border-tertiary); }
+.run-btn { padding: 6px 16px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 13px; cursor: pointer; transition: background .1s; font-family: var(--font-sans); }
+.run-btn:hover { background: var(--color-background-secondary); }
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 3: User Input and String Formatting — Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 3: User input &amp; string formatting</p>
+      <p class="lp-hero-sub">Week 1 — Python Foundations · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">Variables, types</div></div>
+    <div class="meta-item"><div class="meta-label">New functions</div><div class="meta-val">input(), int(), float()</div></div>
+    <div class="meta-item"><div class="meta-label">New syntax</div><div class="meta-val">f-strings</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-target" aria-hidden="true"></i> Learning objectives</div>
+  <ul class="obj-list">
+    <li>Use <code>input()</code> to collect text from a user and store it in a variable</li>
+    <li>Understand that <code>input()</code> always returns a <code>str</code> — even for numbers</li>
+    <li>Convert types using <code>int()</code> and <code>float()</code> to enable arithmetic</li>
+    <li>Format output using f-strings (<code>f"..."</code>) with embedded variables and expressions</li>
+    <li>Combine input, variables, and formatted output in a complete interactive program</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-clock" aria-hidden="true"></i> Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span><div class="tl-title">The problem with hard-coded programs (4 min)</div><div class="tl-desc">Run the Lesson 2 profile program on the projector — the one with hard-coded names. Ask: "What if someone else wants to use this? What do they have to do?" (Edit the code.) "What if 30 students all want their own copy?" Land on the insight: programs that never change aren't very useful. Today we make programs that talk back.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span><div class="tl-title">Introducing input() — live demo (8 min)</div><div class="tl-desc">Type and run Examples 1–2 below on the projector. Demonstrate that the program pauses and waits. Highlight: the prompt string inside input() is what the user reads — make it clear and friendly. Point out that what comes back is always a string, even if they type a number.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span><div class="tl-title">Type conversion: int() and float() (6 min)</div><div class="tl-desc">Show Example 3 — what goes wrong when you try to do maths on a string from input(). Then show the fix. Reinforce with the Lesson 2 homework question: <code>"10" + "5"</code> = <code>"105"</code>. Use the analogy: it's like converting currency — same value, different form.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:18</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span><div class="tl-title">f-strings — the modern way to format output (8 min)</div><div class="tl-desc">Show the three ways to combine strings and variables (Examples 4–5), then explain why f-strings win. Key syntax: the <code>f</code> prefix, curly braces <code>{}</code> around any variable or expression. Show expressions inside braces like <code>{age + 1}</code>. This is one of Python's most-used features — worth spending time on.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:26</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span><div class="tl-title">Activity 1 — Personal greeter (12 min)</div><div class="tl-desc">Students build an interactive greeting program from scratch using input() and f-strings. Full instructions below.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:38</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span><div class="tl-title">Activity 2 — Simple calculator with input (10 min)</div><div class="tl-desc">Students combine input(), int()/float(), arithmetic, and f-strings. Full instructions below. Introduces the type-conversion pitfall hands-on.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span><div class="tl-title">Interactive f-string sandbox + exit ticket (7–10 min)</div><div class="tl-desc">Use the live sandbox below — students fill in names and numbers and see f-string output update. Then exit ticket quiz.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Key concept callout -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-alert-circle" aria-hidden="true"></i> The big idea of this lesson</div>
+  <div class="danger-box"><i class="ti ti-info-circle" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>input() ALWAYS returns a string.</strong> If the user types <code>25</code>, Python receives <code>"25"</code> — the text "25", not the number 25. You must convert with <code>int()</code> or <code>float()</code> before doing any arithmetic. This is the single most common error beginners make with input().</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-code" aria-hidden="true"></i> Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — Your first input()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">name</span> = <span class="fn">input</span>(<span class="str">"What is your name? "</span>)
+<span class="fn">print</span>(<span class="str">"Hello,"</span>, <span class="var">name</span>)</pre>
+  </div>
+  <div class="output-label">Output (user types "Aisha" when prompted)</div>
+  <div class="output-block"><span class="input-line">What is your name? Aisha</span><br>Hello, Aisha</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Multiple inputs</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">name</span> = <span class="fn">input</span>(<span class="str">"Enter your name: "</span>)
+<span class="var">city</span> = <span class="fn">input</span>(<span class="str">"Enter your city: "</span>)
+<span class="fn">print</span>(<span class="str">"Name:"</span>, <span class="var">name</span>)
+<span class="fn">print</span>(<span class="str">"City:"</span>, <span class="var">city</span>)
+<span class="fn">print</span>(<span class="bi">type</span>(<span class="var">name</span>))   <span class="cm"># always str!</span></pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block"><span class="input-line">Enter your name: Omar</span><br><span class="input-line">Enter your city: Lahore</span><br>Name: Omar<br>City: Lahore<br>&lt;class 'str'&gt;</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — The type conversion problem and fix</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — broken first, then fixed</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="cm"># ✗ BROKEN — input gives a string, can't add to number</span>
+<span class="var">age</span> = <span class="fn">input</span>(<span class="str">"How old are you? "</span>)
+<span class="fn">print</span>(<span class="str">"Next year you will be"</span>, <span class="var">age</span> + <span class="num">1</span>)
+<span class="cm"># → TypeError: can only concatenate str (not "int") to str</span>
+
+<span class="cm"># ✓ FIXED — convert to int first</span>
+<span class="var">age</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"How old are you? "</span>))
+<span class="fn">print</span>(<span class="str">"Next year you will be"</span>, <span class="var">age</span> + <span class="num">1</span>)</pre>
+  </div>
+  <div class="output-label">Fixed output (user types 15)</div>
+  <div class="output-block"><span class="input-line">How old are you? 15</span><br>Next year you will be 16</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — Three ways to combine strings (show all three, pick f-strings)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">name</span> = <span class="str">"Aisha"</span>
+<span class="var">age</span> = <span class="num">15</span>
+
+<span class="cm"># Method 1 — concatenation (clunky, needs str conversion)</span>
+<span class="fn">print</span>(<span class="str">"My name is "</span> + <span class="var">name</span> + <span class="str">" and I am "</span> + <span class="bi">str</span>(<span class="var">age</span>) + <span class="str">" years old."</span>)
+
+<span class="cm"># Method 2 — comma-separated print (spaces auto-added)</span>
+<span class="fn">print</span>(<span class="str">"My name is"</span>, <span class="var">name</span>, <span class="str">"and I am"</span>, <span class="var">age</span>, <span class="str">"years old."</span>)
+
+<span class="cm"># Method 3 — f-string (best: readable, flexible, powerful)</span>
+<span class="fn">print</span>(<span class="str">f"My name is <span class="var">{name}</span> and I am <span class="var">{age}</span> years old."</span>)</pre>
+  </div>
+  <div class="output-label">All three print the same thing</div>
+  <div class="output-block">My name is Aisha and I am 15 years old.<br>My name is Aisha and I am 15 years old.<br>My name is Aisha and I am 15 years old.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 5 — Expressions inside f-strings</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="var">name</span> = <span class="fn">input</span>(<span class="str">"Your name: "</span>)
+<span class="var">age</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Your age: "</span>))
+<span class="var">height</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Your height in cm: "</span>))
+
+<span class="fn">print</span>(<span class="str">f"Hi <span class="var">{name}</span>! You are <span class="var">{age}</span> years old."</span>)
+<span class="fn">print</span>(<span class="str">f"Next year you will be <span class="var">{age + 1}</span>."</span>)
+<span class="fn">print</span>(<span class="str">f"Your height in metres is <span class="var">{height / 100}</span>."</span>)
+<span class="fn">print</span>(<span class="str">f"Your name has <span class="var">{len(name)}</span> letters."</span>)</pre>
+  </div>
+  <div class="output-label">Output (user enters: Aisha, 15, 165)</div>
+  <div class="output-block"><span class="input-line">Your name: Aisha</span><br><span class="input-line">Your age: 15</span><br><span class="input-line">Your height in cm: 165</span><br>Hi Aisha! You are 15 years old.<br>Next year you will be 16.<br>Your height in metres is 1.65.<br>Your name has 5 letters.</div>
+
+  <div class="tip-box"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Teaching tip:</strong> When showing Example 5 live, enter your own name and let students see <code>{len(name)}</code> compute the letter count automatically. The "wow" moment of expressions inside strings lands better with a real name than a made-up one.</span></div>
+</div>
+
+<!-- Concept compare -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-arrows-exchange" aria-hidden="true"></i> Concatenation vs f-strings — display on board</div>
+  <div class="concept-compare">
+    <div class="concept-col col-old">
+      <div class="concept-col-head">Old way — string concatenation</div>
+      <div class="concept-col-body">
+        <code style="font-size:12px;font-family:var(--font-mono);">"Hello " + name + "!"</code><br><br>
+        Problems: needs <code>str()</code> for non-strings, hard to read when long, easy to miss spaces
+      </div>
+    </div>
+    <div class="concept-col col-new">
+      <div class="concept-col-head">New way — f-strings</div>
+      <div class="concept-col-body">
+        <code style="font-size:12px;font-family:var(--font-mono);">f"Hello {name}!"</code><br><br>
+        Benefits: variables go directly in braces, expressions work, reads like natural language
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-puzzle" aria-hidden="true"></i> Activity 1 — Personal greeter</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="activity-title">Build an interactive greeting program</div>
+    <div class="activity-desc">Students write a program that asks the user several questions and responds with a personalised, multi-line message using f-strings. No hard-coded names — everything comes from input().</div>
+    <ol class="steps-list">
+      <li>Ask for the user's name, age, city, and favourite hobby using input()</li>
+      <li>Store age as an <code>int</code> using type conversion</li>
+      <li>Print a multi-line greeting using f-strings — at least 4 lines of output</li>
+      <li>Include at least one expression inside an f-string (e.g. <code>{age + 1}</code> or <code>{len(name)}</code>)</li>
+      <li>Extension: also ask for their birth year and calculate how long until they turn 100</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="cm"># Personal Greeter — collect information, then respond!</span>
+
+<span class="fn">print</span>(<span class="str">"=== Welcome! Tell me about yourself ==="</span>)
+<span class="fn">print</span>()
+
+<span class="var">name</span> = <span class="fn">input</span>(<span class="str">"What is your name? "</span>)
+<span class="var">age</span>  = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"How old are you? "</span>))
+<span class="var">city</span> = <span class="fn">input</span>(<span class="str">"What city are you from? "</span>)
+<span class="var">hobby</span> = <span class="fn">input</span>(<span class="str">"What is your favourite hobby? "</span>)
+
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">"=== Hello! Here is what I know about you ==="</span>)
+<span class="fn">print</span>(<span class="str">f"Your name is <span class="var">{name}</span> and it has <span class="var">{???}</span> letters."</span>)
+<span class="fn">print</span>(<span class="str">f"You are <span class="var">{age}</span> years old. Next year you will be <span class="var">{???}</span>."</span>)
+<span class="fn">print</span>(<span class="str">f"You come from <span class="var">{???}</span>."</span>)
+<span class="fn">print</span>(<span class="str">f"Your hobby is <span class="var">{???}</span>. That sounds fun!"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example completed output</div>
+    <div class="output-block"><span class="input-line">What is your name? Aisha</span><br><span class="input-line">How old are you? 15</span><br><span class="input-line">What city are you from? Islamabad</span><br><span class="input-line">What is your favourite hobby? drawing</span><br><br>=== Hello! Here is what I know about you ===<br>Your name is Aisha and it has 5 letters.<br>You are 15 years old. Next year you will be 16.<br>You come from Islamabad.<br>Your hobby is drawing. That sounds fun!</div>
+    <div class="tip-box" style="margin-top:8px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Watch for:</strong> Students who forget to wrap input() with int() for age. Ask them: "What happens if you try to do <code>age + 1</code> without the conversion?"</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-calculator" aria-hidden="true"></i> Activity 2 — Simple calculator with input</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="activity-title">Ask two numbers, do all four operations, display formatted results</div>
+    <div class="activity-desc">Students build a two-number calculator that handles type conversion, performs all four arithmetic operations, and prints everything neatly with f-strings. This is the first program that feels genuinely useful.</div>
+    <ol class="steps-list">
+      <li>Ask the user for two numbers using input() — convert both to <code>float</code> so decimals work</li>
+      <li>Calculate: addition, subtraction, multiplication, and division</li>
+      <li>Print all four results using f-strings in a neat table format</li>
+      <li>Extension: also calculate the remainder (%) and the power (**) and add them to the output</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="cm"># Simple Calculator</span>
+
+<span class="fn">print</span>(<span class="str">"=== Simple Calculator ==="</span>)
+<span class="var">a</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter first number: "</span>))
+<span class="var">b</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Enter second number: "</span>))
+
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> + <span class="var">{b}</span> = <span class="var">{???}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> - <span class="var">{b}</span> = <span class="var">{???}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> × <span class="var">{b}</span> = <span class="var">{???}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> ÷ <span class="var">{b}</span> = <span class="var">{???}</span>"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example completed output</div>
+    <div class="output-block"><span class="input-line">Enter first number: 10</span><br><span class="input-line">Enter second number: 3</span><br><br>10.0 + 3.0 = 13.0<br>10.0 - 3.0 = 7.0<br>10.0 × 3.0 = 30.0<br>10.0 ÷ 3.0 = 3.3333333333333335</div>
+    <div class="info-box" style="margin-top:8px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Discussion moment:</strong> The division result <code>3.3333333333333335</code> is a great conversation starter. Ask: "Is that accurate? Is it pretty?" — preview that Lesson 4 will cover how to round numbers with <code>round()</code>.</span></div>
+    <div class="tip-box" style="margin-top:6px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Extension students:</strong> Challenge them to handle division by zero — what error appears if b = 0? We'll learn the proper fix (try/except) in Week 6, but let curious students explore the error message now.</span></div>
+  </div>
+</div>
+
+<!-- Interactive f-string sandbox -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-terminal" aria-hidden="true"></i> Interactive f-string sandbox — try it live</div>
+  <div class="sandbox">
+    <div class="sandbox-head"><span>Live f-string preview — see output update instantly</span></div>
+    <div class="sandbox-body">
+      <div class="sandbox-row">
+        <span class="sandbox-label">Name</span>
+        <input class="sandbox-input" id="sb-name" value="Aisha" oninput="updateSandbox()">
+      </div>
+      <div class="sandbox-row">
+        <span class="sandbox-label">Age</span>
+        <input class="sandbox-input" id="sb-age" type="number" value="15" oninput="updateSandbox()">
+      </div>
+      <div class="sandbox-row">
+        <span class="sandbox-label">City</span>
+        <input class="sandbox-input" id="sb-city" value="Islamabad" oninput="updateSandbox()">
+      </div>
+      <div class="sandbox-row">
+        <span class="sandbox-label">Hobby</span>
+        <input class="sandbox-input" id="sb-hobby" value="drawing" oninput="updateSandbox()">
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:10px 0 6px;font-weight:500;">f-string output:</div>
+      <div class="sandbox-result" id="sb-out"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-checkbox" aria-hidden="true"></i> Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">A student writes: <code>age = input("Your age: ")</code> then <code>print(age + 1)</code>. What happens and why?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>It prints the age plus 1 correctly — input() returns a number</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span>It crashes with a TypeError — input() always returns a str, and you can't add an int to a str</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>It prints the string "age1" — Python concatenates them</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>It prints nothing — the + operator is invalid here</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">Written part: Write one line that asks the user for their birth year, converts it to an int, and stores it in a variable called <code>birth_year</code>. Then write a second line that uses an f-string to print how old they are this year.</div>
+  </div>
+</div>
+
+<!-- Vocabulary -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-book" aria-hidden="true"></i> Key vocabulary for this lesson</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">input()</strong>A built-in function that pauses the program and waits for the user to type something. Always returns a str.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Type conversion</strong>Changing a value from one type to another using int(), float(), or str().</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">f-string</strong>A formatted string literal — prefix with <code>f</code>, embed variables or expressions inside <code>{}</code>.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Prompt</strong>The string inside input() that the user reads — tells them what to type.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">TypeError</strong>An error that occurs when you try to operate on incompatible types, e.g. adding a str and an int.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">len()</strong>A built-in function that returns the number of characters in a string. Works inside f-strings too.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-home" aria-hidden="true"></i> Homework / self-study (before lesson 4)</div>
+  <div class="hw-box">
+    <div class="hw-item"><i class="ti ti-pencil" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Build a "Trip planner" program: ask the user for a destination, number of days, and daily budget. Print a summary using f-strings that includes the total budget (<code>days × budget</code>).</span></div>
+    <div class="hw-item"><i class="ti ti-code" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Experiment: what happens when you type a decimal like <code>3.5</code> into <code>int(input(...))</code>? What error do you get? How would you fix it? Write your findings.</span></div>
+    <div class="hw-item"><i class="ti ti-list-check" aria-hidden="true" style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;"></i><span>Challenge: look up f-string formatting — how do you round a float to 2 decimal places inside an f-string? Hint: search "f-string format specifier". We'll use this in Lesson 4.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-notes" aria-hidden="true"></i> Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Most common error:</strong> Forgetting to convert input() to int or float before doing arithmetic. When a student gets a TypeError, don't fix it for them — ask "what type does input() return?" and let them trace it.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Writing <code>f"{name}"</code> without the <code>f</code> prefix — it prints the literal text <code>{name}</code> instead of the value. Ask: "Is there an <code>f</code> before the opening quote?"</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Using <code>int()</code> when the user might enter a decimal number. Use <code>float()</code> for any number that might have decimals — it handles whole numbers too.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-bulb" aria-hidden="true" style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> If the class finishes both activities early, introduce <code>f"{value:.2f}"</code> for rounding floats to 2 decimal places in f-strings. This is previewed in the homework and lands well as a bonus.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-heart" aria-hidden="true" style="color:var(--color-text-danger);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Motivation moment:</strong> After Activity 1, pause and point out: "Your program from Lesson 1 always said the same thing. This one responds differently to every person who runs it. That's a real program." Let it land.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (4).html'">Next: Lesson 4 - Arithmetic & math</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+</div>
+<script src="scripts.js"></script>
+<script>
+function updateSandbox() {
+  const name = document.getElementById('sb-name').value || 'name';
+  const age = parseInt(document.getElementById('sb-age').value) || 0;
+  const city = document.getElementById('sb-city').value || 'city';
+  const hobby = document.getElementById('sb-hobby').value || 'hobby';
+  const lines = [
+    `Hi ${name}! You are ${age} years old.`,
+    `Next year you will be ${age + 1}.`,
+    `You come from ${city}.`,
+    `Your hobby is ${hobby}. That sounds fun!`,
+    `Your name has ${name.length} letters.`
+  ];
+  document.getElementById('sb-out').innerHTML = lines.join('<br>');
+}
+function answer(el, correct) {
+  if (document.querySelector('.check-opt.correct')) return;
+  document.querySelectorAll('.check-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! input() always returns a str. To fix this, wrap it: age = int(input("Your age: ")) — then age + 1 works perfectly.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is B. input() returns a str no matter what the user types. Python cannot add a str and an int, so it raises a TypeError. The fix: int(input("Your age: ")).';
+  }
+}
+updateSandbox();
+</script>
+</body>
+</html>

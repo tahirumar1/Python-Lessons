@@ -1,0 +1,548 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link  href="styles.css" rel="stylesheet">
+<style>
+/* methods table */
+.meth-table{width:100%;border-collapse:collapse;font-size:13px}
+.meth-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.meth-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.meth-table tr:last-child td{border-bottom:none}
+.meth-table td:first-child{font-family:var(--font-mono);font-size:12px;color:var(--color-text-info)}
+.meth-table td:nth-child(3){font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+/* iteration patterns */
+.iter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.iter-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.iter-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+/* score analyser interactive */
+.analyser{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.an-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.an-body{padding:14px}
+.an-input{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);margin-bottom:10px}
+.an-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans);margin-bottom:10px}
+.an-results{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.an-stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);text-align:center}
+.an-stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.an-stat-val{font-size:18px;font-weight:500;font-family:var(--font-mono)}
+.an-bar-wrap{margin-top:10px}
+.an-bar-row{display:flex;gap:8px;align-items:center;font-size:12px;margin-bottom:4px}
+.an-bar-label{min-width:60px;color:var(--color-text-secondary);font-family:var(--font-mono)}
+.an-bar{height:16px;border-radius:4px;background:var(--color-background-info);transition:width .3s;min-width:4px}
+.an-bar-val{color:var(--color-text-secondary);min-width:30px}
+/* word freq */
+.wf-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.wf-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.wf-body{padding:14px}
+.wf-textarea{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:vertical;margin-bottom:8px;line-height:1.5}
+.wf-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-success);background:var(--color-background-success);color:var(--color-text-success);font-size:13px;cursor:pointer;font-family:var(--font-sans);margin-bottom:10px}
+.wf-output{display:flex;flex-wrap:wrap;gap:6px;min-height:36px}
+.wf-word{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-family:var(--font-mono);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.wf-count{font-weight:500;color:var(--color-text-info)}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 13: Iterating lists &amp; list methods - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 13: Iterating lists &amp; list methods</p>
+      <p class="hero-sub">Week 3 — Loops &amp; Lists · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">Lists, indexing</div></div>
+    <div class="meta-item"><div class="meta-label">New methods</div><div class="meta-val">sort · reverse · count · index</div></div>
+    <div class="meta-item"><div class="meta-label">New functions</div><div class="meta-val">min · max · sum · enumerate</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Loop through a list directly with <code>for item in list</code> and with index using <code>enumerate()</code></li>
+    <li>Use <code>len()</code>, <code>sum()</code>, <code>min()</code>, <code>max()</code> to analyse a list in one line</li>
+    <li>Apply <code>.sort()</code>, <code>.reverse()</code>, <code>.count()</code>, and <code>.index()</code> to transform and query lists</li>
+    <li>Filter a list inside a loop using <code>if</code> — collecting items that meet a condition</li>
+    <li>Build a class scores analyser and a word frequency counter</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">From storage to analysis (4 min)</div>
+        <div class="tl-desc">Show the scores list from Lesson 12: <code>scores = [85, 92, 67, 74, 90]</code>. Ask: "Last lesson we stored these. Today we answer questions about them — what's the average? Who passed? What's the highest score? What if I want them sorted?" Write those four questions on the board. Every one will be answered with today's tools. Land the lesson's purpose: <strong>lists become useful when you can iterate and analyse them, not just store values.</strong></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Iteration patterns — direct, enumerate, range(len) (8 min)</div>
+        <div class="tl-desc">Show all three patterns side by side (Examples 1–2). Key rule: use direct iteration when you only need values; use <code>enumerate()</code> when you need both index and value; use <code>range(len())</code> when you need to modify elements in place. This rule eliminates 90% of "which loop?" confusion for lists.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Built-in functions: len, sum, min, max (5 min)</div>
+        <div class="tl-desc">Show Example 3. These four functions cover the most common list analysis tasks in one line each. Connect <code>sum()</code> + <code>len()</code> to the average calculation students built manually last lesson — show how one line replaces four.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:17</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">List methods: sort, reverse, count, index (8 min)</div>
+        <div class="tl-desc">Show Examples 4–5. Critical distinction: <code>.sort()</code> modifies the list in place and returns <code>None</code> — students who write <code>sorted_list = my_list.sort()</code> will get <code>None</code> stored. Also show <code>sorted()</code> (the built-in that returns a new list) as the alternative. The sort vs sorted distinction is a classic gotcha.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Filtering a list with if inside a loop (5 min)</div>
+        <div class="tl-desc">Show Example 6 — the filter pattern. Students build a new list of only items meeting a condition: passing scores, long words, positive numbers. This is one of the most-used patterns in all of Python. Preview: "Tomorrow we'll write this in one line — list comprehensions."</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:30</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Class scores analyser (12 min)</div>
+        <div class="tl-desc">Students build a complete score analysis tool: average, highest, lowest, sorted ranking, pass/fail filter. Uses every method and function introduced today.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:42</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Word frequency counter (8 min)</div>
+        <div class="tl-desc">Students split a sentence into a word list, then count how many times each unique word appears using <code>.count()</code> in a loop. Introduces <code>.split()</code> and connects list iteration to string processing.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:50</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Live analyser + exit ticket (5–8 min)</div>
+        <div class="tl-desc">Students enter their own scores into the interactive analyser below to verify their program output. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Iteration patterns -->
+<div class="section">
+  <div class="sec-head">Three iteration patterns — when to use each</div>
+  <div class="iter-grid">
+    <div class="iter-card">
+      <div class="iter-head">① Direct — values only</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">for</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">score</span>)
+<span class="cm"># Use when: you only need the value,
+# not the position</span></pre>
+      </div>
+    </div>
+    <div class="iter-card">
+      <div class="iter-head">② enumerate — index + value</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">for</span> <span class="var">i</span>, <span class="var">score</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">scores</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"[{i}] {score}"</span>)
+<span class="cm"># Use when: you need both the index
+# and the value (e.g. numbered lists)</span></pre>
+      </div>
+    </div>
+    <div class="iter-card">
+      <div class="iter-head">③ range(len) — in-place modification</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">scores</span>))<span class="op">:</span>
+    <span class="var">scores</span>[<span class="var">i</span>] <span class="op">+=</span> <span class="num">5</span>   <span class="cm"># add 5 to each</span>
+<span class="cm"># Use when: you need to CHANGE the
+# list elements themselves</span></pre>
+      </div>
+    </div>
+    <div class="iter-card">
+      <div class="iter-head">④ Filter loop — collect matching items</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="var">passing</span> = []
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+        <span class="var">passing</span><span class="op">.</span><span class="fn">append</span>(<span class="var">s</span>)
+<span class="cm"># Use when: you need a subset of
+# items meeting a condition</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>Decision rule to put on the board:</strong> Values only → direct. Index + value → enumerate. Modify in place → range(len). Build a subset → filter loop. These four patterns cover the vast majority of real list tasks.</span></div>
+</div>
+
+<!-- Methods reference table -->
+<div class="section">
+  <div class="sec-head">List methods &amp; functions reference</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="meth-table">
+      <thead><tr><th>Method / Function</th><th>What it does</th><th>Example → Result</th></tr></thead>
+      <tbody>
+        <tr><td>len(lst)</td><td>Number of items in the list</td><td>len([1,2,3]) → 3</td></tr>
+        <tr><td>sum(lst)</td><td>Total of all numeric items</td><td>sum([10,20,30]) → 60</td></tr>
+        <tr><td>min(lst)</td><td>Smallest value</td><td>min([5,2,8]) → 2</td></tr>
+        <tr><td>max(lst)</td><td>Largest value</td><td>max([5,2,8]) → 8</td></tr>
+        <tr><td>.sort()</td><td>Sorts list IN PLACE — returns None</td><td>[3,1,2].sort() → None (list now [1,2,3])</td></tr>
+        <tr><td>sorted(lst)</td><td>Returns a NEW sorted list — original unchanged</td><td>sorted([3,1,2]) → [1,2,3]</td></tr>
+        <tr><td>.reverse()</td><td>Reverses list IN PLACE — returns None</td><td>[1,2,3].reverse() → list now [3,2,1]</td></tr>
+        <tr><td>.count(x)</td><td>How many times x appears in the list</td><td>["a","b","a"].count("a") → 2</td></tr>
+        <tr><td>.index(x)</td><td>Index of FIRST occurrence of x</td><td>["a","b","c"].index("b") → 1</td></tr>
+        <tr><td>.split()</td><td>Splits a string into a list of words</td><td>"hi there".split() → ["hi","there"]</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>The sort() trap — address it before Example 4:</strong> <code>result = my_list.sort()</code> stores <code>None</code> in result because <code>.sort()</code> modifies in place and returns nothing. Students who need the original list unchanged should use <code>sorted()</code> instead. Write both on the board side by side.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Three iteration patterns compared</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">67</span>, <span class="num">74</span>, <span class="num">90</span>]
+
+<span class="cm"># ① Direct — just the values</span>
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  score: {s}"</span>)
+
+<span class="cm"># ② enumerate — index + value</span>
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">s</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">scores</span>, <span class="num">1</span>)<span class="op">:</span>  <span class="cm"># start=1</span>
+    <span class="fn">print</span>(<span class="str">f"  Student {i}: {s}"</span>)
+
+<span class="cm"># ③ range(len) — modify in place (+5 bonus)</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">scores</span>))<span class="op">:</span>
+    <span class="var">scores</span>[<span class="var">i</span>] <span class="op">+=</span> <span class="num">5</span>
+<span class="fn">print</span>(<span class="str">f"  After bonus: {scores}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">  score: 85 &nbsp; score: 92 &nbsp; score: 67 &nbsp; score: 74 &nbsp; score: 90<br>  Student 1: 85 &nbsp; Student 2: 92 ... Student 5: 90<br>  After bonus: [90, 97, 72, 79, 95]</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — enumerate() start parameter</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">names</span> = [<span class="str">"Aisha"</span>, <span class="str">"Omar"</span>, <span class="str">"Zara"</span>, <span class="str">"Bilal"</span>]
+
+<span class="cm"># enumerate(list, start) — start counter at any number</span>
+<span class="kw">for</span> <span class="var">rank</span>, <span class="var">name</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">names</span>, <span class="num">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  #{rank} — {name}"</span>)
+
+<span class="cm"># Without enumerate — the clunky way</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">names</span>))<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  #{i+1} — {names[i]}"</span>)  <span class="cm"># same, but more verbose</span></pre>
+  </div>
+  <div class="out-lbl">Both produce the same output</div>
+  <div class="out">  #1 — Aisha<br>  #2 — Omar<br>  #3 — Zara<br>  #4 — Bilal</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — len, sum, min, max in one block</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span> = [<span class="num">85</span>, <span class="num">92</span>, <span class="num">67</span>, <span class="num">74</span>, <span class="num">90</span>, <span class="num">55</span>, <span class="num">88</span>]
+
+<span class="fn">print</span>(<span class="str">f"Count   : {len(scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Total   : {sum(scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Average : {sum(scores) / len(scores):.1f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Highest : {max(scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Lowest  : {min(scores)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Range   : {max(scores) - min(scores)}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Count   : 7<br>Total   : 551<br>Average : 78.7<br>Highest : 92<br>Lowest  : 55<br>Range   : 37</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Connection to Lesson 12 homework:</strong> Students were asked to find the highest temperature using a loop and accumulator — without <code>max()</code>. Show both versions side by side. The manual loop was 5 lines; <code>max(scores)</code> is 1 word. Point out: Python's built-ins exist so you don't have to reinvent them.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — sort(), sorted(), reverse()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">nums</span> = [<span class="num">5</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">9</span>, <span class="num">3</span>]
+
+<span class="cm"># sorted() — returns NEW list, original unchanged</span>
+<span class="var">asc</span>  = <span class="fn">sorted</span>(<span class="var">nums</span>)
+<span class="var">desc</span> = <span class="fn">sorted</span>(<span class="var">nums</span>, <span class="var">reverse</span><span class="op">=</span><span class="kw">True</span>)
+<span class="fn">print</span>(<span class="str">f"Original  : {nums}"</span>)   <span class="cm"># unchanged!</span>
+<span class="fn">print</span>(<span class="str">f"Ascending : {asc}"</span>)
+<span class="fn">print</span>(<span class="str">f"Descending: {desc}"</span>)
+
+<span class="cm"># .sort() — modifies IN PLACE, returns None</span>
+<span class="var">nums</span><span class="op">.</span><span class="fn">sort</span>()
+<span class="fn">print</span>(<span class="str">f"After .sort(): {nums}"</span>)  <span class="cm"># now sorted</span>
+
+<span class="cm"># ✗ The trap — don't do this</span>
+<span class="var">trap</span> = <span class="var">nums</span><span class="op">.</span><span class="fn">sort</span>()
+<span class="fn">print</span>(<span class="var">trap</span>)                    <span class="cm"># None!!</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Original  : [5, 2, 8, 1, 9, 3]<br>Ascending : [1, 2, 3, 5, 8, 9]<br>Descending: [9, 8, 5, 3, 2, 1]<br>After .sort(): [1, 2, 3, 5, 8, 9]<br>None</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — count(), index(), and split()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">letters</span> = [<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"a"</span>, <span class="str">"c"</span>, <span class="str">"a"</span>, <span class="str">"b"</span>]
+
+<span class="fn">print</span>(<span class="var">letters</span><span class="op">.</span><span class="fn">count</span>(<span class="str">"a"</span>))   <span class="cm"># 3 — how many "a"s</span>
+<span class="fn">print</span>(<span class="var">letters</span><span class="op">.</span><span class="fn">index</span>(<span class="str">"b"</span>))   <span class="cm"># 1 — FIRST position of "b"</span>
+
+<span class="cm"># split() — string → list of words</span>
+<span class="var">sentence</span> = <span class="str">"the cat sat on the mat"</span>
+<span class="var">words</span>    = <span class="var">sentence</span><span class="op">.</span><span class="fn">split</span>()
+<span class="fn">print</span>(<span class="var">words</span>)
+<span class="fn">print</span>(<span class="var">words</span><span class="op">.</span><span class="fn">count</span>(<span class="str">"the"</span>))   <span class="cm"># 2</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">words</span>))             <span class="cm"># 6</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">3<br>1<br>['the', 'cat', 'sat', 'on', 'the', 'mat']<br>2<br>6</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 6 — The filter loop pattern</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">scores</span>  = [<span class="num">85</span>, <span class="num">42</span>, <span class="num">92</span>, <span class="num">38</span>, <span class="num">67</span>, <span class="num">51</span>, <span class="num">74</span>]
+<span class="var">passing</span> = []   <span class="cm"># empty list to collect results</span>
+<span class="var">failing</span> = []
+
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">s</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+        <span class="var">passing</span><span class="op">.</span><span class="fn">append</span>(<span class="var">s</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="var">failing</span><span class="op">.</span><span class="fn">append</span>(<span class="var">s</span>)
+
+<span class="fn">print</span>(<span class="str">f"Passing ({len(passing)}): {sorted(passing, reverse=True)}"</span>)
+<span class="fn">print</span>(<span class="str">f"Failing ({len(failing)}): {failing}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Passing (5): [92, 85, 74, 67, 51]<br>Failing (2): [42, 38]</div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔮</span><span><strong>Preview — Lesson 14:</strong> Point at the filter loop and say "tomorrow you'll write those 4 lines in just 1 line using a list comprehension." Students who feel the verbosity today will appreciate comprehensions much more tomorrow.</span></div>
+</div>
+
+<!-- Interactive score analyser -->
+<div class="section">
+  <div class="sec-head">Live score analyser — enter any scores to analyse</div>
+  <div class="analyser">
+    <div class="an-head">Enter comma-separated scores and click Analyse</div>
+    <div class="an-body">
+      <input class="an-input" id="an-input" value="85, 92, 67, 74, 90, 55, 88, 43, 71, 96" placeholder="e.g. 85, 92, 67, 74, 90">
+      <button class="an-btn" onclick="runAnalyser()">Analyse →</button>
+      <div class="an-results" id="an-results"></div>
+      <div class="an-bar-wrap" id="an-bars"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Class scores analyser</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="activity-title">Build a full score analysis tool using every method introduced today</div>
+    <div class="activity-desc">Students write a program that starts with a given list of scores and produces a comprehensive analysis report. Every new function and method from this lesson must appear at least once.</div>
+    <ol class="steps-list">
+      <li>Start with: <code>scores = [85, 42, 92, 38, 67, 51, 74, 88, 60, 95]</code></li>
+      <li>Print: count, total, average (to 1 d.p.), highest, lowest, and score range</li>
+      <li>Filter into <code>passing</code> (≥50) and <code>failing</code> (&lt;50) lists using a filter loop</li>
+      <li>Sort and print the passing scores in descending order using <code>sorted()</code></li>
+      <li>Use <code>enumerate(passing_sorted, 1)</code> to print a numbered ranking of passers</li>
+      <li>Extension: also print the median (sort the list, pick the middle value using indexing)</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Example output</div>
+    <div class="out">===== Class Report =====<br>Students : 10<br>Average  : 69.2<br>Highest  : 95<br>Lowest   : 38<br>Range    : 57<br><br>--- Passing (8 students) ---<br>  #1  95<br>  #2  92<br>  #3  88<br>  #4  85<br>  #5  74<br>  #6  67<br>  #7  60<br>  #8  51<br><br>--- Failing (2 students) ---<br>  42, 38</div>
+    <div class="tip-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Extension — median:</strong> Sort the list, then: if length is odd, take <code>sorted_scores[len//2]</code>; if even, average the two middle values at <code>len//2 - 1</code> and <code>len//2</code>. This is a great problem-solving challenge for fast finishers.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Word frequency counter</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 8 minutes · Individual</div>
+    <div class="activity-title">Split a sentence into words, then count each unique word using .count()</div>
+    <div class="activity-desc">Students use <code>.split()</code> to turn a string into a list of words, then loop through unique words and use <code>.count()</code> to find how many times each one appears. Introduces the pattern of combining iteration with membership checking.</div>
+    <ol class="steps-list">
+      <li>Store a sentence: <code>text = "the cat sat on the mat the cat sat"</code></li>
+      <li>Split it into a list: <code>words = text.split()</code></li>
+      <li>Build a <code>seen</code> list to track which words you've already counted</li>
+      <li>For each word in <code>words</code>: if <code>word not in seen</code>, print its count and add it to <code>seen</code></li>
+      <li>Extension: ask the user to enter their own sentence, then show the word with the highest frequency</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">text</span>  = <span class="fn">input</span>(<span class="str">"Enter a sentence: "</span>)<span class="op">.</span><span class="fn">lower</span>()
+<span class="var">words</span> = <span class="var">text</span><span class="op">.</span><span class="fn">split</span>()
+<span class="var">seen</span>  = []
+
+<span class="fn">print</span>(<span class="str">f"\nWord frequencies ({len(words)} words total):"</span>)
+<span class="kw">for</span> <span class="var">word</span> <span class="kw">in</span> <span class="var">words</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">word</span> <span class="kw">not in</span> <span class="var">seen</span><span class="op">:</span>
+        <span class="var">count</span> = <span class="var">words</span><span class="op">.</span><span class="fn">count</span>(<span class="var">word</span>)
+        <span class="fn">print</span>(<span class="str">f"  '{word}': {count}"</span>)
+        <span class="var">seen</span><span class="op">.</span><span class="fn">append</span>(<span class="var">word</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Example output</div>
+    <div class="out"><span class="in-line">Enter a sentence: the cat sat on the mat the cat sat</span><br><br>Word frequencies (9 words total):<br>  'the': 3<br>  'cat': 2<br>  'sat': 2<br>  'on': 1<br>  'mat': 1</div>
+    <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Why .lower()?</strong> So "The" and "the" are treated as the same word. This is a real data-cleaning technique called normalisation — students are doing professional-level text processing without realising it.</span></div>
+  </div>
+</div>
+
+<!-- Word frequency tool -->
+<div class="section">
+  <div class="sec-head">Live word frequency tool — verify Activity 2 output</div>
+  <div class="wf-tool">
+    <div class="wf-head">Type any sentence — see word frequencies instantly</div>
+    <div class="wf-body">
+      <textarea class="wf-textarea" id="wf-input" rows="2" placeholder="the cat sat on the mat the cat sat">the cat sat on the mat the cat sat</textarea>
+      <button class="wf-btn" onclick="runWF()">Count words →</button>
+      <div class="wf-output" id="wf-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">A student writes <code>result = scores.sort()</code> then prints <code>result</code>. What prints?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>The sorted list — <code>.sort()</code> returns the sorted version</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span><code>None</code> — <code>.sort()</code> sorts in place and returns nothing; to get a new sorted list use <code>sorted(scores)</code></div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>The original unsorted list — <code>.sort()</code> doesn't modify the list</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>A TypeError — you can only sort numbers, not a list variable</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Given <code>words = ["hi", "hello", "hi", "hey", "hi", "hello"]</code>, write one line each to:<br>
+      (1) Count how many times "hi" appears &nbsp;·&nbsp; (2) Find the index of "hey" &nbsp;·&nbsp; (3) Get the total number of words &nbsp;·&nbsp; (4) Sort alphabetically into a new variable (original unchanged)
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">enumerate()</strong>Built-in that adds an index counter to any iterable. Returns (index, value) pairs each iteration.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">sort() vs sorted()</strong><code>.sort()</code> mutates in place and returns None. <code>sorted()</code> returns a new list and leaves the original unchanged.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Filter loop pattern</strong>Creating an empty list, then appending items that pass an <code>if</code> condition inside a for loop.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">.split()</strong>String method that splits on whitespace (or a given separator) and returns a list of substrings.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">.count(x)</strong>Returns how many times x appears in the list. Works on strings too: <code>"hello".count("l") → 2</code>.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Aggregate functions</strong><code>sum()</code>, <code>min()</code>, <code>max()</code> — process an entire list and return a single summary value.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 14)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a program that asks the user to enter 5 numbers one at a time (using a for loop and append), then prints them sorted ascending and descending, plus the average.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Given <code>data = [3, 7, 3, 1, 9, 3, 5, 7, 2]</code>, use list methods to find: the most common value (hint: which value has the highest count?), the position of the first 7, and the sorted version without modifying the original.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Research: Python's <code>sorted()</code> has a <code>key</code> parameter. Look up how to use it to sort a list of strings by their length rather than alphabetically. Write a one-line example and explain what <code>key=len</code> does.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">The sort() = None trap — demonstrate it live:</strong> Don't just warn students; run <code>result = [3,1,2].sort(); print(result)</code> on the projector and let them see <code>None</code>. The surprise is the lesson. Then immediately show <code>sorted([3,1,2])</code> as the fix. Students who see the wrong output remember the rule.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — modifying list while iterating:</strong> Students who try to <code>remove()</code> items from a list inside a <code>for item in list</code> loop will get unexpected behaviour — Python skips elements when the list changes size mid-loop. The safe pattern is to filter into a new list (the filter loop pattern from Example 6).</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — .index() with missing value:</strong> <code>.index("x")</code> raises <code>ValueError</code> if "x" is not in the list. Teach the safe pattern: check <code>"x" in list</code> before calling <code>.index("x")</code>.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Lesson 14 preview — plant the seed:</strong> After showing the filter loop (Example 6), say: "You just wrote 4 lines. Tomorrow you'll write that in 1 line — a list comprehension. The logic is identical; the syntax is just compressed." Students who feel the verbosity today will be genuinely impressed tomorrow.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Activity 2 — .lower() is data cleaning:</strong> When students use <code>.lower()</code> before splitting, tell them this is called text normalisation and it's used in every real-world text processing system. The word frequency counter they just built is a primitive version of the algorithm that powers search engines and autocorrect.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (14).html'">Next: Lesson 14 - List slicing and comprehensions</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Score analyser
+function runAnalyser(){
+  const raw = document.getElementById('an-input').value;
+  const nums = raw.split(',').map(s=>parseFloat(s.trim())).filter(n=>!isNaN(n));
+  if(nums.length===0){return;}
+  const total=nums.reduce((a,b)=>a+b,0);
+  const avg=total/nums.length;
+  const mn=Math.min(...nums), mx=Math.max(...nums);
+  const passing=nums.filter(s=>s>=50).length;
+  const failing=nums.length-passing;
+  const stats=[
+    {label:'Count',val:nums.length},
+    {label:'Average',val:avg.toFixed(1)},
+    {label:'Highest',val:mx},
+    {label:'Lowest',val:mn},
+    {label:'Passing',val:passing},
+    {label:'Failing',val:failing},
+  ];
+  const res=document.getElementById('an-results');
+  res.innerHTML='';
+  stats.forEach(s=>{
+    res.innerHTML+=`<div class="an-stat"><div class="an-stat-label">${s.label}</div><div class="an-stat-val">${s.val}</div></div>`;
+  });
+  // bar chart
+  const bars=document.getElementById('an-bars');
+  bars.innerHTML='<div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500">Score distribution:</div>';
+  const sorted=[...nums].sort((a,b)=>b-a);
+  sorted.forEach((v,i)=>{
+    const pct=Math.round((v/100)*100);
+    bars.innerHTML+=`<div class="an-bar-row"><span class="an-bar-label">#${i+1}: ${v}</span><div class="an-bar" style="width:${Math.max(pct,2)}%"></div><span class="an-bar-val">${v}%</span></div>`;
+  });
+}
+runAnalyser();
+
+// Word frequency
+function runWF(){
+  const text=document.getElementById('wf-input').value.toLowerCase().trim();
+  if(!text){return;}
+  const words=text.split(/\s+/).filter(w=>w.length>0);
+  const out=document.getElementById('wf-output');
+  out.innerHTML='';
+  const seen=new Set();
+  const freq=[];
+  words.forEach(w=>{
+    if(!seen.has(w)){
+      seen.add(w);
+      freq.push({word:w,count:words.filter(x=>x===w).length});
+    }
+  });
+  freq.sort((a,b)=>b.count-a.count);
+  freq.forEach(f=>{
+    out.innerHTML+=`<div class="wf-word">${f.word} <span class="wf-count">×${f.count}</span></div>`;
+  });
+}
+runWF();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! .sort() sorts the list in place and returns None — it does not return the sorted list. To store a sorted copy, use sorted(scores) instead, which returns a new list and leaves the original unchanged.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is B. .sort() is an in-place method: it rearranges the original list and returns None. Storing its return value always gives you None. Use sorted(scores) when you need to keep the result in a variable.';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* zones */
+.zones{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.zone{border-radius:var(--border-radius-md);padding:10px 14px;border:2px dashed}
+.zone.z1{border-color:var(--color-border-success);background:color-mix(in srgb,var(--color-background-success) 8%,transparent)}
+.zone.z2{border-color:var(--color-border-info);background:color-mix(in srgb,var(--color-background-info) 8%,transparent)}
+.zone.z3{border-color:var(--color-border-warning);background:color-mix(in srgb,var(--color-background-warning) 8%,transparent)}
+.zone-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.zone.z1 .zone-label{color:var(--color-text-success)}
+.zone.z2 .zone-label{color:var(--color-text-info)}
+.zone.z3 .zone-label{color:var(--color-text-warning)}
+.zone-desc{font-size:12px;color:var(--color-text-secondary)}
+/* function map */
+.fn-map{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.fm-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.fm-body{padding:14px;display:flex;flex-direction:column;gap:6px}
+.fm-fn{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 12px;cursor:pointer;transition:all .12s;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.fm-fn:hover{background:var(--color-background-secondary)}
+.fm-fn.sel{border-color:var(--color-border-info);background:var(--color-background-info)}
+.fm-name{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.fm-sig{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.fm-role{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;flex-shrink:0}
+.r-op{background:var(--color-background-info);color:var(--color-text-info)}
+.r-io{background:var(--color-background-warning);color:var(--color-text-warning)}
+.r-util{background:var(--color-background-success);color:var(--color-text-success)}
+.r-main{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.fm-detail{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;border:0.5px solid var(--color-border-tertiary);display:none;margin-top:4px}
+.fm-detail.show{display:block}
+/* calc */
+.calc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.calc-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.calc-body{padding:14px}
+.calc-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.calc-lbl{font-size:12px;color:var(--color-text-secondary);min-width:80px}
+.calc-in{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:90px}
+.calc-sel{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.calc-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+.calc-res{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:14px;border:0.5px solid var(--color-border-tertiary);min-height:38px;color:var(--color-text-success)}
+/* call trace stepper */
+.tracer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.tr-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tr-body{padding:14px}
+.tr-step{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;margin-bottom:6px;background:var(--color-background-secondary);transition:all .15s;cursor:default}
+.tr-step.active{border-color:var(--color-border-info);background:var(--color-background-info)}
+.tr-step.done{border-color:var(--color-border-success);background:var(--color-background-success);opacity:.7}
+.tr-num{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);min-width:20px;margin-top:2px}
+.tr-fn{font-family:var(--font-mono);font-size:12px;flex:1;font-weight:500}
+.tr-note{font-size:12px;color:var(--color-text-secondary);flex:2;font-style:italic}
+.tr-nav{display:flex;gap:8px;margin-top:10px}
+.tr-btn{padding:5px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.tr-btn:hover{background:var(--color-background-primary)}
+.tr-btn:disabled{opacity:.4;cursor:not-allowed}
+.tr-output{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 12px;font-family:var(--font-mono);font-size:12px;border:0.5px solid var(--color-border-tertiary);min-height:28px;margin-top:8px;color:var(--color-text-success)}
+/* graph draw tool */
+.graph-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.gt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.gt-body{padding:14px}
+.gt-row{display:flex;gap:10px;align-items:center;font-size:13px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:6px;flex-wrap:wrap}
+.gt-fn{font-family:var(--font-mono);font-size:12.5px;min-width:160px}
+.gt-arrow{color:var(--color-text-secondary);font-size:16px}
+.gt-calls{display:flex;flex-wrap:wrap;gap:4px}
+.gt-call-tag{font-family:var(--font-mono);font-size:11px;padding:2px 8px;border-radius:10px;border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);cursor:pointer;transition:all .12s}
+.gt-call-tag:hover{opacity:.75}
+.gt-call-tag.none{border-color:var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-tertiary)}
+.gt-highlight{animation:flash .4s ease}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.3}}
+/* week preview */
+.w5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.w5-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 19: Multiple functions &amp; program structure - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 19: Multiple functions &amp; program structure</p>
+      <p class="lp-hero-sub">Week 4 — Functions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">def · return · scope</div></div>
+    <div class="meta-item"><div class="meta-label">New concept</div><div class="meta-val">Function composition</div></div>
+    <div class="meta-item"><div class="meta-label">Key skill</div><div class="meta-val">Decomposition</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="sec">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Break a program into logical functions — each doing exactly one thing</li>
+    <li>Call functions from within other functions (function composition)</li>
+    <li>Draw a call graph to visualise how functions relate to each other</li>
+    <li>Apply a consistent three-zone file layout: helpers → main() → entry call</li>
+    <li>Read a multi-function program and trace execution through layers of calls</li>
+    <li>Build a mini calculator structured into 7 separate functions</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="sec">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The restaurant kitchen analogy (5 min)</div>
+        <div class="tl-desc">Say: "A restaurant kitchen has a head chef who coordinates, a sous chef, a pastry chef, a grill cook — each with one specialised job. The head chef doesn't cook every dish; they direct specialists. A well-structured program works the same: main() coordinates, and specialist functions each do one small job." Draw main() at the top with arrows pointing down to helpers. This mental model anchors the whole lesson.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:05</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Functions calling other functions (8 min)</div>
+        <div class="tl-desc">Show Examples 1–2. Trace the call chain step by step on the board — draw arrows showing which function calls which. Key insight: a function's return value can be passed directly as an argument to another. Show stored and inline chained versions side by side.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:13</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">The three-zone program structure (7 min)</div>
+        <div class="tl-desc">Show Example 3 and the three-zone panel below. Walk through each zone. Ask: "If you wanted to change how results display, which function would you go to?" Students should answer without reading the whole file — that's the point of structure.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:20</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Code reading — trace a structured program (5 min)</div>
+        <div class="tl-desc">Use the interactive function map. Without running, students trace: "main() calls what? That calls what? Where does the return go?" Students sketch the call graph in notebooks.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Mini calculator with 7 functions (18 min)</div>
+        <div class="tl-desc">Students build the most structurally complete program of the course — a 4-operation calculator where every logical piece lives in its own function.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:43</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Draw the call graph (7 min)</div>
+        <div class="tl-desc">Students draw boxes for each function and arrows for each call. Pairs compare graphs and discuss structural differences.</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:50</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Exit ticket (5–8 min)</div>
+        <div class="tl-desc">Exit quiz below. Ask 2 volunteers to show their call graph on the projector.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Three-zone layout -->
+<div class="sec">
+  <div class="sec-head">The three-zone program layout — standard for all Python files</div>
+  <div class="zones">
+    <div class="zone z1">
+      <div class="zone-label">① Helper / utility functions — at the top</div>
+      <div class="zone-desc">Small, focused functions that each do one thing. Defined first so main() can call them. Examples: <code>add(a,b)</code>, <code>validate_input(raw)</code>, <code>format_result(n)</code>. Each is independently testable.</div>
+    </div>
+    <div class="zone z2">
+      <div class="zone-label">② main() — the orchestrator — in the middle</div>
+      <div class="zone-desc">Calls helpers in the right order. Holds the overall logic but does NOT do the work itself. Reading main() should give you the full story in 10–15 lines, even if the program has 100 lines total.</div>
+    </div>
+    <div class="zone z3">
+      <div class="zone-label">③ Entry point — ONE line at the very bottom</div>
+      <div class="zone-desc"><code>main()</code> — the single line that starts everything. Only one line runs at the global level. All other code is inside function definitions.</div>
+    </div>
+  </div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Why helpers before main():</strong> Python reads top to bottom. If main() calls <code>format_result()</code>, that function must already be defined above main(). Helpers first — entry point last.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="sec">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Functions calling functions: chained temperature converter</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">c_to_f</span>(<span class="var">c</span>)<span class="op">:</span>
+    <span class="str">"""Celsius to Fahrenheit."""</span>
+    <span class="kw">return</span> <span class="var">c</span> <span class="op">*</span> <span class="num">9</span> <span class="op">/</span> <span class="num">5</span> <span class="op">+</span> <span class="num">32</span>
+
+<span class="kw">def</span> <span class="fn">c_to_k</span>(<span class="var">c</span>)<span class="op">:</span>
+    <span class="str">"""Celsius to Kelvin."""</span>
+    <span class="kw">return</span> <span class="var">c</span> <span class="op">+</span> <span class="num">273.15</span>
+
+<span class="kw">def</span> <span class="fn">report</span>(<span class="var">c</span>)<span class="op">:</span>
+    <span class="str">"""Print full report — calls two helpers."""</span>
+    <span class="fn">print</span>(<span class="str">f"  {c}°C = {c_to_f(c):.1f}°F = {c_to_k(c):.2f} K"</span>)
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Run the temperature converter."""</span>
+    <span class="fn">print</span>(<span class="str">"Temperature conversions:"</span>)
+    <span class="kw">for</span> <span class="var">t</span> <span class="kw">in</span> [<span class="num">0</span>, <span class="num">20</span>, <span class="num">37</span>, <span class="num">100</span>]<span class="op">:</span>
+        <span class="fn">report</span>(<span class="var">t</span>)
+
+<span class="fn">main</span>()</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Temperature conversions:<br>  0°C = 32.0°F = 273.15 K<br>  20°C = 68.0°F = 293.15 K<br>  37°C = 98.6°F = 310.15 K<br>  100°C = 212.0°F = 373.15 K</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Trace on the board:</strong> main() → report(37) → c_to_f(37) returns 98.6 → c_to_k(37) returns 310.15 → prints line → back to main(). Use the interactive tracer below to step through this call chain.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Inline chaining vs stored</div>
+  <div class="code-block">
+    <div class="ch"><span>main.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">double</span>(<span class="var">n</span>)<span class="op">:</span>   <span class="kw">return</span> <span class="var">n</span> <span class="op">*</span> <span class="num">2</span>
+<span class="kw">def</span> <span class="fn">add_ten</span>(<span class="var">n</span>)<span class="op">:</span> <span class="kw">return</span> <span class="var">n</span> <span class="op">+</span> <span class="num">10</span>
+<span class="kw">def</span> <span class="fn">square</span>(<span class="var">n</span>)<span class="op">:</span>  <span class="kw">return</span> <span class="var">n</span> <span class="op">**</span> <span class="num">2</span>
+
+<span class="cm"># Stored — clear step by step</span>
+<span class="var">a</span> = <span class="fn">double</span>(<span class="num">3</span>)          <span class="cm"># 6</span>
+<span class="var">b</span> = <span class="fn">add_ten</span>(<span class="var">a</span>)         <span class="cm"># 16</span>
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="var">b</span>))        <span class="cm"># 256</span>
+
+<span class="cm"># Inline — compact, reads right-to-left</span>
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="fn">add_ten</span>(<span class="fn">double</span>(<span class="num">3</span>))))  <span class="cm"># also 256</span></pre>
+  </div>
+  <div class="out-lbl">Both print 256</div>
+  <div class="out">256<br>256</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Complete three-zone structured program</div>
+  <div class="code-block">
+    <div class="ch"><span>student_report.py</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ═══ ZONE ① — Helper functions ═══════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">calculate_average</span>(<span class="var">scores</span>)<span class="op">:</span>
+    <span class="str">"""Return the average of a list of scores."""</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(<span class="var">scores</span>) <span class="op">/</span> <span class="fn">len</span>(<span class="var">scores</span>)
+
+<span class="kw">def</span> <span class="fn">get_grade</span>(<span class="var">avg</span>)<span class="op">:</span>
+    <span class="str">"""Return letter grade for a given average."""</span>
+    <span class="kw">if</span> <span class="var">avg</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span>  <span class="kw">return</span> <span class="str">"A"</span>
+    <span class="kw">if</span> <span class="var">avg</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span>  <span class="kw">return</span> <span class="str">"B"</span>
+    <span class="kw">if</span> <span class="var">avg</span> <span class="op">&gt;=</span> <span class="num">60</span><span class="op">:</span>  <span class="kw">return</span> <span class="str">"C"</span>
+    <span class="kw">return</span> <span class="str">"F"</span>
+
+<span class="kw">def</span> <span class="fn">print_student</span>(<span class="var">name</span>, <span class="var">scores</span>)<span class="op">:</span>
+    <span class="str">"""Print one student's report — calls two helpers."""</span>
+    <span class="var">avg</span>   = <span class="fn">calculate_average</span>(<span class="var">scores</span>)
+    <span class="var">grade</span> = <span class="fn">get_grade</span>(<span class="var">avg</span>)
+    <span class="fn">print</span>(<span class="str">f"  {name:<span class="num">10</span>} | avg {avg:5.1f} | grade {grade}"</span>)
+
+<span class="cm"># ═══ ZONE ② — main() ═════════════════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Run the student report system."""</span>
+    <span class="var">students</span> = [
+        (<span class="str">"Aisha"</span>,  [<span class="num">85</span>, <span class="num">90</span>, <span class="num">92</span>]),
+        (<span class="str">"Omar"</span>,   [<span class="num">70</span>, <span class="num">68</span>, <span class="num">74</span>]),
+        (<span class="str">"Zara"</span>,   [<span class="num">95</span>, <span class="num">98</span>, <span class="num">100</span>]),
+    ]
+    <span class="fn">print</span>(<span class="str">"Student Report\n" + "-" * 35</span>)
+    <span class="kw">for</span> <span class="var">name</span>, <span class="var">scores</span> <span class="kw">in</span> <span class="var">students</span><span class="op">:</span>
+        <span class="fn">print_student</span>(<span class="var">name</span>, <span class="var">scores</span>)
+    <span class="fn">print</span>(<span class="str">"-" * 35</span>)
+
+<span class="cm"># ═══ ZONE ③ — Entry point ════════════════════════════</span>
+
+<span class="fn">main</span>()</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Student Report<br>-----------------------------------<br>  Aisha      | avg  89.0 | grade B<br>  Omar       | avg  70.7 | grade C<br>  Zara       | avg  97.7 | grade A<br>-----------------------------------</div>
+</div>
+
+<!-- Interactive call tracer -->
+<div class="sec">
+  <div class="sec-head">Interactive call tracer — step through Example 3</div>
+  <div class="tracer">
+    <div class="tr-head">
+      <span>Click Next to step through: main() → print_student() → calculate_average() → get_grade()</span>
+      <div style="display:flex;gap:6px">
+        <button class="tr-btn" id="tr-prev" onclick="trStep(-1)" disabled>← Prev</button>
+        <button class="tr-btn" id="tr-next" onclick="trStep(1)">Next →</button>
+        <button class="tr-btn" onclick="trReset()">Reset</button>
+      </div>
+    </div>
+    <div class="tr-body">
+      <div id="tr-steps"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:8px;font-weight:500">Output so far:</div>
+      <div class="tr-output" id="tr-output">(nothing yet)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Call graph SVG -->
+<div class="sec">
+  <div class="sec-head">Call graph for student_report.py — draw this in notebooks</div>
+  <div class="cg-wrap">
+    <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" font-family="var(--font-sans)" font-size="12" style="max-width:520px;width:100%">
+      <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-secondary)"/></marker></defs>
+      <!-- main -->
+      <rect x="190" y="8" width="120" height="34" rx="8" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1.5"/>
+      <text x="250" y="30" text-anchor="middle" fill="var(--color-text-warning)" font-weight="600">main()</text>
+      <!-- arrow to print_student -->
+      <line x1="250" y1="42" x2="250" y2="76" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- print_student -->
+      <rect x="160" y="76" width="180" height="34" rx="8" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="1.5"/>
+      <text x="250" y="98" text-anchor="middle" fill="var(--color-text-info)" font-weight="500">print_student(name,scores)</text>
+      <!-- arrows to helpers -->
+      <line x1="210" y1="110" x2="110" y2="148" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="290" y1="110" x2="400" y2="148" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- calculate_average -->
+      <rect x="10" y="148" width="200" height="34" rx="8" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1.5"/>
+      <text x="110" y="170" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">calculate_average(scores)</text>
+      <!-- get_grade -->
+      <rect x="300" y="148" width="210" height="34" rx="8" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1.5"/>
+      <text x="405" y="170" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">get_grade(avg)</text>
+      <!-- return dashes -->
+      <line x1="110" y1="148" x2="220" y2="110" stroke="var(--color-text-success)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#ar)"/>
+      <line x1="405" y1="148" x2="280" y2="110" stroke="var(--color-text-success)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#ar)"/>
+      <!-- legend -->
+      <line x1="20" y1="192" x2="50" y2="192" stroke="var(--color-border-secondary)" stroke-width="1.5"/><text x="56" y="196" fill="var(--color-text-secondary)" font-size="11">calls</text>
+      <line x1="100" y1="192" x2="130" y2="192" stroke="var(--color-text-success)" stroke-width="1" stroke-dasharray="4,3"/><text x="136" y="196" fill="var(--color-text-secondary)" font-size="11">returns value</text>
+    </svg>
+  </div>
+  <div class="tip" style="margin-top:0"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Students copy this into notebooks,</strong> then draw their own version for the calculator in Activity 2. The act of drawing locks in how call chains flow — problems invisible in code become obvious as a diagram.</span></div>
+</div>
+
+<!-- Interactive function map -->
+<div class="sec">
+  <div class="sec-head">Interactive function map — click any function to explore its role</div>
+  <div class="fn-map">
+    <div class="fm-head">Calculator functions — click each to see description and connections</div>
+    <div class="fm-body" id="fm-body"></div>
+    <div class="fm-detail" id="fm-detail"></div>
+  </div>
+</div>
+
+<!-- Live calculator demo -->
+<div class="sec">
+  <div class="sec-head">Live calculator demo — target output for Activity 1</div>
+  <div class="calc">
+    <div class="calc-head">Mini calculator — each operation is its own function. This is what students are building.</div>
+    <div class="calc-body">
+      <div class="calc-row">
+        <span class="calc-lbl">Number a</span>
+        <input class="calc-in" id="ca" type="number" value="12" oninput="runCalc()">
+        <select class="calc-sel" id="cop" onchange="runCalc()">
+          <option>+</option><option>-</option><option>×</option><option>÷</option>
+        </select>
+        <input class="calc-in" id="cb2" type="number" value="4" oninput="runCalc()">
+        <button class="calc-btn" onclick="runCalc()">Calculate</button>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500">Result:</div>
+      <div class="calc-res" id="calc-res"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:8px;font-style:italic">Function called: <span id="fn-called" style="font-family:var(--font-mono);color:var(--color-text-info)">add(a, b)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="sec">
+  <div class="sec-head">Activity 1 — Mini calculator with 7 functions</div>
+  <div class="act-card">
+    <div class="act-num">Activity 1 · 18 minutes · Individual</div>
+    <div class="act-title">Build a menu-driven calculator structured into 7 clean functions</div>
+    <div class="act-desc">The most structurally complete program of the course. Every logical piece lives in its own function. Reading main() alone tells the full story in ~15 lines without reading any helper.</div>
+    <ol class="sl">
+      <li>Write 4 operation functions: <code>add(a,b)</code>, <code>subtract(a,b)</code>, <code>multiply(a,b)</code>, <code>divide(a,b)</code> — divide returns None if b is zero</li>
+      <li>Write <code>get_numbers()</code> — asks for two floats, returns them as a tuple <code>(a, b)</code></li>
+      <li>Write <code>show_menu()</code> — prints the 5 options (4 ops + Quit)</li>
+      <li>Write <code>format_result(a, sym, b, r)</code> — prints the formatted equation with <code>:.4g</code></li>
+      <li>Write <code>main()</code> — while True loop: show_menu → get choice → get_numbers → call operation → format_result → loop</li>
+      <li>One line at the very bottom: <code>main()</code></li>
+    </ol>
+
+    <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Requirements — tick each one as you complete it:</div>
+    <div class="checklist" id="req-list">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>4 operation functions — each returns a value, docstring present</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>divide() returns None on zero and the caller checks for it</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>get_numbers() uses tuple return: <code>return a, b</code></span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>show_menu() and format_result() are separate functions</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>main() fits in ~15 lines — delegates to helpers</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Three-zone layout: helpers → main() → entry call</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Program runs without errors through multiple operations</span></div></div>
+    </div>
+    <div style="margin-top:8px">
+      <div class="prog-lbl" id="prog-lbl">Progress: 0 / 7 complete</div>
+      <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+    </div>
+
+    <div style="font-size:13px;font-weight:500;margin:14px 0 6px">Complete starter skeleton</div>
+    <div class="code-block">
+      <div class="ch"><span>calculator.py — skeleton</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># ═══ ZONE ① — Operation functions ═══════════════════</span>
+
+<span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="str">"""Return a + b."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">subtract</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="str">"""Return a - b."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">multiply</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="str">"""Return a * b."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">divide</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="str">"""Return a / b, or None if b == 0."""</span>
+    <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  ✗ Cannot divide by zero."</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">return</span> ???
+
+<span class="cm"># ═══ ZONE ① — Utility functions ══════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">get_numbers</span>()<span class="op">:</span>
+    <span class="str">"""Ask user for two floats. Returns tuple (a, b)."""</span>
+    <span class="var">a</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"  First : "</span>))
+    <span class="var">b</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"  Second: "</span>))
+    <span class="kw">return</span> <span class="var">a</span>, <span class="var">b</span>
+
+<span class="kw">def</span> <span class="fn">show_menu</span>()<span class="op">:</span>
+    <span class="str">"""Display the operation menu."""</span>
+    <span class="fn">print</span>(<span class="str">"\n  1.Add  2.Subtract  3.Multiply  4.Divide  5.Quit"</span>)
+
+<span class="kw">def</span> <span class="fn">format_result</span>(<span class="var">a</span>, <span class="var">sym</span>, <span class="var">b</span>, <span class="var">r</span>)<span class="op">:</span>
+    <span class="str">"""Print formatted equation."""</span>
+    <span class="fn">print</span>(<span class="str">f"  {a} {sym} {b} = {r:.4g}"</span>)
+
+<span class="cm"># ═══ ZONE ② — main() ═════════════════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Run the calculator."""</span>
+    <span class="fn">print</span>(<span class="str">"=== Mini Calculator ==="</span>)
+    <span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>
+        <span class="fn">show_menu</span>()
+        <span class="var">choice</span> = <span class="fn">input</span>(<span class="str">"  Choice: "</span>)<span class="op">.</span><span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"5"</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  Goodbye!"</span>)
+            <span class="kw">break</span>
+        <span class="kw">if</span> <span class="var">choice</span> <span class="kw">not in</span> [<span class="str">"1"</span>,<span class="str">"2"</span>,<span class="str">"3"</span>,<span class="str">"4"</span>]<span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  ✗ Invalid choice."</span>)
+            <span class="kw">continue</span>
+        <span class="var">a</span>, <span class="var">b</span> = <span class="fn">get_numbers</span>()       <span class="cm"># tuple unpacking</span>
+        <span class="kw">if</span>   <span class="var">choice</span><span class="op">==</span><span class="str">"1"</span><span class="op">:</span> <span class="fn">format_result</span>(<span class="var">a</span>,<span class="str">"+"</span>,<span class="var">b</span>,<span class="fn">add</span>(<span class="var">a</span>,<span class="var">b</span>))
+        <span class="kw">elif</span> <span class="var">choice</span><span class="op">==</span><span class="str">"2"</span><span class="op">:</span> <span class="fn">format_result</span>(<span class="var">a</span>,<span class="str">"-"</span>,<span class="var">b</span>,<span class="fn">subtract</span>(<span class="var">a</span>,<span class="var">b</span>))
+        <span class="kw">elif</span> <span class="var">choice</span><span class="op">==</span><span class="str">"3"</span><span class="op">:</span> <span class="fn">format_result</span>(<span class="var">a</span>,<span class="str">"×"</span>,<span class="var">b</span>,<span class="fn">multiply</span>(<span class="var">a</span>,<span class="var">b</span>))
+        <span class="kw">elif</span> <span class="var">choice</span><span class="op">==</span><span class="str">"4"</span><span class="op">:</span>
+            <span class="var">r</span> = <span class="fn">divide</span>(<span class="var">a</span>,<span class="var">b</span>)
+            <span class="kw">if</span> <span class="var">r</span> <span class="kw">is not</span> <span class="kw">None</span><span class="op">:</span> <span class="fn">format_result</span>(<span class="var">a</span>,<span class="str">"÷"</span>,<span class="var">b</span>,<span class="var">r</span>)
+
+<span class="cm"># ═══ ZONE ③ — Entry point ════════════════════════════</span>
+
+<span class="fn">main</span>()</pre>
+    </div>
+    <div class="out-lbl">Sample session</div>
+    <div class="out">=== Mini Calculator ===<br>  1.Add  2.Subtract  3.Multiply  4.Divide  5.Quit<br>  Choice: <span class="in-c">1</span><br>  First : <span class="in-c">12</span>  Second: <span class="in-c">4</span><br>  12.0 + 4.0 = 16<br>  Choice: <span class="in-c">4</span><br>  First : <span class="in-c">10</span>  Second: <span class="in-c">0</span><br>  ✗ Cannot divide by zero.<br>  Choice: <span class="in-c">5</span><br>  Goodbye!</div>
+    <div class="tip" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Tuple unpacking reminder:</strong> <code>a, b = get_numbers()</code> is students' first time seeing multiple return values unpacked in one line. If they're confused, show the equivalent: <code>pair = get_numbers(); a = pair[0]; b = pair[1]</code> — then show the shortcut.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="sec">
+  <div class="sec-head">Activity 2 — Draw the call graph</div>
+  <div class="act-card">
+    <div class="act-num">Activity 2 · 7 minutes · Pairs</div>
+    <div class="act-title">Map your calculator's function relationships</div>
+    <div class="act-desc">Click each function below to reveal what it calls. Use this as a guide while drawing your own call graph on paper — a box per function, a solid arrow for each call, a dashed arrow for each return value.</div>
+
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Interactive call graph explorer — click a function to highlight what it calls:</div>
+    <div class="graph-tool">
+      <div class="gt-head">
+        <span>Calculator call graph — click any function to see its connections</span>
+        <button style="padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:12px;cursor:pointer;font-family:var(--font-sans)" onclick="clearGraph()">Clear</button>
+      </div>
+      <div class="gt-body" id="graph-body"></div>
+    </div>
+
+    <div class="info" style="margin-top:10px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>What a good graph reveals:</strong> If main() has 8+ arrows out and also contains computation, it's doing too much. If two functions share no connections, ask whether they belong together. The graph makes structural problems visible that are invisible in code.</span></div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="sec">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="ck">
+    <div class="ck-q">A program has 5 functions. Only <code>main()</code> is called at the global level — the other 4 are called from inside functions. Why is this better than putting all logic directly in <code>main()</code>?</div>
+    <div class="ck-opts">
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">A</span>It runs faster — Python executes small functions more efficiently than large ones</div>
+      <div class="ck-opt" onclick="ans(this,true)"><span class="opt-l">B</span>Each function does one clear job — making code easier to read, debug, reuse, and change without breaking other parts</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">C</span>It uses less memory — each function frees its scope immediately after returning</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">D</span>It is required — Python raises an error if main() contains more than 20 lines</div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Look at your calculator's main() function. How many lines does it have? Could someone read those lines and understand what the calculator does — without reading the helpers? If not, what would you move into a helper?
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="sec">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vg">
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Function composition</strong>Using the return value of one function as the argument to another — chaining them together to build complex behaviour from simple parts.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Call graph</strong>A diagram showing functions as boxes and calls as arrows. Makes a program's structure visible at a glance.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Decomposition</strong>Breaking a large problem into smaller sub-problems, each solved by its own function. The core engineering skill of this week.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Single responsibility</strong>Each function does exactly one thing. If you can't describe it in one short sentence, it probably does too much.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Tuple unpacking</strong><code>a, b = get_numbers()</code> — assigning multiple return values from a function to multiple variables in one line.</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Entry point</strong>The single <code>main()</code> call at the bottom of a file that starts the program. Everything flows from this one line.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="sec">
+  <div class="sec-head">Homework / self-study (before Lesson 20 — Week 4 Project)</div>
+  <div class="hw">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Add <code>power(a,b)</code> and <code>modulo(a,b)</code> to your calculator. Update <code>show_menu()</code> and <code>main()</code>. Draw the updated call graph — how many new arrows appear?</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Refactor your Week 3 to-do list app using the three-zone structure. <code>main()</code> should fit in 15 lines. The call graph should have at least 5 functions with clear single responsibilities.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Design challenge: sketch the function structure for a "bank account" program — deposit, withdraw, check balance, print statement. Draw the full call graph before writing any code.</span></div>
+  </div>
+</div>
+
+<!-- Week 4 project preview -->
+<div class="sec">
+  <div class="sec-head">Looking ahead — Lesson 20: Week 4 Project</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Week 4 Project: Quiz game with functions</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">Tomorrow is the Week 4 project day. Students build a 5-question trivia quiz where every piece of logic — displaying questions, checking answers, tracking score, showing results — lives in its own function. Structurally identical to today's calculator. Students who built today's calculator confidently will find the project very approachable.</div>
+    <div class="w5-grid">
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L16</div><div style="color:var(--color-text-secondary)">def · calling</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L17</div><div style="color:var(--color-text-secondary)">params · return</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L18</div><div style="color:var(--color-text-secondary)">scope</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L19</div><div style="color:var(--color-text-secondary)">structure</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L20</div><div style="color:var(--color-text-success)">🛠 Quiz game</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="sec">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Most common mistake — everything in main():</strong> Students who put operation logic directly in main() rather than calling helpers. If you see main() longer than 25 lines, ask: "What does this block do? Can you give it a name? Good — make it a function."</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Tuple unpacking:</strong> <code>a, b = get_numbers()</code> is students' first encounter with multiple return values. Show both the one-liner and the two-step version side-by-side. Neither is wrong; the unpacking form is more Pythonic.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">The divide None check:</strong> Students who pass divide()'s result directly to format_result() without checking for None will crash on zero division. The skeleton shows the correct pattern — point it out before Activity 1 starts.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Activity 2 timing:</strong> 7 minutes for the call graph is intentionally short — a rough sketch is enough. The value is in the thinking. Fast pairs who finish early: "Which function has the most arrows? Is that a problem?"</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Connecting to Week 3:</strong> Point out that the to-do app from Lesson 15 already had a show_tasks() helper. Students have been using this pattern — today they're learning the name and principle behind it.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (20).html'">Next: Lesson 20 — Week 4 Project</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Call tracer data
+const trSteps = [
+  {fn:'main()', note:'Entry point calls main(). Execution begins here.', out:''},
+  {fn:'  print("Student Report...")', note:'main() prints the header directly.', out:'Student Report\n-----------------------------------'},
+  {fn:'  print_student("Aisha", [85,90,92])', note:'main() calls print_student — first student.', out:''},
+  {fn:'    avg = calculate_average([85,90,92])', note:'print_student calls calculate_average — goes deeper.', out:''},
+  {fn:'    → returns 89.0', note:'calculate_average returns 89.0 back to print_student.', out:''},
+  {fn:'    grade = get_grade(89.0)', note:'print_student calls get_grade with the average.', out:''},
+  {fn:'    → returns "B"', note:'get_grade returns "B" — 89.0 >= 75.', out:''},
+  {fn:'    print(f"  Aisha... grade B")', note:'print_student now has avg and grade — prints the line.', out:'  Aisha      | avg  89.0 | grade B'},
+  {fn:'  print_student("Omar", [70,68,74])', note:'Back in main(). Second student — same chain repeats.', out:'  Omar       | avg  70.7 | grade C'},
+  {fn:'  print_student("Zara", [95,98,100])', note:'Third student.', out:'  Zara       | avg  97.7 | grade A'},
+  {fn:'  print("---...")', note:'main() prints the footer. Loop complete.', out:'-----------------------------------'},
+];
+let trCur = 0;
+let trOutputLines = [];
+
+function renderTrace() {
+  const cont = document.getElementById('tr-steps');
+  cont.innerHTML = '';
+  trSteps.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.className = 'tr-step' + (i === trCur ? ' active' : i < trCur ? ' done' : '');
+    d.innerHTML = `<div class="tr-num">${i+1}</div><div class="tr-fn">${s.fn}</div><div class="tr-note">${i === trCur ? s.note : ''}</div>`;
+    cont.appendChild(d);
+  });
+  const outEl = document.getElementById('tr-output');
+  if (trOutputLines.length) {
+    outEl.textContent = trOutputLines.join('\n');
+  } else {
+    outEl.textContent = '(nothing yet)';
+  }
+  document.getElementById('tr-prev').disabled = trCur === 0;
+  document.getElementById('tr-next').disabled = trCur === trSteps.length - 1;
+}
+
+function trStep(dir) {
+  if (dir > 0 && trCur < trSteps.length - 1) {
+    trCur++;
+    if (trSteps[trCur].out) trOutputLines.push(trSteps[trCur].out);
+  } else if (dir < 0 && trCur > 0) {
+    if (trSteps[trCur].out) trOutputLines.pop();
+    trCur--;
+  }
+  renderTrace();
+}
+
+function trReset() {
+  trCur = 0;
+  trOutputLines = [];
+  renderTrace();
+}
+
+renderTrace();
+
+// Function map
+const fns = [
+  {name:'add(a, b)', sig:'→ float', role:'r-op', rl:'operation', desc:'Returns a + b. Pure arithmetic — no side effects, no print. Can be tested with add(3,4) == 7.', calls:[], by:['main()']},
+  {name:'subtract(a, b)', sig:'→ float', role:'r-op', rl:'operation', desc:'Returns a - b. Identical structure to add — just a different operator.', calls:[], by:['main()']},
+  {name:'multiply(a, b)', sig:'→ float', role:'r-op', rl:'operation', desc:'Returns a * b.', calls:[], by:['main()']},
+  {name:'divide(a, b)', sig:'→ float | None', role:'r-op', rl:'operation', desc:'Returns a / b. Special case: if b == 0, prints warning and returns None. Caller must always check the result for None before using it.', calls:[], by:['main()']},
+  {name:'get_numbers()', sig:'→ (float, float)', role:'r-io', rl:'input', desc:'Asks the user for two floats and returns them as a tuple. Isolates all user-input logic in one place — main() never calls input() for numbers directly.', calls:['input()'], by:['main()']},
+  {name:'show_menu()', sig:'→ None', role:'r-io', rl:'display', desc:'Prints the operation menu. No return value — pure display. If the menu ever changes, only this function needs editing.', calls:['print()'], by:['main()']},
+  {name:'format_result(a, sym, b, r)', sig:'→ None', role:'r-util', rl:'display', desc:'Formats and prints the complete equation. Centralises all output formatting — change the display style here and nowhere else.', calls:['print()'], by:['main()']},
+  {name:'main()', sig:'→ None', role:'r-main', rl:'orchestrator', desc:'Coordinates the whole program. Shows menu, reads choice, calls get_numbers(), calls the right operation, calls format_result(). Reading main() alone tells you everything the program does.', calls:['show_menu()','get_numbers()','add()','subtract()','multiply()','divide()','format_result()'], by:['entry point']}
+];
+let activeFn = null;
+
+function buildFM() {
+  const b = document.getElementById('fm-body');
+  fns.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'fm-fn';
+    d.innerHTML = `<div><div class="fm-name">${f.name}</div><div class="fm-sig">${f.sig}</div></div><span class="fm-role ${f.role}">${f.rl}</span>`;
+    d.onclick = () => {
+      document.querySelectorAll('.fm-fn').forEach(x => x.classList.remove('sel'));
+      const det = document.getElementById('fm-detail');
+      if (activeFn === i) { activeFn = null; det.classList.remove('show'); return; }
+      activeFn = i;
+      d.classList.add('sel');
+      det.innerHTML = `<strong style="font-weight:500">${f.name}</strong>
+        <div style="margin-top:6px;font-size:12px;color:var(--color-text-secondary)">${f.desc}</div>
+        ${f.calls.length ? `<div style="margin-top:6px;font-size:12px"><strong style="font-weight:500">Calls:</strong> ${f.calls.join(', ')}</div>` : ''}
+        <div style="font-size:12px"><strong style="font-weight:500">Called by:</strong> ${f.by.join(', ')}</div>`;
+      det.classList.add('show');
+    };
+    b.appendChild(d);
+  });
+}
+
+buildFM();
+
+// Live calc
+function runCalc() {
+  const a = parseFloat(document.getElementById('ca').value);
+  const b = parseFloat(document.getElementById('cb2').value);
+  const op = document.getElementById('cop').value;
+  const res = document.getElementById('calc-res');
+  const fnName = document.getElementById('fn-called');
+  if (isNaN(a) || isNaN(b)) { res.textContent = 'Enter valid numbers'; return; }
+  let r, s, fname;
+  if (op === '+') { r = a + b; s = '+'; fname = 'add(a, b)'; }
+  else if (op === '-') { r = a - b; s = '-'; fname = 'subtract(a, b)'; }
+  else if (op === '×') { r = a * b; s = '×'; fname = 'multiply(a, b)'; }
+  else {
+    fname = 'divide(a, b)';
+    if (b === 0) { res.textContent = '✗ Cannot divide by zero. divide() returns None.'; res.style.color = 'var(--color-text-danger)'; fnName.textContent = fname; return; }
+    r = a / b; s = '÷';
+  }
+  res.style.color = 'var(--color-text-success)';
+  res.textContent = `format_result(${a}, "${s}", ${b}, ${parseFloat(r.toPrecision(6))})  →  ${a} ${s} ${b} = ${parseFloat(r.toPrecision(6))}`;
+  fnName.textContent = fname;
+}
+
+runCalc();
+
+// Checklist
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  const items = document.querySelectorAll('#req-list .cl-item');
+  const done = [...items].filter(i => i.classList.contains('done')).length;
+  document.getElementById('prog-lbl').textContent = `Progress: ${done} / ${items.length} complete`;
+  document.getElementById('prog-bar').style.width = (done / items.length * 100) + '%';
+}
+
+// Call graph explorer
+const graphData = [
+  {
+    name: 'main()',
+    calls: ['show_menu()', 'get_numbers()', 'add()', 'subtract()', 'multiply()', 'divide()', 'format_result()'],
+    calledBy: 'entry point'
+  },
+  { name: 'show_menu()', calls: ['print()'], calledBy: 'main()' },
+  { name: 'get_numbers()', calls: ['input()', 'float()'], calledBy: 'main()' },
+  { name: 'add(a,b)', calls: [], calledBy: 'main()' },
+  { name: 'subtract(a,b)', calls: [], calledBy: 'main()' },
+  { name: 'multiply(a,b)', calls: [], calledBy: 'main()' },
+  { name: 'divide(a,b)', calls: ['print() if b==0'], calledBy: 'main()' },
+  { name: 'format_result(a,sym,b,r)', calls: ['print()'], calledBy: 'main()' },
+];
+
+let activeGraphFn = null;
+
+function buildGraph() {
+  const body = document.getElementById('graph-body');
+  graphData.forEach((fn, i) => {
+    const row = document.createElement('div');
+    row.className = 'gt-row';
+    row.id = `gfn-${i}`;
+    const callsHtml = fn.calls.length
+      ? fn.calls.map(c => `<span class="gt-call-tag" data-target="${c}">${c}</span>`).join('')
+      : `<span class="gt-call-tag none">(no calls)</span>`;
+    row.innerHTML = `
+      <div class="gt-fn" style="cursor:pointer;font-weight:500" onclick="selectGraphFn(${i})">${fn.name}</div>
+      <div class="gt-arrow">→</div>
+      <div class="gt-calls">${callsHtml}</div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);margin-left:auto;white-space:nowrap">called by: ${fn.calledBy}</div>
+    `;
+    body.appendChild(row);
+  });
+}
+
+function selectGraphFn(i) {
+  // reset all
+  document.querySelectorAll('.gt-row').forEach(r => {
+    r.style.background = '';
+    r.style.borderColor = '';
+  });
+  document.querySelectorAll('.gt-call-tag').forEach(t => t.style.opacity = '1');
+
+  if (activeGraphFn === i) { activeGraphFn = null; return; }
+  activeGraphFn = i;
+
+  const row = document.getElementById(`gfn-${i}`);
+  row.style.background = 'var(--color-background-info)';
+  row.style.borderColor = 'var(--color-border-info)';
+
+  // highlight targets
+  const fn = graphData[i];
+  fn.calls.forEach(callName => {
+    graphData.forEach((f2, j) => {
+      if (f2.name.startsWith(callName.split('(')[0])) {
+        const targetRow = document.getElementById(`gfn-${j}`);
+        if (targetRow) {
+          targetRow.style.background = 'var(--color-background-success)';
+          targetRow.style.borderColor = 'var(--color-border-success)';
+          targetRow.classList.add('gt-highlight');
+          setTimeout(() => targetRow.classList.remove('gt-highlight'), 500);
+        }
+      }
+    });
+  });
+
+  // also highlight who calls this fn
+  graphData.forEach((f2, j) => {
+    if (j !== i && f2.calls.some(c => c.startsWith(graphData[i].name.split('(')[0]))) {
+      const callerRow = document.getElementById(`gfn-${j}`);
+      if (callerRow) {
+        callerRow.style.background = 'color-mix(in srgb,var(--color-background-warning) 30%,transparent)';
+        callerRow.style.borderColor = 'var(--color-border-warning)';
+      }
+    }
+  });
+}
+
+function clearGraph() {
+  activeGraphFn = null;
+  document.querySelectorAll('.gt-row').forEach(r => {
+    r.style.background = '';
+    r.style.borderColor = '';
+  });
+}
+
+buildGraph();
+
+// Exit ticket
+function ans(el, correct) {
+  if (document.querySelector('.ck-opt.correct')) return;
+  document.querySelectorAll('.ck-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! When each function does one thing: you can fix a bug in add() without touching subtract(). You can change display format by editing format_result() alone. You can test each function independently. And reading main() gives the full picture without reading every line.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is B. Breaking logic into small functions is about readability, debuggability, and maintainability — not performance or memory. The real benefit is human: code that\'s easier to read, test, and change without breaking other parts.';
+  }
+}
+
+</script>
+</body>
+</html>

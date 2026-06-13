@@ -1,0 +1,18 @@
+Changes
+
+2. ADD Header
+<Head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="primary.css">
+
+</Head>
+<body>
+<div class="lp">
+<h2>Lesson 8: Nested conditions input validation - Full Lesson Plan</h2>
+
+
+4. add buttons
+<button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (3).html'">Next: Lesson 3 - User input &amp; f-strings</button>
+<button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+
+

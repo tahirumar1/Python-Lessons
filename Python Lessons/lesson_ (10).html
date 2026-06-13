@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* extension grid */
+.ext-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.ext-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.ext-level{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ext-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.ext-desc{font-size:12px;color:var(--color-text-secondary)}
+/* live game */
+.live-game{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.lg-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lg-body{padding:14px}
+.lg-input-row{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.lg-input{font-size:14px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:100px}
+.lg-btn{padding:8px 18px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans);border-color:var(--color-border-info)}
+.lg-btn:hover{opacity:.85}
+.lg-reset{background:var(--color-background-secondary);color:var(--color-text-secondary);border-color:var(--color-border-secondary)}
+.lg-history{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:12.5px;min-height:80px;border:0.5px solid var(--color-border-tertiary);max-height:200px;overflow-y:auto;line-height:2}
+.lg-stats{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.lg-stat{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:4px 10px;border-radius:10px;border:0.5px solid var(--color-border-tertiary)}
+/* peer review */
+.peer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.peer-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;background:var(--color-background-primary)}
+.peer-card-head{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.peer-textarea{width:100%;margin-top:4px;font-size:13px;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none}
+/* rubric */
+.rubric-table{width:100%;border-collapse:collapse;font-size:13px}
+.rubric-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.rubric-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.rubric-table tr:last-child td{border-bottom:none}
+.pts{font-weight:500;color:var(--color-text-info);font-family:var(--font-mono)}
+/* week 3 preview */
+.w3-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.w3-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+.w3-num{font-weight:500;margin-bottom:2px}
+.w3-topic{color:var(--color-text-secondary)}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 10: Week 2 Project — Number Guessing Game - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 10: Week 2 Project — Number Guessing Game</p>
+      <p class="hero-sub">Week 2 — Making Decisions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-purple">🛠 Project day</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">Project + demo</div></div>
+    <div class="meta-item"><div class="meta-label">Skills tested</div><div class="meta-val">L6–L9 combined</div></div>
+    <div class="meta-item"><div class="meta-label">Deliverable</div><div class="meta-val">Working .py file</div></div>
+    <div class="meta-item"><div class="meta-label">New module</div><div class="meta-val">random</div></div>
+  </div>
+</div>
+
+<!-- Week 2 recap -->
+<div class="section">
+  <div class="sec-head">What this project brings together</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px;">This is the first project that feels like a real game. Every concept from Week 2 is woven together: <code>if/elif/else</code> for hints, <code>and/or/not</code> for compound checks, nested conditions for validation, and a <code>while</code> loop with <code>break</code> to keep the game running. Students who finish the core requirements should have something they can genuinely share and play with friends.</p>
+  <div class="success-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🎯</span><span><strong>Project day goal:</strong> Every student leaves with a complete, playable game. Not a tutorial — their own design, their own variable names, their own messages. Circulate early and often; unblock stuck students by asking questions rather than giving code.</span></div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Combine <code>while</code> loops, conditionals, and input validation in one complete program</li>
+    <li>Use <code>import random</code> and <code>random.randint()</code> to generate a secret number</li>
+    <li>Implement a play-again outer loop so the game restarts without re-running the file</li>
+    <li>Track and display a best-score (fewest tries) across multiple rounds</li>
+    <li>Present code to a partner and explain at least two design decisions</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Launch</span>
+        <div class="tl-title">Week 2 recap + live demo (6 min)</div>
+        <div class="tl-desc">Quick-fire verbal recap: ask students to call out one keyword or concept from each of Lessons 6–9. Write them on the board. Then play the live game demo below on the projector — let a student come up and play a round. Don't show the code yet. Let the game speak for itself.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:06</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Plan</span>
+        <div class="tl-title">Students plan their game on paper (5 min)</div>
+        <div class="tl-desc">Before touching the editor, students draw the two-loop structure on paper: the outer play-again loop and the inner guessing loop. They also decide: their number range, their try limit, their win/lose messages, and whether they want a best-score tracker. Planning on paper prevents blank-editor paralysis — enforce it.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:11</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Build</span>
+        <div class="tl-title">Independent build session (27 min)</div>
+        <div class="tl-desc">Students build from scratch or extend yesterday's Activity 2 prototype. Requirements checklist below. Teacher circulates silently for the first 5 minutes — let students attempt before offering help. Guiding questions only: "What condition makes the inner loop exit?" "Where should the play-again question go?"</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:38</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Review</span>
+        <div class="tl-title">Peer code swap (8 min)</div>
+        <div class="tl-desc">Pairs swap computers. Each student plays their partner's game, then fills in the written peer review card below. Focus: does it loop correctly? does it handle a wrong guess gracefully? does it give good hints?</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:46</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-purple" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Share</span>
+        <div class="tl-title">Showcase + Week 2 wrap-up (9 min)</div>
+        <div class="tl-desc">3–4 volunteers demo on the projector. Teacher asks each: "Show me your while loop condition" and "How does your play-again work?" Then close with the Week 3 preview panel.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Project brief -->
+<div class="section">
+  <div class="sec-head">Project brief — give this to students</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:16px;font-weight:500;margin-bottom:6px">Build your own Number Guessing Game</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px">You have 27 minutes. Build a complete, playable number guessing game. Your game must meet all requirements below — the extensions are optional but earn bragging rights.</div>
+    <div style="font-size:13px;font-weight:500;margin-bottom:8px">Requirements checklist — tick each one as you complete it:</div>
+    <div class="checklist" id="req-checklist">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Computer picks a random number using <code>random.randint()</code></span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Player guesses in a <code>while</code> loop — loop exits only when correct or tries run out</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Each wrong guess prints a "too high" or "too low" hint using <code>if/elif/else</code></span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>A try counter increments each guess and is shown in the win message</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>A try limit (e.g. 7) — if exceeded, reveal the secret number and end the round</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>A play-again outer loop — asks "Play again? (yes/no)" after each round</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>A best-score tracker — remembers the fewest tries across all rounds and displays it</span></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Program runs without errors from start to finish through multiple rounds</span></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="prog-label" id="prog-label">Progress: 0 / 8 complete</div>
+      <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Extension challenges -->
+<div class="section">
+  <div class="sec-head">Extension challenges — for fast finishers</div>
+  <div class="ext-grid">
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-success)">⭐ Level 1</div>
+      <div class="ext-title">Difficulty selector</div>
+      <div class="ext-desc">Ask the player to choose Easy (1–50, 10 tries), Medium (1–100, 7 tries), or Hard (1–200, 5 tries) before each round. Adjust <code>randint()</code> and the try limit accordingly.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-warning)">⭐⭐ Level 2</div>
+      <div class="ext-title">Warm/cold hints</div>
+      <div class="ext-desc">Instead of just "too high/low", also print "very close!" if within 5, "close" if within 15, or "far away" if more than 15 off. Use <code>abs()</code> to calculate distance.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-danger)">⭐⭐⭐ Level 3</div>
+      <div class="ext-title">Full leaderboard</div>
+      <div class="ext-desc">Ask for the player's name at the start. After each round, store their score. At the end, print a session leaderboard of all rounds played, sorted best to worst. (Sorting comes in Week 3 — but let them attempt it now!)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — play the game on the projector</div>
+  <div class="live-game">
+    <div class="lg-head">
+      <span>Number Guessing Game — interactive demo</span>
+      <div style="display:flex;gap:6px">
+        <button class="lg-btn lg-reset" onclick="resetGame()">New game</button>
+      </div>
+    </div>
+    <div class="lg-body">
+      <div id="lg-status" style="font-size:13px;color:var(--color-text-secondary);margin-bottom:8px"></div>
+      <div class="lg-input-row">
+        <input class="lg-input" type="number" id="lg-guess" placeholder="1–100" min="1" max="100" onkeydown="if(event.key==='Enter')makeGuess()">
+        <button class="lg-btn" onclick="makeGuess()">Guess →</button>
+      </div>
+      <div class="lg-history" id="lg-history"></div>
+      <div class="lg-stats">
+        <div class="lg-stat">Round: <span id="lg-round">1</span></div>
+        <div class="lg-stat">Tries this round: <span id="lg-tries">0</span> / 7</div>
+        <div class="lg-stat">Best score: <span id="lg-best">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">📌</span><span><strong>Show only the game — not the code yet.</strong> Students should experience what they're building before they see how it's built. Invite a student to the front to play a round live on the projector.</span></div>
+</div>
+
+<!-- Teacher solution -->
+<div class="section">
+  <div class="sec-head">Teacher's complete solution — reveal only after peer review</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>When to show this:</strong> After peer review only — as a reference for comparison. Students who see it before building will copy it. Students who built their own first will learn far more from comparing theirs to it.</span></div>
+  <div class="code-block">
+    <div class="code-header"><span>guessing_game.py — complete teacher solution</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">import</span> <span class="bi">random</span>
+
+<span class="fn">print</span>(<span class="str">"=" * 40</span>)
+<span class="fn">print</span>(<span class="str">"     NUMBER GUESSING GAME"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 40</span>)
+
+<span class="var">MAX_TRIES</span>  = <span class="num">7</span>
+<span class="var">best_score</span> = <span class="kw">None</span>    <span class="cm"># None means "no score yet"</span>
+<span class="var">round_num</span>  = <span class="num">1</span>
+
+<span class="cm"># ── Outer loop: play again ──────────────────────</span>
+<span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"\nRound {round_num} — Guess a number between 1 and 100."</span>)
+    <span class="var">secret</span> = <span class="bi">random</span><span class="op">.</span><span class="fn">randint</span>(<span class="num">1</span>, <span class="num">100</span>)
+    <span class="var">tries</span>  = <span class="num">0</span>
+    <span class="var">won</span>    = <span class="kw">False</span>
+
+    <span class="cm"># ── Inner loop: guessing ───────────────────────</span>
+    <span class="kw">while</span> <span class="var">tries</span> <span class="op">&lt;</span> <span class="var">MAX_TRIES</span><span class="op">:</span>
+        <span class="var">remaining</span> = <span class="var">MAX_TRIES</span> <span class="op">-</span> <span class="var">tries</span>
+        <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">f"  Guess ({remaining} tries left): "</span>)
+
+        <span class="cm"># validate input</span>
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  Please enter a whole number."</span>)
+            <span class="kw">continue</span>                       <span class="cm"># don't count invalid input</span>
+
+        <span class="var">guess</span> = <span class="fn">int</span>(<span class="var">raw</span>)
+        <span class="var">tries</span> <span class="op">+=</span> <span class="num">1</span>
+
+        <span class="kw">if</span> <span class="var">guess</span> <span class="op">==</span> <span class="var">secret</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">f"  🎉 Correct! You got it in {tries} {'try' if tries == 1 else 'tries'}."</span>)
+            <span class="var">won</span> = <span class="kw">True</span>
+            <span class="kw">break</span>
+        <span class="kw">elif</span> <span class="var">guess</span> <span class="op">&lt;</span> <span class="var">secret</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  Too low — try higher. ↑"</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  Too high — try lower. ↓"</span>)
+
+    <span class="cm"># ── End of round ───────────────────────────────</span>
+    <span class="kw">if</span> <span class="kw">not</span> <span class="var">won</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"  💀 Out of tries! The number was {secret}."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="kw">if</span> <span class="var">best_score</span> <span class="kw">is</span> <span class="kw">None</span> <span class="kw">or</span> <span class="var">tries</span> <span class="op">&lt;</span> <span class="var">best_score</span><span class="op">:</span>
+            <span class="var">best_score</span> = <span class="var">tries</span>
+            <span class="fn">print</span>(<span class="str">"  🏆 New best score!"</span>)
+        <span class="fn">print</span>(<span class="str">f"  Best score so far: {best_score} tries."</span>)
+
+    <span class="cm"># ── Play again? ─────────────────────────────────</span>
+    <span class="var">again</span> = <span class="fn">input</span>(<span class="str">"\nPlay again? (yes/no): "</span>)<span class="op">.</span><span class="fn">lower</span>()<span class="op">.</span><span class="fn">strip</span>()
+    <span class="kw">if</span> <span class="var">again</span> <span class="op">!=</span> <span class="str">"yes"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"\nThanks for playing! Final best score: {best_score} tries."</span>)
+        <span class="kw">break</span>
+    <span class="var">round_num</span> <span class="op">+=</span> <span class="num">1</span></pre>
+  </div>
+  <div class="out-lbl">Sample output — one round won, one lost</div>
+  <div class="out">========================================<br>     NUMBER GUESSING GAME<br>========================================<br><br>Round 1 — Guess a number between 1 and 100.<br><span class="in-line">  Guess (7 tries left): 50</span> → Too high — try lower. ↓<br><span class="in-line">  Guess (6 tries left): 25</span> → Too low — try higher. ↑<br><span class="in-line">  Guess (5 tries left): 37</span> → Too high — try lower. ↓<br><span class="in-line">  Guess (4 tries left): 31</span> → 🎉 Correct! You got it in 4 tries.<br>  🏆 New best score!<br>  Best score so far: 4 tries.<br><span class="in-line">Play again? (yes/no): yes</span><br><br>Round 2 — Guess a number between 1 and 100.<br>  ...(7 wrong guesses)...<br>  💀 Out of tries! The number was 83.<br><span class="in-line">Play again? (yes/no): no</span><br><br>Thanks for playing! Final best score: 4 tries.</div>
+  <div class="tip-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Two things to point out after the reveal:</strong> (1) <code>best_score = None</code> — using <code>None</code> as an "uninitialised" sentinel, checked with <code>is None</code>. (2) <code>.lower().strip()</code> on the play-again input — normalises "Yes ", "YES", "yes" all to "yes". These are real Python idioms worth naming.</span></div>
+</div>
+
+<!-- Peer review -->
+<div class="section">
+  <div class="sec-head">Peer review card</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:13px;font-weight:500">Peer Review — Week 2 Project</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">Reviewer: _____________ &nbsp; Author: _____________</span>
+    </div>
+    <div class="peer-grid">
+      <div class="peer-card">
+        <div class="peer-card-head">✅ One thing that works well</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Name the specific line or feature.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. The play-again loop on line 34 works perfectly — I played 3 rounds and it never crashed..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">🔧 One thing to improve</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Suggest the fix, not just the problem.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. If I type 'abc' as a guess, it crashes. Add .isdigit() check before int() conversion..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">❓ One question for the author</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Something genuinely curious about their design.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. Why did you use 'while tries < 7' instead of 'while True' with a break?..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-card-head">🎯 Requirements check</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Tick any that are MISSING:</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> random number generated</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> while loop with guess</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> too high / too low hints</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> try counter shown</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> try limit + reveal</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> play-again loop</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> best-score tracker</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rubric -->
+<div class="section">
+  <div class="sec-head">Grading rubric — optional, for formal assessment</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="rubric-table">
+      <thead><tr><th>Criterion</th><th>Full marks</th><th>Partial</th><th>Not yet</th><th>Pts</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Core game loop</strong> — while + break works correctly</td><td>Loops until correct or limit hit; break exits cleanly</td><td>Loop runs but exit condition buggy</td><td>No working loop</td><td class="pts">3</td></tr>
+        <tr><td><strong>Hints</strong> — correct too high / too low each guess</td><td>All branches correct for every input</td><td>One branch wrong</td><td>No hints</td><td class="pts">2</td></tr>
+        <tr><td><strong>Play-again</strong> — outer loop restarts game</td><td>Works for any number of rounds</td><td>Restarts once but breaks on 2nd</td><td>No play-again</td><td class="pts">2</td></tr>
+        <tr><td><strong>Best score</strong> — tracked and displayed correctly</td><td>Updates only on improvement, shown each win</td><td>Tracked but displayed wrong</td><td>Not attempted</td><td class="pts">2</td></tr>
+        <tr><td><strong>Robustness</strong> — handles non-numeric input</td><td>Validates with .isdigit(), doesn't count bad input</td><td>Partially handles</td><td>Crashes on bad input</td><td class="pts">1</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:8px">Total: 10 points. For informal cohorts, consider pass/not-yet rather than numeric scoring on project days.</p>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — self-assessment exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">In the guessing game, why is <code>best_score</code> initialised to <code>None</code> rather than <code>0</code>?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>None</code> and <code>0</code> are the same thing in Python — either works</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span>Because <code>0</code> would crash when compared to an integer try count</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span><code>None</code> means "no score yet" — if we used <code>0</code>, no real score could ever beat it, since you can't win in 0 tries</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>Because <code>random</code> requires scores to be initialised as <code>None</code></div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:14px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written self-reflection (students complete in notebooks):<br>
+      (1) Draw the two-loop structure of your game — label the outer loop, inner loop, break, and play-again condition.<br>
+      (2) What was the single hardest bug you fixed today? What caused it and how did you solve it?<br>
+      (3) What one feature would you add to your game if you had 10 more minutes?
+    </div>
+  </div>
+</div>
+
+<!-- Week 3 preview -->
+<div class="section">
+  <div class="sec-head">Looking ahead — Week 3 preview</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Week 3: Loops &amp; lists</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">We've used while loops to repeat things until a condition changes. Next week we meet <code>for</code> loops — which repeat a fixed number of times — and <strong>lists</strong>, Python's most powerful built-in data structure. Our programs stop processing one thing at a time and start working with collections.</div>
+    <div class="w3-grid">
+      <div class="w3-card"><div class="w3-num">L11</div><div class="w3-topic">for loops &amp; range()</div></div>
+      <div class="w3-card"><div class="w3-num">L12</div><div class="w3-topic">Lists: create &amp; access</div></div>
+      <div class="w3-card"><div class="w3-num">L13</div><div class="w3-topic">Iterating &amp; methods</div></div>
+      <div class="w3-card"><div class="w3-num">L14</div><div class="w3-topic">Slicing &amp; comprehensions</div></div>
+      <div class="w3-card"><div class="w3-num" style="color:var(--color-text-success)">L15</div><div class="w3-topic" style="color:var(--color-text-success)">🛠 To-do app</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Most common structural bug:</strong> Students who put the <code>random.randint()</code> call outside the outer loop — meaning the same secret number is used every round. Watch for this during circulation. Ask: "Where does a new secret number need to be picked?"</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake:</strong> The best_score update logic — students who write <code>if tries &lt; best_score</code> without first checking <code>if best_score is None</code> will crash on the first round since you can't compare an int to None. Show them the <code>is None or</code> pattern.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake:</strong> Students who don't reset <code>tries = 0</code> and <code>won = False</code> inside the outer loop — so Round 2 inherits Round 1's state. Teach: every variable that belongs to a single round must be re-initialised at the start of each round, inside the outer loop.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Pacing:</strong> 27 minutes is enough for the core 8 requirements if students planned on paper first. Students who struggle with the play-again loop should skip the best-score tracker for now — a working core game is better than a broken extended one.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">❤️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Celebration:</strong> Week 2 is complete. Students who joined with no coding experience now have two working, interactive programs — a Mad Libs generator and a number guessing game. Say that out loud. Let them feel it before previewing Week 3.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (11).html'">Next: Lesson 11 - for loops and range()</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// checklist
+function toggleCheck(el){
+  el.classList.toggle('done');
+  const items = document.querySelectorAll('#req-checklist .cl-item');
+  const done = [...items].filter(i=>i.classList.contains('done')).length;
+  document.getElementById('prog-label').textContent=`Progress: ${done} / ${items.length} complete`;
+  document.getElementById('prog-bar').style.width=(done/items.length*100)+'%';
+}
+
+// live game
+let secret, tries, round, bestScore, gameOver;
+function resetGame(){
+  secret = Math.floor(Math.random()*100)+1;
+  tries = 0;
+  gameOver = false;
+  document.getElementById('lg-history').innerHTML = '';
+  document.getElementById('lg-guess').value = '';
+  document.getElementById('lg-tries').textContent = '0';
+  document.getElementById('lg-status').textContent = 'Guess a number between 1 and 100 — you have 7 tries!';
+  document.getElementById('lg-guess').disabled = false;
+  document.querySelector('.lg-btn:not(.lg-reset)').disabled = false;
+}
+function initGame(){
+  round = 1; bestScore = null;
+  document.getElementById('lg-round').textContent = '1';
+  document.getElementById('lg-best').textContent = '—';
+  resetGame();
+}
+function addHistory(msg, color){
+  const div = document.createElement('div');
+  div.style.color = color||'var(--color-text-primary)';
+  div.textContent = msg;
+  const h = document.getElementById('lg-history');
+  h.appendChild(div);
+  h.scrollTop = h.scrollHeight;
+}
+function makeGuess(){
+  if(gameOver) return;
+  const raw = document.getElementById('lg-guess').value.trim();
+  if(!raw || isNaN(raw) || !Number.isInteger(+raw)){
+    addHistory('  ⚠ Please enter a whole number.','var(--color-text-warning)'); return;
+  }
+  const g = parseInt(raw);
+  if(g<1||g>100){addHistory('  ⚠ Enter a number between 1 and 100.','var(--color-text-warning)'); return;}
+  tries++;
+  document.getElementById('lg-tries').textContent = tries;
+  document.getElementById('lg-guess').value='';
+  if(g===secret){
+    addHistory(`  🎉 Correct! ${secret} — you got it in ${tries} ${tries===1?'try':'tries'}.`,'var(--color-text-success)');
+    if(bestScore===null||tries<bestScore){
+      bestScore=tries;
+      document.getElementById('lg-best').textContent=bestScore;
+      addHistory('  🏆 New best score!','var(--color-text-success)');
+    }
+    gameOver=true;
+    endRound();
+  } else if(tries>=7){
+    addHistory(`  Guess: ${g} — ${g<secret?'Too low ↑':'Too high ↓'}`,'var(--color-text-secondary)');
+    addHistory(`  💀 Out of tries! The number was ${secret}.`,'var(--color-text-danger)');
+    gameOver=true;
+    endRound();
+  } else {
+    const hint = g<secret?'Too low — try higher ↑':'Too high — try lower ↓';
+    addHistory(`  Guess: ${g} — ${hint}`, g<secret?'var(--color-text-info)':'var(--color-text-warning)');
+    document.getElementById('lg-status').textContent=`${7-tries} tries remaining.`;
+  }
+}
+function endRound(){
+  document.getElementById('lg-guess').disabled=true;
+  document.querySelector('.lg-btn:not(.lg-reset)').disabled=true;
+  addHistory('');
+  addHistory('  Press "New game" to play again.','var(--color-text-secondary)');
+  document.getElementById('lg-status').textContent='Round over!';
+  round++;
+  document.getElementById('lg-round').textContent=round;
+}
+
+// exit ticket
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! None is Python\'s way of saying "this value doesn\'t exist yet." If best_score were 0, a player who won in 1 try would still beat it, but a player who won in 0 tries is impossible — so 0 would work too, but None is semantically cleaner: it means "no game has been won yet."';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. None is a special Python value meaning "nothing/uninitialised." Using 0 as the initial best_score would mean no real score (minimum 1 try) could ever beat it, so the best_score would never update. None lets us detect "first win" cleanly.';
+  }
+}
+initGame();
+</script>
+</body>
+</html>

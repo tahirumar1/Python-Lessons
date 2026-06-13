@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link  href="styles.css" rel="stylesheet">
+<style>
+/* Operator Grid */
+.op-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.op-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.op-sym{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--color-text-info);display:block;margin-bottom:4px}
+.op-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.op-example{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary)}
+.op-result{font-family:var(--font-mono);font-size:12px;color:var(--color-text-success)}
+/* PEMDAS Chart */
+.pemdas-row{display:flex;gap:0;margin:10px 0;border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.pemdas-cell{flex:1;padding:8px 6px;text-align:center;border-right:0.5px solid var(--color-border-tertiary);font-size:12px}
+.pemdas-cell:last-child{border-right:none}
+.pemdas-letter{font-size:18px;font-weight:500;display:block;margin-bottom:2px}
+.pemdas-word{font-size:10px;color:var(--color-text-secondary)}
+/* Sandbox */
+.sandbox{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.sandbox-head{padding:8px 14px;font-size:12px;font-weight:500;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center}
+.sandbox-body{padding:14px}
+.sb-expr-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.sb-input{flex:1;min-width:160px;font-size:13px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono)}
+.sb-result{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:13px;border:0.5px solid var(--color-border-tertiary);min-height:38px;color:var(--color-text-success);margin-top:4px}
+.sb-label{font-size:12px;color:var(--color-text-secondary);min-width:60px}
+/* Riddle cards */
+.riddle-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;background:var(--color-background-secondary);margin-bottom:8px;cursor:pointer;transition:background .12s}
+.riddle-card:hover{background:var(--color-background-primary)}
+.riddle-expr{font-family:var(--font-mono);font-size:15px;font-weight:500;margin-bottom:4px}
+.riddle-hint{font-size:12px;color:var(--color-text-secondary)}
+.riddle-answer{font-family:var(--font-mono);font-size:13px;color:var(--color-text-success);margin-top:6px;display:none}
+.riddle-card.shown .riddle-answer{display:block}
+.riddle-card.shown .riddle-hint{display:none}
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 4: Arithmetic and Math Operations — Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 4: Arithmetic &amp; math operations</p>
+      <p class="lp-hero-sub">Week 1 — Python Foundations · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">input(), f-strings</div></div>
+    <div class="meta-item"><div class="meta-label">New operators</div><div class="meta-val">// % ** round()</div></div>
+    <div class="meta-item"><div class="meta-label">New module</div><div class="meta-val">math</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Use all seven arithmetic operators: <code>+  -  *  /  //  %  **</code></li>
+    <li>Predict operator precedence (PEMDAS/BODMAS) without running the code</li>
+    <li>Use <code>round()</code> and f-string format specifiers (<code>:.2f</code>) for clean decimal output</li>
+    <li>Import and use the <code>math</code> module for sqrt, floor, ceil, and pi</li>
+    <li>Build a real-world calculator that combines all skills from Lessons 1–4</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The ugly division problem (4 min)</div>
+        <div class="tl-desc">Show the output from Lesson 3's calculator: <code>10 ÷ 3 = 3.3333333333333335</code>. Ask: "Would you show this to a customer?" Today we fix that — and learn every other operator Python has. Write on the board: "By the end of today, you can build a calculator that a real person would want to use."</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">All 7 arithmetic operators — live demo (10 min)</div>
+        <div class="tl-desc">Walk through Examples 1–2 on the projector. For <code>//</code> and <code>%</code>, use the "buses and students" analogy (see notes). For <code>**</code>, connect to maths class. Ask students to predict each output before running.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Operator precedence + rounding (8 min)</div>
+        <div class="tl-desc">Show the PEMDAS chart below. Run the precedence examples live — students trace on paper first. Then show <code>round()</code> and the <code>:.2f</code> f-string format specifier as the fix for the ugly division.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:22</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">The math module (5 min)</div>
+        <div class="tl-desc">Introduce <code>import math</code>. Show math.sqrt(), math.pi, math.floor(), math.ceil(). Key idea: a module is a toolbox of extra functions. Python has hundreds — we'll meet more in Week 6.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Tip calculator (10 min)</div>
+        <div class="tl-desc">Real-world application that uses input(), float(), arithmetic, round(), and f-strings together. Full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Math riddle race (10 min)</div>
+        <div class="tl-desc">Pairs predict output of tricky expressions before running. Interactive riddles embedded below — click each card to reveal the answer.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Operator playground + exit ticket (8–10 min)</div>
+        <div class="tl-desc">Students type expressions into the live sandbox below to verify predictions. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Operator reference -->
+<div class="section">
+  <div class="sec-head">Operator reference — display on projector</div>
+  <div class="op-grid">
+    <div class="op-card"><span class="op-sym">+  −  *</span><div class="op-name">Add, subtract, multiply</div><div class="op-example">10 + 3 → <span class="op-result">13</span> &nbsp; 10 - 3 → <span class="op-result">7</span> &nbsp; 10 * 3 → <span class="op-result">30</span></div></div>
+    <div class="op-card"><span class="op-sym">/</span><div class="op-name">Division — always returns a float</div><div class="op-example">10 / 3 → <span class="op-result">3.3333...</span> &nbsp; 9 / 3 → <span class="op-result">3.0</span></div></div>
+    <div class="op-card"><span class="op-sym">//</span><div class="op-name">Floor division — whole number result</div><div class="op-example">10 // 3 → <span class="op-result">3</span> &nbsp; 7 // 2 → <span class="op-result">3</span> &nbsp; 1 // 2 → <span class="op-result">0</span></div></div>
+    <div class="op-card"><span class="op-sym">%</span><div class="op-name">Modulo — remainder after division</div><div class="op-example">10 % 3 → <span class="op-result">1</span> &nbsp; 10 % 2 → <span class="op-result">0</span> &nbsp; 7 % 4 → <span class="op-result">3</span></div></div>
+    <div class="op-card"><span class="op-sym">**</span><div class="op-name">Exponent — raise to a power</div><div class="op-example">2 ** 8 → <span class="op-result">256</span> &nbsp; 9 ** 0.5 → <span class="op-result">3.0</span></div></div>
+    <div class="op-card"><span class="op-sym">round()</span><div class="op-name">Round to n decimal places</div><div class="op-example">round(3.14159, 2) → <span class="op-result">3.14</span> &nbsp; round(2.5) → <span class="op-result">2</span></div></div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🚌</span><span><strong>Bus analogy for // and %:</strong> 27 students, buses hold 8 each. How many full buses? <code>27 // 8 = 3</code>. How many students left over? <code>27 % 8 = 3</code>. Draw this on the board — it sticks.</span></div>
+</div>
+
+<!-- PEMDAS -->
+<div class="section">
+  <div class="sec-head">Operator precedence — PEMDAS / BODMAS</div>
+  <div class="pemdas-row">
+    <div class="pemdas-cell" style="background:var(--color-background-danger);color:var(--color-text-danger)"><span class="pemdas-letter">P</span><span class="pemdas-word">Parentheses</span></div>
+    <div class="pemdas-cell" style="background:var(--color-background-warning);color:var(--color-text-warning)"><span class="pemdas-letter">E</span><span class="pemdas-word">Exponents **</span></div>
+    <div class="pemdas-cell" style="background:var(--color-background-success);color:var(--color-text-success)"><span class="pemdas-letter">MD</span><span class="pemdas-word">* / // %</span></div>
+    <div class="pemdas-cell" style="background:var(--color-background-info);color:var(--color-text-info)"><span class="pemdas-letter">AS</span><span class="pemdas-word">+ and −</span></div>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 8px;">Within the same level, Python evaluates left to right. When in doubt — use parentheses. They always win.</p>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — trace these on paper first</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="num">2</span> + <span class="num">3</span> * <span class="num">4</span>)        <span class="cm"># → 14  (not 20 — * before +)</span>
+<span class="fn">print</span>((<span class="num">2</span> + <span class="num">3</span>) * <span class="num">4</span>)      <span class="cm"># → 20  (parentheses first)</span>
+<span class="fn">print</span>(<span class="num">2</span> ** <span class="num">3</span> ** <span class="num">2</span>)       <span class="cm"># → 512 (right-to-left: 3**2=9, 2**9=512)</span>
+<span class="fn">print</span>(<span class="num">10</span> / <span class="num">2</span> * <span class="num">5</span>)        <span class="cm"># → 25.0 (left-to-right: 5.0 * 5)</span>
+<span class="fn">print</span>(<span class="num">10</span> % <span class="num">3</span> + <span class="num">2</span> ** <span class="num">2</span>)   <span class="cm"># → 5   (** first, then %, then +)</span></pre>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Teaching tip:</strong> Have students trace line 3 on paper — most will predict 64 (left to right). The right-to-left behaviour of <code>**</code> surprises everyone and cements why PEMDAS matters.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — All seven operators</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">a</span> = <span class="num">17</span>
+<span class="var">b</span> = <span class="num">5</span>
+
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> + <span class="var">{b}</span>  = <span class="var">{a + b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> - <span class="var">{b}</span>  = <span class="var">{a - b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> * <span class="var">{b}</span>  = <span class="var">{a * b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> / <span class="var">{b}</span>  = <span class="var">{a / b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> // <span class="var">{b}</span> = <span class="var">{a // b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> % <span class="var">{b}</span>  = <span class="var">{a % b}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> ** <span class="var">{b}</span> = <span class="var">{a ** b}</span>"</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">17 + 5  = 22<br>17 - 5  = 12<br>17 * 5  = 85<br>17 / 5  = 3.4<br>17 // 5 = 3<br>17 % 5  = 2<br>17 ** 5 = 1419857</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Rounding and f-string format specifiers</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">result</span> = <span class="num">10</span> / <span class="num">3</span>
+
+<span class="fn">print</span>(<span class="var">result</span>)                    <span class="cm"># 3.3333333333333335 — ugly</span>
+<span class="fn">print</span>(<span class="bi">round</span>(<span class="var">result</span>, <span class="num">2</span>))           <span class="cm"># 3.33 — better</span>
+<span class="fn">print</span>(<span class="str">f"<span class="var">{result:.2f}</span>"</span>)            <span class="cm"># 3.33 — f-string way</span>
+<span class="fn">print</span>(<span class="str">f"<span class="var">{result:.4f}</span>"</span>)            <span class="cm"># 3.3333</span>
+<span class="fn">print</span>(<span class="str">f"<span class="var">{result:.0f}</span>"</span>)            <span class="cm"># 3 — rounded to whole number</span>
+
+<span class="cm"># Tip: use augmented assignment to update variables</span>
+<span class="var">score</span> = <span class="num">10</span>
+<span class="var">score</span> += <span class="num">5</span>    <span class="cm"># same as score = score + 5</span>
+<span class="var">score</span> *= <span class="num">2</span>    <span class="cm"># same as score = score * 2</span>
+<span class="fn">print</span>(<span class="var">score</span>)   <span class="cm"># 30</span></pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">3.3333333333333335<br>3.33<br>3.33<br>3.3333<br>3<br>30</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — The math module</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">import</span> <span class="bi">math</span>
+
+<span class="fn">print</span>(<span class="bi">math</span>.pi)                   <span class="cm"># 3.141592653589793</span>
+<span class="fn">print</span>(<span class="bi">math</span>.sqrt(<span class="num">144</span>))            <span class="cm"># 12.0</span>
+<span class="fn">print</span>(<span class="bi">math</span>.floor(<span class="num">3.9</span>))           <span class="cm"># 3  — always rounds down</span>
+<span class="fn">print</span>(<span class="bi">math</span>.ceil(<span class="num">3.1</span>))            <span class="cm"># 4  — always rounds up</span>
+<span class="fn">print</span>(<span class="bi">math</span>.pow(<span class="num">2</span>, <span class="num">10</span>))           <span class="cm"># 1024.0</span>
+
+<span class="cm"># Practical: area of a circle</span>
+<span class="var">radius</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Radius in cm: "</span>))
+<span class="var">area</span> = <span class="bi">math</span>.pi * <span class="var">radius</span> ** <span class="num">2</span>
+<span class="fn">print</span>(<span class="str">f"Area = <span class="var">{area:.2f}</span> cm²"</span>)</pre>
+  </div>
+  <div class="output-label">Output (user enters 7)</div>
+  <div class="output-block"><span class="input-line">Radius in cm: 7</span><br>Area = 153.94 cm²</div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Tip calculator</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Individual</div>
+    <div class="activity-title">Build a restaurant tip calculator</div>
+    <div class="activity-desc">A real-world program that uses input, float conversion, arithmetic, rounding, and f-string formatting all together. Every student has used or seen a tip calculator — this makes the lesson tangible.</div>
+    <ol class="steps-list">
+      <li>Ask for the bill amount and the tip percentage using <code>float(input(...))</code></li>
+      <li>Calculate the tip amount: <code>bill * (tip_percent / 100)</code></li>
+      <li>Calculate the total: <code>bill + tip</code></li>
+      <li>Print all values rounded to 2 decimal places using <code>:.2f</code> in f-strings</li>
+      <li>Extension: also ask how many people are splitting the bill, then print each person's share</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># Tip Calculator</span>
+<span class="fn">print</span>(<span class="str">"=== Tip Calculator ==="</span>)
+
+<span class="var">bill</span>        = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Bill amount (Rs): "</span>))
+<span class="var">tip_percent</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Tip percentage (%): "</span>))
+
+<span class="var">tip_amount</span>  = <span class="var">bill</span> * (<span class="var">tip_percent</span> / <span class="num">100</span>)
+<span class="var">total</span>       = <span class="var">???</span>
+
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">f"Bill amount : Rs <span class="var">{bill:.2f}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"Tip (<span class="var">{tip_percent:.0f}</span>%)   : Rs <span class="var">{???:.2f}</span>"</span>)
+<span class="fn">print</span>(<span class="str">f"Total       : Rs <span class="var">{???:.2f}</span>"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example completed output</div>
+    <div class="output-block"><span class="input-line">Bill amount (Rs): 850</span><br><span class="input-line">Tip percentage (%): 15</span><br><br>Bill amount : Rs 850.00<br>Tip (15%)   : Rs 127.50<br>Total       : Rs 977.50</div>
+    <div class="tip-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Extension output</strong> (splitting 3 ways): <code>Each person pays: Rs 325.83</code> — uses <code>//</code> or <code>/</code> and <code>:.2f</code>.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Math riddle race</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Pairs</div>
+    <div class="activity-title">Predict the output — then verify in Python</div>
+    <div class="activity-desc">Each card below shows an expression. Students write their prediction in their notebook first, then click to reveal, then run it in their editor to confirm. First pair to get all 8 correct wins.</div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(10 % 3)</div>
+        <div class="riddle-hint">Think: what's left over after dividing 10 by 3? · click to reveal</div>
+        <div class="riddle-answer">→ 1 &nbsp; (3×3=9, remainder 1)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(2 + 3 * 4)</div>
+        <div class="riddle-hint">Remember PEMDAS — which runs first? · click to reveal</div>
+        <div class="riddle-answer">→ 14 &nbsp; (* before +, so 3*4=12, then 2+12=14)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(7 // 2)</div>
+        <div class="riddle-hint">Floor division — what whole number fits? · click to reveal</div>
+        <div class="riddle-answer">→ 3 &nbsp; (7 ÷ 2 = 3.5, floor gives 3)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(2 ** 3 ** 2)</div>
+        <div class="riddle-hint">** is right-to-left! Start from the right. · click to reveal</div>
+        <div class="riddle-answer">→ 512 &nbsp; (3**2=9 first, then 2**9=512 — not 64!)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(100 % 7)</div>
+        <div class="riddle-hint">How many times does 7 fit into 100? · click to reveal</div>
+        <div class="riddle-answer">→ 2 &nbsp; (7×14=98, remainder 2)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(9 / 3)</div>
+        <div class="riddle-hint">Division always returns… what type? · click to reveal</div>
+        <div class="riddle-answer">→ 3.0 &nbsp; (/ always returns a float, even when it divides evenly)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">x = 5; x **= 2; print(x)</div>
+        <div class="riddle-hint">**= is augmented assignment for exponent · click to reveal</div>
+        <div class="riddle-answer">→ 25 &nbsp; (x **= 2 means x = x ** 2 = 5² = 25)</div>
+      </div>
+      <div class="riddle-card" onclick="this.classList.toggle('shown')">
+        <div class="riddle-expr">print(round(2.675, 2))</div>
+        <div class="riddle-hint">This one is tricky — Python's float precision surprises most! · click to reveal</div>
+        <div class="riddle-answer">→ 2.67 &nbsp; (not 2.68 — floating point precision quirk; a great discussion starter!)</div>
+      </div>
+    </div>
+    <div class="tip-box" style="margin-top:10px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Riddle 8 follow-up:</strong> <code>round(2.675, 2)</code> printing <code>2.67</code> instead of <code>2.68</code> is a real floating-point precision issue. You don't need to explain IEEE 754 — just say "computers store decimals as binary fractions, which can cause tiny rounding surprises. For money, we'll learn better tools later."</span></div>
+  </div>
+</div>
+
+<!-- Live sandbox -->
+<div class="section">
+  <div class="sec-head">Operator playground — try any expression</div>
+  <div class="sandbox">
+    <div class="sandbox-head"><span>Type a Python expression — see the result instantly</span></div>
+    <div class="sandbox-body">
+      <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px;">Try things like: <code>17 % 5</code> · <code>2 ** 10</code> · <code>100 // 7</code> · <code>3.14 * 5 ** 2</code></div>
+      <div class="sb-expr-row">
+        <span class="sb-label">Expression</span>
+        <input class="sb-input" id="sb-expr" value="17 % 5" oninput="evalExpr()" placeholder="e.g. 2 ** 10">
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500;">Result:</div>
+      <div class="sb-result" id="sb-result"></div>
+      <div style="margin-top:10px;font-size:12px;color:var(--color-text-secondary);">Quick-try buttons:</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="quick-btns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What does <code>10 % 3</code> return, and what does the <code>%</code> operator actually calculate?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>3.333… — it's the same as regular division</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span>3 — it's the same as floor division</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span>1 — it returns the remainder after dividing 10 by 3</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>0 — it checks if 10 is divisible by 3</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">Written part: Write the expression for each of these — without running Python:<br>(1) 5 to the power of 4 &nbsp;·&nbsp; (2) How many whole buses for 53 students at 8 per bus &nbsp;·&nbsp; (3) How many students are left without a full bus</div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Floor division (//)</strong>Divides and rounds down to the nearest whole number. Always returns an int if both operands are int.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Modulo (%)</strong>Returns the remainder after division. Key use: checking even/odd (<code>n % 2 == 0</code>).</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Operator precedence</strong>The rules that determine which operators run first. Same as PEMDAS/BODMAS from maths class.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Augmented assignment</strong>Shortcuts like <code>+=</code>, <code>-=</code>, <code>*=</code> — update a variable in place.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Module</strong>A file of pre-written Python code you can import and use. <code>import math</code> gives access to maths functions.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Format specifier (:.2f)</strong>Inside an f-string, controls how a float is displayed. <code>:.2f</code> = 2 decimal places.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 5 — Week 1 Project)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">✏️</span><span>Build a "Unit converter" program: ask the user for a distance in kilometres. Print it converted to miles (<code>× 0.621371</code>), metres (<code>× 1000</code>), and centimetres. Format all results to 2 decimal places.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🔢</span><span>Predict (on paper, no Python): <code>3 + 4 * 2 ** 2 - 1</code>. Show your working step by step using PEMDAS, then verify.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🔍</span><span>Explore: look up 3 more functions in the <code>math</code> module you haven't used. Write what each one does and one example of when it might be useful.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Students using <code>^</code> for exponents (from calculator habit). In Python, <code>^</code> is the bitwise XOR operator — it will silently give a wrong answer. Emphasise: exponent in Python is <code>**</code>.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Forgetting that <code>/</code> always returns a float — <code>9 / 3</code> gives <code>3.0</code>, not <code>3</code>. Students are often surprised. Reinforce: use <code>//</code> when you need an integer result.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Writing <code>{value.2f}</code> instead of <code>{value:.2f}</code> — the colon is required. A missing colon gives a NameError or AttributeError.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> If time is short, skip the math module demo and assign it as homework exploration. The operators and precedence content is essential; math is a nice-to-have for Day 4.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Week 1 preview:</strong> Lesson 5 is the Week 1 project — Mad Libs generator. Remind students that all four lessons this week feed into it: print(), variables, input(), and now arithmetic. A well-prepared student can build something impressive.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (5).html'">Next: Lesson 5 - Mad Libs project</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+</div>
+<script src="scripts.js"></script>
+<script>
+const safeOps = ['+','-','*','/','//','%','**','(',')','.',','];
+function isSafeExpr(s){
+  return /^[\d\s\+\-\*\/\(\)\.\%\,]+$/.test(s) && s.length < 80;
+}
+function evalExpr(){
+  const expr = document.getElementById('sb-expr').value.trim();
+  const out = document.getElementById('sb-result');
+  if(!expr){out.textContent='';return;}
+  if(!isSafeExpr(expr)){out.style.color='var(--color-text-danger)';out.textContent='Only numeric expressions supported here (no variables or functions)';return;}
+  try{
+    const result = Function('"use strict";return ('+expr+')')();
+    out.style.color='var(--color-text-success)';
+    out.textContent = '→ ' + result;
+  } catch(e){
+    out.style.color='var(--color-text-danger)';
+    out.textContent = 'Error: ' + e.message;
+  }
+}
+const quickExprs = ['17 % 5','2 ** 10','100 // 7','9 / 3','2 ** 3 ** 2','(2+3) * 4','10 % 2'];
+const qb = document.getElementById('quick-btns');
+quickExprs.forEach(expr => {
+  const b = document.createElement('button');
+  b.textContent = expr;
+  b.style.cssText = 'font-size:12px;font-family:var(--font-mono);padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer;';
+  b.onclick = () => { document.getElementById('sb-expr').value = expr; evalExpr(); };
+  qb.appendChild(b);
+});
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){fb.style.color='var(--color-text-success)';fb.textContent='✓ Correct! 10 ÷ 3 = 3 remainder 1. The % operator gives you that leftover 1. It\'s one of the most useful operators in programming — we\'ll use it every time we need to check if a number is even or odd.';}
+  else{fb.style.color='var(--color-text-secondary)';fb.textContent='Not quite — the answer is C. % gives the remainder: 10 = 3×3 + 1, so 10 % 3 = 1. It does not divide, floor divide, or check divisibility directly.';}
+}
+evalExpr();
+</script>
+</body>
+</html>

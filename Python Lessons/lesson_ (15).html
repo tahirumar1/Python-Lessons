@@ -1,0 +1,541 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link href="styles.css" rel="stylesheet" >
+<style>
+/* ext grid */
+.ext-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.ext-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.ext-level{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ext-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.ext-desc{font-size:12px;color:var(--color-text-secondary)}
+/* live demo */
+.live-todo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.lt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.lt-body{padding:14px}
+.lt-menu{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.lt-btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;cursor:pointer;font-family:var(--font-sans);transition:all .12s}
+.lt-btn:hover{background:var(--color-background-primary)}
+.lt-btn.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.lt-btn.danger{border-color:var(--color-border-danger);color:var(--color-text-danger)}
+.lt-btn.success{border-color:var(--color-border-success);color:var(--color-text-success)}
+.lt-input-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.lt-input{flex:1;min-width:140px;font-size:13px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.lt-submit{padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+.lt-list{display:flex;flex-direction:column;gap:5px;min-height:40px}
+.lt-task{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px}
+.lt-task.done-task{opacity:.5}
+.lt-task.done-task .lt-task-text{text-decoration:line-through}
+.lt-task-num{font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary);min-width:20px}
+.lt-task-badge{font-size:10px;padding:2px 6px;border-radius:10px;font-weight:500}
+.lt-task-badge.pending{background:var(--color-background-warning);color:var(--color-text-warning)}
+.lt-task-badge.done{background:var(--color-background-success);color:var(--color-text-success)}
+.lt-task-text{flex:1}
+.lt-task-del{background:none;border:none;cursor:pointer;color:var(--color-text-danger);font-size:14px;padding:0 4px;line-height:1}
+.lt-log{font-family:var(--font-mono);font-size:12px;color:var(--color-text-secondary);min-height:20px;margin-top:8px;font-style:italic}
+.lt-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.lt-stat{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:3px 10px;border-radius:10px;border:0.5px solid var(--color-border-tertiary)}
+/* peer review */
+.peer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.peer-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;background:var(--color-background-primary)}
+.peer-head{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.peer-textarea{width:100%;margin-top:4px;font-size:13px;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none}
+/* rubric */
+.rubric-table{width:100%;border-collapse:collapse;font-size:13px}
+.rubric-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.rubric-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.rubric-table tr:last-child td{border-bottom:none}
+.pts{font-weight:500;color:var(--color-text-info);font-family:var(--font-mono)}
+/* w4 grid */
+.w4-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.w4-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 15: Week 3 Project — To-do List App - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 15: Week 3 Project — To-do List App</p>
+      <p class="hero-sub">Week 3 — Loops &amp; Lists · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-purple">🛠 Project day</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">Project + demo</div></div>
+    <div class="meta-item"><div class="meta-label">Skills tested</div><div class="meta-val">L11–L14 + L1–L10</div></div>
+    <div class="meta-item"><div class="meta-label">Deliverable</div><div class="meta-val">Working .py app</div></div>
+    <div class="meta-item"><div class="meta-label">Complexity</div><div class="meta-val">Highest so far</div></div>
+  </div>
+</div>
+
+<!-- What this brings together -->
+<div class="section">
+  <div class="sec-head">What this project brings together</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">This is the most complete program students have built — a real command-line application with persistent state, multiple operations, status tracking, and sorted output. It touches every major concept from all three weeks: variables, input, f-strings, conditionals, while loops, for loops, lists, list methods, slicing, and list comprehensions.</p>
+  <div class="success-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>Project day philosophy:</strong> Students design their own menu labels, their own task status names, their own messages. The requirements define the behaviour — not the code. Circulate and ask questions rather than giving code. Students who struggle with the done/pending status system are encountering their first real data design challenge — let them think.</span></div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Design and build a multi-option menu-driven app from scratch using a <code>while True</code> loop</li>
+    <li>Store tasks as strings in a list and track their status in a parallel list (or as tuples)</li>
+    <li>Use <code>append</code>, <code>remove</code>, <code>pop</code>, indexing, and list comprehensions in a real program</li>
+    <li>Display numbered task lists using <code>enumerate()</code> and formatted f-strings</li>
+    <li>Handle invalid input gracefully — empty task names, invalid menu choices, numbers out of range</li>
+    <li>Present and explain their design decisions to a partner during peer review</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Launch</span>
+        <div class="tl-title">Week 3 recap + live demo (6 min)</div>
+        <div class="tl-desc">Quick verbal recap: ask students to name one thing from each of Lessons 11–14. Then play the live to-do app demo below on the projector — add tasks, mark one done, remove one, sort. A student comes up and uses it. Don't show the code yet. The goal: students see exactly what they're building and feel the gap between "I know lists" and "I can build an app with lists."</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:06</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Plan</span>
+        <div class="tl-title">Students plan their app structure on paper (6 min)</div>
+        <div class="tl-desc">Before the editor opens: students draw their menu options, their data structures (one list? two lists? list of tuples?), and sketch the flow of each menu option. Teacher approves each student's data design before they start coding — this prevents the most common structural bugs. The key question to ask every student: "How are you going to track whether a task is done or pending?"</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Build</span>
+        <div class="tl-title">Independent build session (27 min)</div>
+        <div class="tl-desc">Students build from scratch — not from the starter code in Activity 1 unless they're stuck. Checklist below. Circulate silently for the first 5 minutes. Guiding questions only: "What list method adds to the end?", "How does your app know if a task is done?", "What index does enumerate give for the first task?"</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:39</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Review</span>
+        <div class="tl-title">Peer code swap (8 min)</div>
+        <div class="tl-desc">Pairs swap computers. Each student uses their partner's app, tries to break it with bad input, and fills in the peer review card below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-purple" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Share</span>
+        <div class="tl-title">Showcase + Week 3 wrap-up (8 min)</div>
+        <div class="tl-desc">3–4 volunteers demo on projector. Teacher asks each: "Show me how you stored the done/pending status" and "Where does your list comprehension appear?" Then close with the Week 4 preview.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Project brief -->
+<div class="section">
+  <div class="sec-head">Project brief — give this to students</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:16px;font-weight:500;margin-bottom:6px">Build your own To-do List App</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px">You have 27 minutes. Build a complete, working to-do list application. Your app must run from start to finish without crashing, handle bad input gracefully, and meet all requirements below.</div>
+    <div style="font-size:13px;font-weight:500;margin-bottom:8px">Requirements checklist — tick each one as you complete it:</div>
+    <div class="checklist" id="req-checklist">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>A <code>while True</code> loop drives a menu with at least 5 options</span><span class="cl-note">e.g. view all, add, mark done, remove, quit</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Tasks stored in a list; their status (done/pending) tracked separately</span><span class="cl-note">use a parallel list of booleans, or a list of [task, status] pairs</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>View option: prints numbered tasks with done/pending status using enumerate()</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Add option: validates input is not empty before appending</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Mark done option: user selects task by number; updates its status</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Remove option: user selects task by number; removes it safely</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>At least one list comprehension (e.g. filter pending tasks, count done tasks)</span></div></div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><div><span>Invalid menu choices and out-of-range task numbers handled with clear messages</span></div></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="prog-label" id="prog-label">Progress: 0 / 8 complete</div>
+      <div class="prog-wrap"><div class="prog-bar" id="prog-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Extension challenges -->
+<div class="section">
+  <div class="sec-head">Extension challenges — for fast finishers</div>
+  <div class="ext-grid">
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-success)">⭐ Level 1</div>
+      <div class="ext-title">Sort &amp; filter</div>
+      <div class="ext-desc">Add menu options to show only pending tasks (filter comprehension) and to sort all tasks alphabetically using <code>sorted()</code>.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-warning)">⭐⭐ Level 2</div>
+      <div class="ext-title">Priority system</div>
+      <div class="ext-desc">Let users assign a priority (1=high, 2=medium, 3=low) when adding a task. Display tasks sorted by priority. Show counts per priority level.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-danger)">⭐⭐⭐ Level 3</div>
+      <div class="ext-title">Undo last action</div>
+      <div class="ext-desc">Store the last removed task in a variable. Add an "undo" menu option that re-appends it. Hint: use <code>pop()</code> which returns the removed item.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live to-do app demo — show on projector before build session</div>
+  <div class="live-todo">
+    <div class="lt-head">
+      <span>To-do List App — interactive demo</span>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span id="lt-pending-count" style="font-size:12px;color:var(--color-text-warning)">0 pending</span>
+        <span id="lt-done-count" style="font-size:12px;color:var(--color-text-success)">0 done</span>
+      </div>
+    </div>
+    <div class="lt-body">
+      <div class="lt-menu">
+        <button class="lt-btn" onclick="setMode('view')">1. View all</button>
+        <button class="lt-btn" onclick="setMode('add')">2. Add task</button>
+        <button class="lt-btn" onclick="setMode('done')">3. Mark done</button>
+        <button class="lt-btn" onclick="setMode('remove')">4. Remove</button>
+        <button class="lt-btn" onclick="setMode('filter')">5. Pending only</button>
+        <button class="lt-btn danger" onclick="clearAll()">Clear all</button>
+      </div>
+      <div id="lt-action-area" class="lt-input-row" style="display:none">
+        <input class="lt-input" id="lt-input" placeholder="">
+        <button class="lt-submit" id="lt-submit-btn" onclick="submitAction()">Go</button>
+      </div>
+      <div class="lt-list" id="lt-list"></div>
+      <div class="lt-log" id="lt-log"></div>
+      <div class="lt-stats">
+        <div class="lt-stat">Total: <span id="stat-total">0</span></div>
+        <div class="lt-stat">Pending: <span id="stat-pending">0</span></div>
+        <div class="lt-stat">Done: <span id="stat-done">0</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">📌</span><span><strong>Show the demo — not the code yet.</strong> Let a student come up and add 3–4 tasks, mark one done, remove one, then view pending only. Students should feel the app before they build it. Reveal the teacher solution code only after peer review.</span></div>
+</div>
+
+<!-- Teacher solution -->
+<div class="section">
+  <div class="sec-head">Teacher's complete solution — reveal after peer review only</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Design choice to highlight:</strong> This solution uses a list of <code>[task_name, status]</code> pairs (a list of lists). An alternative is two parallel lists — <code>tasks[]</code> and <code>statuses[]</code>. Both are valid. Ask students which approach they used and why. There is no single right answer — this is their first real design decision.</span></div>
+  <div class="code-block">
+    <div class="code-header"><span>todo_app.py — complete teacher solution</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ============================================================</span>
+<span class="cm">#  TO-DO LIST APP  —  Week 3 Project</span>
+<span class="cm"># ============================================================</span>
+<span class="cm"># Data structure: list of [task_name, done_bool] pairs</span>
+
+<span class="var">tasks</span> = []   <span class="cm"># each item: ["task name", True/False]</span>
+
+<span class="kw">def</span> <span class="fn">show_tasks</span>(<span class="var">task_list</span>, <span class="var">title</span>=<span class="str">"All tasks"</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"\n── {title} ({'empty' if not task_list else str(len(task_list))+' items'}) ──"</span>)
+    <span class="kw">if</span> <span class="kw">not</span> <span class="var">task_list</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  (nothing here yet)"</span>)
+        <span class="kw">return</span>
+    <span class="kw">for</span> <span class="var">i</span>, <span class="var">item</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">task_list</span>, <span class="num">1</span>)<span class="op">:</span>
+        <span class="var">status</span> = <span class="str">"✓ done  "</span> <span class="kw">if</span> <span class="var">item</span>[<span class="num">1</span>] <span class="kw">else</span> <span class="str">"○ pending"</span>
+        <span class="fn">print</span>(<span class="str">f"  {i}. [{status}] {item[0]}"</span>)
+
+<span class="cm"># ── Main loop ────────────────────────────────────────────────</span>
+<span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>
+    <span class="var">pending</span> = [<span class="var">t</span> <span class="kw">for</span> <span class="var">t</span> <span class="kw">in</span> <span class="var">tasks</span> <span class="kw">if</span> <span class="kw">not</span> <span class="var">t</span>[<span class="num">1</span>]]
+    <span class="var">done</span>    = [<span class="var">t</span> <span class="kw">for</span> <span class="var">t</span> <span class="kw">in</span> <span class="var">tasks</span> <span class="kw">if</span> <span class="var">t</span>[<span class="num">1</span>]]
+
+    <span class="fn">print</span>(<span class="str">f"\n{'='*40}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  TO-DO  |  {len(pending)} pending · {len(done)} done"</span>)
+    <span class="fn">print</span>(<span class="str">f"{'='*40}"</span>)
+    <span class="fn">print</span>(<span class="str">"  1. View all tasks"</span>)
+    <span class="fn">print</span>(<span class="str">"  2. Add a task"</span>)
+    <span class="fn">print</span>(<span class="str">"  3. Mark task as done"</span>)
+    <span class="fn">print</span>(<span class="str">"  4. Remove a task"</span>)
+    <span class="fn">print</span>(<span class="str">"  5. View pending only"</span>)
+    <span class="fn">print</span>(<span class="str">"  6. Quit"</span>)
+
+    <span class="var">choice</span> = <span class="fn">input</span>(<span class="str">"\n  Choose (1-6): "</span>)<span class="op">.</span><span class="fn">strip</span>()
+
+    <span class="kw">if</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"1"</span><span class="op">:</span>
+        <span class="fn">show_tasks</span>(<span class="var">tasks</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"2"</span><span class="op">:</span>
+        <span class="var">name</span> = <span class="fn">input</span>(<span class="str">"  Task name: "</span>)<span class="op">.</span><span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">name</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"  ✗ Task name cannot be empty."</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="var">tasks</span><span class="op">.</span><span class="fn">append</span>([<span class="var">name</span>, <span class="kw">False</span>])
+            <span class="fn">print</span>(<span class="str">f"  ✓ '{name}' added."</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"3"</span><span class="op">:</span>
+        <span class="fn">show_tasks</span>(<span class="var">tasks</span>)
+        <span class="kw">if</span> <span class="var">tasks</span><span class="op">:</span>
+            <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">"  Task number to mark done: "</span>)
+            <span class="kw">if</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>() <span class="kw">and</span> <span class="num">1</span> <span class="op">&lt;=</span> <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">&lt;=</span> <span class="fn">len</span>(<span class="var">tasks</span>)<span class="op">:</span>
+                <span class="var">idx</span> = <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">-</span> <span class="num">1</span>
+                <span class="var">tasks</span>[<span class="var">idx</span>][<span class="num">1</span>] = <span class="kw">True</span>
+                <span class="fn">print</span>(<span class="str">f"  ✓ '{tasks[idx][0]}' marked as done."</span>)
+            <span class="kw">else</span><span class="op">:</span>
+                <span class="fn">print</span>(<span class="str">"  ✗ Invalid number."</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"4"</span><span class="op">:</span>
+        <span class="fn">show_tasks</span>(<span class="var">tasks</span>)
+        <span class="kw">if</span> <span class="var">tasks</span><span class="op">:</span>
+            <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">"  Task number to remove: "</span>)
+            <span class="kw">if</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>() <span class="kw">and</span> <span class="num">1</span> <span class="op">&lt;=</span> <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">&lt;=</span> <span class="fn">len</span>(<span class="var">tasks</span>)<span class="op">:</span>
+                <span class="var">removed</span> = <span class="var">tasks</span><span class="op">.</span><span class="fn">pop</span>(<span class="fn">int</span>(<span class="var">raw</span>) <span class="op">-</span> <span class="num">1</span>)
+                <span class="fn">print</span>(<span class="str">f"  ✓ '{removed[0]}' removed."</span>)
+            <span class="kw">else</span><span class="op">:</span>
+                <span class="fn">print</span>(<span class="str">"  ✗ Invalid number."</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"5"</span><span class="op">:</span>
+        <span class="fn">show_tasks</span>(<span class="var">pending</span>, <span class="str">"Pending tasks"</span>)
+
+    <span class="kw">elif</span> <span class="var">choice</span> <span class="op">==</span> <span class="str">"6"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"\n  Goodbye! You had {len(pending)} pending tasks."</span>)
+        <span class="kw">break</span>
+
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  ✗ Please choose a number from 1 to 6."</span>)</pre>
+  </div>
+  <div class="out-lbl">Sample session output</div>
+  <div class="out">========================================<br>  TO-DO  |  0 pending · 0 done<br>========================================<br>  Choose (1-6): <span class="in-line">2</span><br>  Task name: <span class="in-line">Buy groceries</span><br>  ✓ 'Buy groceries' added.<br>  Choose (1-6): <span class="in-line">2</span><br>  Task name: <span class="in-line">Finish homework</span><br>  ✓ 'Finish homework' added.<br>  Choose (1-6): <span class="in-line">3</span><br>  1. [○ pending] Buy groceries<br>  2. [○ pending] Finish homework<br>  Task number to mark done: <span class="in-line">1</span><br>  ✓ 'Buy groceries' marked as done.<br>  Choose (1-6): <span class="in-line">5</span><br>── Pending tasks (1 items) ──<br>  1. [○ pending] Finish homework<br>  Choose (1-6): <span class="in-line">6</span><br>  Goodbye! You had 1 pending tasks.</div>
+  <div class="tip-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Two things to point out in the reveal:</strong> (1) The <code>show_tasks()</code> function — a reusable helper that's called from multiple menu branches. Students who didn't use functions had to repeat the display code. This naturally previews Week 4's functions lesson. (2) The list comprehensions for <code>pending</code> and <code>done</code> at the top of the loop — recalculated fresh every iteration so the counts are always accurate.</span></div>
+</div>
+
+<!-- Peer review -->
+<div class="section">
+  <div class="sec-head">Peer review card</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:13px;font-weight:500">Peer Review — Week 3 Project</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">Reviewer: _____________ &nbsp; Author: _____________</span>
+    </div>
+    <div class="peer-grid">
+      <div class="peer-card">
+        <div class="peer-head">✅ One thing that works well</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Be specific — name the line or feature.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. The pending-only filter on line 47 uses a list comprehension perfectly — it's clean and exactly right..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">🔧 One thing to improve</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Suggest the fix, not just the problem.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. If I type 'abc' as a task number it crashes. Add .isdigit() check before int() to fix..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">❓ One design question</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Ask about a design decision you're curious about.</div>
+        <textarea class="peer-textarea" rows="3" placeholder="e.g. Why did you use two separate lists for tasks and statuses instead of one list of pairs?..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">🎯 Requirements check</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Tick any that are MISSING:</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px">
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> while True loop + menu</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Task status tracking</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> enumerate() in view</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Empty-name validation</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Mark done by number</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Remove by number</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> List comprehension</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Invalid input handled</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rubric -->
+<div class="section">
+  <div class="sec-head">Grading rubric — optional, for formal assessment</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="rubric-table">
+      <thead><tr><th>Criterion</th><th>Full marks</th><th>Partial</th><th>Not yet</th><th>Pts</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Core loop</strong> — menu + while True + break</td><td>All 5+ options work across multiple cycles</td><td>Loop works but 1–2 options broken</td><td>No working loop</td><td class="pts">3</td></tr>
+        <tr><td><strong>Status tracking</strong> — done/pending stored and displayed</td><td>Status correctly shown and updated in view</td><td>Status stored but display incorrect</td><td>No status system</td><td class="pts">2</td></tr>
+        <tr><td><strong>List operations</strong> — append, remove/pop, index access</td><td>All three used correctly with range validation</td><td>Two of three correct</td><td>Crashes on operations</td><td class="pts">2</td></tr>
+        <tr><td><strong>Comprehension</strong> — at least one in the app</td><td>Correct comprehension with clear purpose</td><td>Attempted but syntax error</td><td>Not present</td><td class="pts">1</td></tr>
+        <tr><td><strong>Robustness</strong> — invalid input handled</td><td>Empty names, bad numbers, bad menu choices all handled</td><td>1–2 cases handled</td><td>Crashes on bad input</td><td class="pts">2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:8px">Total: 10 points. For informal cohorts consider pass/not-yet rather than numeric grades on project days.</p>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — self-assessment exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">In the teacher solution, why are the <code>pending</code> and <code>done</code> comprehensions placed at the top of the <code>while True</code> loop rather than once before it?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>Python requires comprehensions to be inside loops — they can't run outside</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span>So they recalculate every iteration — keeping the counts accurate after every add, remove, or mark-done action</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>To save memory — comprehensions outside loops use more RAM</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>It makes no difference — the same result would happen if they were before the loop</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:14px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written self-reflection (students complete in notebooks):<br>
+      (1) Draw your data structure — show how you stored tasks and their status.<br>
+      (2) Where did you use a list comprehension? Write the line and explain what it does.<br>
+      (3) What is one thing you would change about your app design if you started again?
+    </div>
+  </div>
+</div>
+
+<!-- Week 4 preview -->
+<div class="section">
+  <div class="sec-head">Looking ahead — Week 4 preview</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Week 4: Functions</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">You may have noticed the teacher solution used a <code>show_tasks()</code> function — a named block of code that could be called from multiple places. Next week we learn to write our own functions, which will make your programs shorter, cleaner, and much easier to debug. The to-do app you built today will be refactorable in Week 4 in minutes.</div>
+    <div class="w4-grid">
+      <div class="w4-card"><div style="font-weight:500;margin-bottom:2px">L16</div><div style="color:var(--color-text-secondary)">Defining &amp; calling</div></div>
+      <div class="w4-card"><div style="font-weight:500;margin-bottom:2px">L17</div><div style="color:var(--color-text-secondary)">Parameters &amp; return</div></div>
+      <div class="w4-card"><div style="font-weight:500;margin-bottom:2px">L18</div><div style="color:var(--color-text-secondary)">Scope: local vs global</div></div>
+      <div class="w4-card"><div style="font-weight:500;margin-bottom:2px">L19</div><div style="color:var(--color-text-secondary)">Multiple functions</div></div>
+      <div class="w4-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L20</div><div style="color:var(--color-text-success)">🛠 Quiz game</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Most common structural bug:</strong> Students who use a single list of task names and try to store done/pending by checking if the name has a "✓" prefix or similar. This is fragile and breaks when tasks are renamed. Catch it in the planning phase — ask "what data structure holds the status?" before students open their editor.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Off-by-one in task numbers:</strong> Students display tasks numbered 1–N (using enumerate(..., 1)) but then access them with tasks[number - 1]. Forgetting the <code>- 1</code> is extremely common. Point this out when you see it: "Your menu says task 1, but Python's index for that task is 0."</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — remove without range check:</strong> Students who call <code>tasks.pop(int(raw) - 1)</code> without first checking that the index is within range. If the list has 2 tasks and the user enters 5, Python raises an IndexError. The safe pattern: <code>if raw.isdigit() and 1 &lt;= int(raw) &lt;= len(tasks)</code>.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">The show_tasks() function moment:</strong> After revealing the solution, point to <code>show_tasks()</code> and say: "This function is called 4 times in the program. Without it, those 6 lines would be copy-pasted 4 times — that's 24 lines instead of 6. Next week, you'll learn to write these." Students who copy-pasted display code in their own solution will feel this immediately.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">❤️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Celebration:</strong> Week 3 is complete. Students who had never written code 15 days ago now have a working to-do list app. That is a remarkable journey. Say it out loud before previewing Week 4.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (16).html'">Next: Lesson 16 — Defining &amp; calling functions</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Checklist
+function toggleCheck(el){
+  el.classList.toggle('done');
+  const items=document.querySelectorAll('#req-checklist .cl-item');
+  const done=[...items].filter(i=>i.classList.contains('done')).length;
+  document.getElementById('prog-label').textContent=`Progress: ${done} / ${items.length} complete`;
+  document.getElementById('prog-bar').style.width=(done/items.length*100)+'%';
+}
+
+// Live to-do demo
+let tasks=[];
+let currentMode=null;
+const modeConfig={
+  add:{placeholder:'Task name…',label:'Add'},
+  done:{placeholder:'Task number to mark done…',label:'Mark done'},
+  remove:{placeholder:'Task number to remove…',label:'Remove'},
+  filter:{placeholder:'',label:''},
+  view:{placeholder:'',label:''},
+};
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.lt-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  const area=document.getElementById('lt-action-area');
+  const input=document.getElementById('lt-input');
+  const btn=document.getElementById('lt-submit-btn');
+  if(m==='add'||m==='done'||m==='remove'){
+    area.style.display='flex';
+    input.placeholder=modeConfig[m].placeholder;
+    btn.textContent=modeConfig[m].label;
+    input.value='';
+    input.focus();
+  } else {
+    area.style.display='none';
+    if(m==='view') renderList(tasks,'All tasks');
+    else if(m==='filter'){
+      const pending=tasks.filter(t=>!t.done);
+      renderList(pending,'Pending only');
+      log(`Showing ${pending.length} pending task${pending.length!==1?'s':''}`,false);
+    }
+  }
+}
+function submitAction(){
+  const val=document.getElementById('lt-input').value.trim();
+  if(currentMode==='add'){
+    if(!val){log('✗ Task name cannot be empty.',true);return;}
+    tasks.push({name:val,done:false});
+    log(`✓ '${val}' added.`,false);
+    document.getElementById('lt-input').value='';
+  } else if(currentMode==='done'||currentMode==='remove'){
+    const n=parseInt(val);
+    if(!val.match(/^\d+$/)||n<1||n>tasks.length){
+      log(`✗ Enter a number between 1 and ${tasks.length||'?'}.`,true);return;
+    }
+    if(currentMode==='done'){
+      tasks[n-1].done=true;
+      log(`✓ '${tasks[n-1].name}' marked as done.`,false);
+    } else {
+      const removed=tasks.splice(n-1,1)[0];
+      log(`✓ '${removed.name}' removed.`,false);
+    }
+    document.getElementById('lt-input').value='';
+  }
+  renderList(tasks,'All tasks');
+  updateStats();
+}
+function renderList(list,title){
+  const el=document.getElementById('lt-list');
+  if(!list.length){el.innerHTML=`<div style="font-size:13px;color:var(--color-text-tertiary);padding:8px 12px;font-style:italic">(${title} — empty)</div>`;updateStats();return;}
+  el.innerHTML='';
+  list.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className='lt-task'+(t.done?' done-task':'');
+    div.innerHTML=`<span class="lt-task-num">${i+1}.</span><span class="lt-task-badge ${t.done?'done':'pending'}">${t.done?'✓ done':'○ pending'}</span><span class="lt-task-text">${t.name}</span>`;
+    el.appendChild(div);
+  });
+  updateStats();
+}
+function updateStats(){
+  const pending=tasks.filter(t=>!t.done).length;
+  const done=tasks.filter(t=>t.done).length;
+  document.getElementById('stat-total').textContent=tasks.length;
+  document.getElementById('stat-pending').textContent=pending;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('lt-pending-count').textContent=`${pending} pending`;
+  document.getElementById('lt-done-count').textContent=`${done} done`;
+}
+function clearAll(){tasks=[];renderList([],'All tasks');log('List cleared.',false);}
+function log(msg,isErr){
+  const el=document.getElementById('lt-log');
+  el.textContent=msg;
+  el.style.color=isErr?'var(--color-text-danger)':'var(--color-text-success)';
+}
+// seed with sample tasks
+tasks=[{name:'Buy groceries',done:false},{name:'Finish homework',done:true},{name:'Call doctor',done:false}];
+renderList(tasks,'All tasks');
+updateStats();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! The tasks list changes every time a task is added, removed, or marked done. If pending and done were calculated once before the loop, they would be stale by the second iteration. Recalculating at the top of every loop iteration guarantees the counts always reflect the current state of the list.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is B. The tasks list changes throughout the session. Comprehensions calculated before the loop would reflect the initial empty list and never update. By placing them at the top of the while True loop, they recalculate after every single user action.';
+  }
+}
+</script>
+</body>
+</html>

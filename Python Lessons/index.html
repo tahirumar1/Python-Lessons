@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="styles.css" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap { padding: 1rem 0; font-size: 14px; color: var(--color-text-primary); }
+  .course-header { margin-bottom: 1.5rem; }
+  .course-title { font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+  .course-meta { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1rem; }
+  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 16px; flex: 1; min-width: 100px; }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 2px; }
+  .stat-value { font-size: 20px; font-weight: 500; }
+  /* week blocks and filters */
+  .week-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .filter-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 13px; cursor: pointer; color: var(--color-text-secondary); transition: all .15s; }
+  .filter-btn.active { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); font-weight: 500; }
+  .filter-btn:hover:not(.active) { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .week-block { margin-bottom: 1.4rem; }
+  .week-header { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
+  .week-theme { font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 20px; }
+  /* day cards */
+  .days-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .day-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px; cursor: pointer; transition: border-color .15s, box-shadow .15s; position: relative; overflow: hidden; }
+  .day-card:hover { border-color: var(--color-border-secondary); }
+  .day-card.expanded { border-color: var(--color-border-info); }
+  .day-card .day-num { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+  .day-card .day-title { font-size: 12px; font-weight: 500; line-height: 1.4; }
+  .day-card .day-type { font-size: 10px; margin-top: 5px; padding: 2px 6px; border-radius: 10px; display: inline-block; }
+  .day-detail { display: none; margin-top: 1.2rem; background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; border: 0.5px solid var(--color-border-tertiary); }
+  .day-detail.visible { display: block; }
+  /* detail panel */
+  .detail-title { font-size: 16px; font-weight: 500; margin: 0 0 4px; }
+  .detail-meta { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1rem; }
+  .detail-section { margin-bottom: 1rem; }
+  .detail-section h4 { font-size: 13px; font-weight: 500; margin: 0 0 6px; color: var(--color-text-secondary); display: flex; align-items: center; gap: 6px; }
+  .detail-section ul { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.8; color: var(--color-text-primary); }
+  /* activity card and badges */
+  .activity-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 12px; margin-bottom: 6px; font-size: 13px; }
+  .activity-card strong { font-weight: 500; }
+  .check-card { background: var(--color-background-success); border-radius: var(--border-radius-md); padding: 8px 12px; font-size: 13px; color: var(--color-text-success); }
+  .close-btn { float: right; background: none; border: none; cursor: pointer; font-size: 18px; color: var(--color-text-secondary); line-height: 1; padding: 0; margin-left: 8px; }
+  .badge-new { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-review { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .badge-project { background: var(--color-background-success); color: var(--color-text-success); }
+  .badge-adv { background: var(--color-background-danger); color: var(--color-text-danger); }
+</style>
+</head>
+
+<body>
+<div class ="lp">
+<h2 class="sr-only">Python Complete Course - 40 Lesson Plan for Beginners</h2>
+<div class="wrap">
+<div class="course-header">
+    <p class="course-title">Python Complete Course</p>
+    <p class="course-meta">Complete beginners · Ages 13+ · 45–60 min per lesson · 5 days/week · 8 weeks</p>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-label">Total lessons</div><div class="stat-value">40</div></div>
+    <div class="stat"><div class="stat-label">Weeks</div><div class="stat-value">8</div></div>
+    <div class="stat"><div class="stat-label">Projects</div><div class="stat-value">8</div></div>
+    <div class="stat"><div class="stat-label">Final project</div><div class="stat-value">1</div></div>
+  </div>
+  <div class="week-filter" id="filters"></div>
+  <div id="schedule"></div>
+  <div id="detail-panel" class="day-detail"></div>
+</div>
+
+<script>
+const weeks = [
+  {
+    week: 1, theme: "Python foundations", color: "badge-new",
+    days: [
+      { title: "What is Python? Setup & first program", type: "new",
+        objectives: ["Understand what Python is and where it's used", "Install Python and VS Code (or use online IDE)", "Write and run a first program using print()"],
+        activities: [
+          { name: "Hello World & beyond", desc: "Students print their name, age, and a fun fact using print(). Then modify it to display a mini self-intro." },
+          { name: "Explore & break it", desc: "Intentionally introduce syntax errors; students fix them and explain what went wrong." }
+        ],
+        check: "Exit ticket: Write one print() statement and explain what happens if you remove the parentheses." },
+      { title: "Variables & data types", type: "new",
+        objectives: ["Declare and use variables", "Identify str, int, float, bool types", "Use type() to inspect values"],
+        activities: [
+          { name: "My profile variables", desc: "Create variables for name, age, height, and favorite color. Print them with labels." },
+          { name: "Type detective", desc: "Given a list of values, students predict the type before running type() to confirm." }
+        ],
+        check: "Which data type holds the value 3.14? Create a variable for it and print its type." },
+      { title: "User input & string formatting", type: "new",
+        objectives: ["Use input() to collect user data", "Format output with f-strings", "Convert types with int() and float()"],
+        activities: [
+          { name: "Personal greeter", desc: "Ask for name and age, then print a custom greeting using an f-string." },
+          { name: "Simple calculator input", desc: "Ask two numbers, add them, print a formatted result. Discuss type conversion." }
+        ],
+        check: "Ask the user for their name and birth year, then print how old they are this year." },
+      { title: "Arithmetic & math operations", type: "new",
+        objectives: ["Use +, -, *, /, //, %, ** operators", "Apply operator precedence (PEMDAS)", "Use the math module basics"],
+        activities: [
+          { name: "Tip calculator", desc: "Input a bill amount and tip %, calculate and display the tip and total." },
+          { name: "Math riddle race", desc: "Pairs solve 5 math expression puzzles - predict the output before running." }
+        ],
+        check: "What is the result of 10 % 3? What does // do? Write one example of each." },
+      { title: "Week 1 project: Mad Libs generator", type: "project",
+        objectives: ["Apply variables, input(), and f-strings together", "Debug a complete short program", "Present code to the class"],
+        activities: [
+          { name: "Build Mad Libs", desc: "Students create a 5-input Mad Libs story using variables and f-strings." },
+          { name: "Share & critique", desc: "Pairs swap code, run each other's program, and give one piece of feedback." }
+        ],
+        check: "Can you explain every line of your program to a classmate without notes?" }
+    ]
+  },
+  {
+    week: 2, theme: "Making decisions", color: "badge-new",
+    days: [
+      { title: "if / elif / else", type: "new",
+        objectives: ["Write if, elif, and else blocks", "Understand Boolean conditions", "Use comparison operators (==, !=, <, >)"],
+        activities: [
+          { name: "Grade classifier", desc: "Input a score and print the grade (A/B/C/D/F) using if-elif-else." },
+          { name: "Odd or even?", desc: "Write a program using % to detect odd/even and print a personalized message." }
+        ],
+        check: "Write an if-elif-else block that prints 'hot', 'warm', or 'cold' based on a temperature." },
+      { title: "Logical operators: and, or, not", type: "new",
+        objectives: ["Combine conditions with and / or / not", "Trace logic through compound expressions", "Avoid common logic bugs"],
+        activities: [
+          { name: "Movie night checker", desc: "Check age AND parent permission to decide if someone can watch a movie." },
+          { name: "Logic truth table", desc: "Fill in a paper truth table for and/or/not; verify answers with Python." }
+        ],
+        check: "Write a condition that's True only when a number is between 10 and 20 (inclusive)." },
+      { title: "Nested conditions & input validation", type: "new",
+        objectives: ["Write nested if statements", "Validate user input before using it", "Handle unexpected input gracefully"],
+        activities: [
+          { name: "Login simulator", desc: "Check if username AND password match; print appropriate messages for each case." },
+          { name: "Safe divider", desc: "Ask for two numbers; check the denominator is not zero before dividing." }
+        ],
+        check: "What happens if a user types 'abc' when you expect a number? How can you check for this?" },
+      { title: "while loops", type: "new",
+        objectives: ["Write while loops with a clear exit condition", "Use break to exit early", "Prevent infinite loops"],
+        activities: [
+          { name: "Countdown timer", desc: "Write a while loop that counts down from 10 and prints 'Blast off!' at 0." },
+          { name: "Guess the number", desc: "Computer picks a secret number; user keeps guessing until correct. Use while + break." }
+        ],
+        check: "Write a while loop that prints numbers 1–5. Add a break if the number is 3." },
+      { title: "Week 2 project: Number guessing game", type: "project",
+        objectives: ["Combine input(), conditions, and while loops", "Provide helpful hints (higher/lower)", "Count and display number of tries"],
+        activities: [
+          { name: "Build the game", desc: "Full guessing game with hints and a try counter using import random." },
+          { name: "Extend it", desc: "Add a play-again loop and a leaderboard of tries for the session." }
+        ],
+        check: "Demo your game to a partner. Can they win in under 7 tries with your hints?" }
+    ]
+  },
+  {
+    week: 3, theme: "Loops & lists", color: "badge-new",
+    days: [
+      { title: "for loops & range()", type: "new",
+        objectives: ["Use for loops to iterate over sequences", "Use range(start, stop, step)", "Compare for vs while"],
+        activities: [
+          { name: "Multiplication table", desc: "Print a multiplication table for any number using a for loop." },
+          { name: "FizzBuzz", desc: "Classic FizzBuzz from 1–30 using for and if-elif-else." }
+        ],
+        check: "Write a for loop that prints every even number from 2 to 20." },
+      { title: "Lists: create, access, modify", type: "new",
+        objectives: ["Create and index lists", "Use append(), remove(), pop()", "Understand positive and negative indexing"],
+        activities: [
+          { name: "Shopping list manager", desc: "Start with a list; add, remove, and display items using list methods." },
+          { name: "Index quiz", desc: "Given a list, predict the output of various index and slice expressions." }
+        ],
+        check: "Given fruits = ['apple','banana','cherry'], how do you get 'cherry' using a negative index?" },
+      { title: "Iterating lists & list methods", type: "new",
+        objectives: ["Loop through lists with for", "Use len(), sort(), reverse(), count(), index()", "Use in operator"],
+        activities: [
+          { name: "Class scores analyzer", desc: "Given a list of scores, find average, max, min, and whether a given score is in the list." },
+          { name: "Word frequency", desc: "Count how many times each word appears in a short sentence split into a list." }
+        ],
+        check: "Write a loop that prints only items in a list that have more than 4 characters." },
+      { title: "List slicing & list comprehensions", type: "new",
+        objectives: ["Slice lists with [start:end:step]", "Write a basic list comprehension", "Build filtered lists efficiently"],
+        activities: [
+          { name: "Slice explorer", desc: "Given a 10-item list, extract first 3, last 3, every other, and reversed." },
+          { name: "Squares list comp", desc: "Use a list comprehension to generate squares of 1–10, then filter for evens." }
+        ],
+        check: "Write a list comprehension that keeps only the words longer than 3 letters from a list." },
+      { title: "Week 3 project: To-do list app", type: "project",
+        objectives: ["Build a menu-driven command-line app", "Use lists and loops together", "Handle invalid menu choices"],
+        activities: [
+          { name: "Build the app", desc: "A loop-based menu: add task, view tasks, remove task, quit. Persists during session." },
+          { name: "UX upgrade", desc: "Add task numbering, a done/pending status flag, and a clear-all option." }
+        ],
+        check: "Can your app handle adding 10 tasks, removing 3, and displaying the correct remaining list?" }
+    ]
+  },
+  {
+    week: 4, theme: "Functions", color: "badge-new",
+    days: [
+      { title: "Defining & calling functions", type: "new",
+        objectives: ["Define functions with def", "Call functions and understand flow", "Use docstrings to document"],
+        activities: [
+          { name: "Reusable greeter", desc: "Convert previous greeting code into a function; call it multiple times with different names." },
+          { name: "DRY refactor", desc: "Given a script with repeated code blocks, students refactor it using functions." }
+        ],
+        check: "Write a function greet(name) that returns a greeting string. Call it 3 times." },
+      { title: "Parameters, arguments & return", type: "new",
+        objectives: ["Pass arguments to functions", "Return values and use them", "Understand default parameters"],
+        activities: [
+          { name: "Converter toolkit", desc: "Write functions: celsius_to_fahrenheit, kg_to_pounds, km_to_miles. Call each." },
+          { name: "Discount calculator", desc: "A function calculate_price(price, discount=10) using default parameter." }
+        ],
+        check: "Write a function multiply(a, b=2) that returns a*b. What happens when you call multiply(5)?" },
+      { title: "Variable scope: local vs global", type: "new",
+        objectives: ["Explain local and global scope", "Use the global keyword correctly", "Avoid scope-related bugs"],
+        activities: [
+          { name: "Scope detective", desc: "Given 4 code snippets, predict if they work or crash and why." },
+          { name: "Counter with global", desc: "Build a function that increments a global counter each time it's called." }
+        ],
+        check: "What is the difference between a local and global variable? Give one example of each." },
+      { title: "Multiple functions & program structure", type: "new",
+        objectives: ["Break a program into multiple functions", "Call functions from other functions", "Write a main() function"],
+        activities: [
+          { name: "Mini calculator", desc: "Write add, subtract, multiply, divide functions + a main() that calls them from a menu." },
+          { name: "Code reading", desc: "Read a 30-line program; draw the function call diagram on paper." }
+        ],
+        check: "What does calling main() do if it just calls other functions? Why is this good practice?" },
+      { title: "Week 4 project: Quiz game with functions", type: "project",
+        objectives: ["Use functions for display, check_answer, score, and play", "Return values between functions", "Show final score"],
+        activities: [
+          { name: "Build the quiz", desc: "5-question trivia quiz: each question is a function call; score tracked with return values." },
+          { name: "Add categories", desc: "Group questions by topic; let user choose a category function to play." }
+        ],
+        check: "Trace through one quiz question: which functions are called and what do they return?" }
+    ]
+  },
+  {
+    week: 5, theme: "Dictionaries & tuples", color: "badge-new",
+    days: [
+      { title: "Dictionaries: create & access", type: "new",
+        objectives: ["Create dictionaries with key-value pairs", "Access, add, and delete entries", "Use .get() safely"],
+        activities: [
+          { name: "Student record", desc: "Create a student dict with name, grade, age. Access, update, and print each field." },
+          { name: "Phonebook app", desc: "Add contacts, look up by name, delete contacts using a dictionary." }
+        ],
+        check: "Given a dict d = {'x': 10}, what does d.get('y', 0) return and why?" },
+      { title: "Iterating dictionaries", type: "new",
+        objectives: ["Use .keys(), .values(), .items()", "Loop over dictionary entries", "Build frequency counters"],
+        activities: [
+          { name: "Word counter", desc: "Count how often each word appears in a sentence using a dict as a counter." },
+          { name: "Leaderboard", desc: "Build a top-scores dict; loop and print in a formatted table." }
+        ],
+        check: "Write a loop that prints every key-value pair in a dictionary as 'key: value'." },
+      { title: "Nested dictionaries & real data", type: "new",
+        objectives: ["Access values inside nested dicts", "Model real-world data (e.g. students, products)", "Iterate nested structures"],
+        activities: [
+          { name: "Class database", desc: "A dict of students, each with a sub-dict of subject scores. Print each student's average." },
+          { name: "JSON-like data", desc: "Given a mock API response dict, extract specific values with safe .get()." }
+        ],
+        check: "Access the email in data = {'user': {'name': 'Ali', 'email': 'a@x.com'}}" },
+      { title: "Tuples & when to use them", type: "new",
+        objectives: ["Create and unpack tuples", "Understand immutability", "Use tuples for coordinates, records"],
+        activities: [
+          { name: "Coordinate system", desc: "Store (x, y) points as tuples; calculate distance between two points." },
+          { name: "Tuple unpacking race", desc: "Unpack 5 tuples of different sizes in one line each. Discuss when to use tuple vs list." }
+        ],
+        check: "Why can't you do my_tuple[0] = 5? What error does it give?" },
+      { title: "Week 5 project: Contacts manager", type: "project",
+        objectives: ["Store contacts in a list of dicts", "Search by name, add, edit, delete", "Display formatted output"],
+        activities: [
+          { name: "Build it", desc: "Full contacts app: add, search, update, delete, and list all contacts in a table." },
+          { name: "Sort & filter", desc: "Add ability to sort contacts alphabetically and filter by a keyword." }
+        ],
+        check: "Add a contact, search for them, update their number, then delete them - all without bugs." }
+    ]
+  },
+  {
+    week: 6, theme: "Files, errors & modules", color: "badge-new",
+    days: [
+      { title: "Reading & writing files", type: "new",
+        objectives: ["Open files with open() and with", "Read with .read(), .readlines()", "Write and append to files"],
+        activities: [
+          { name: "File diary", desc: "Write a program that lets users add diary entries saved to diary.txt." },
+          { name: "Word count tool", desc: "Read a text file and print the number of words, lines, and characters." }
+        ],
+        check: "What is the difference between 'w' and 'a' mode when opening a file?" },
+      { title: "Exception handling: try / except", type: "new",
+        objectives: ["Use try/except to catch errors", "Handle FileNotFoundError and ValueError", "Use finally for cleanup"],
+        activities: [
+          { name: "Safe number input", desc: "Wrap int(input()) in try/except; keep asking until a valid number is entered." },
+          { name: "Safe file reader", desc: "Try to open a file; if it doesn't exist, create it with a welcome message." }
+        ],
+        check: "What happens without try/except when a user types 'hello' where a number is expected?" },
+      { title: "Built-in modules: random, math, datetime", type: "new",
+        objectives: ["Import and use random, math, datetime", "Generate random numbers and choices", "Work with today's date"],
+        activities: [
+          { name: "Random quote machine", desc: "Store 5 quotes in a list; use random.choice() to print one each run." },
+          { name: "Age calculator", desc: "Use datetime to calculate exact age from a birth year the user inputs." }
+        ],
+        check: "Import random and write one line that picks a random item from a list of 5 colors." },
+      { title: "Creating your own modules", type: "new",
+        objectives: ["Save reusable functions in a .py module file", "Import your module into another file", "Understand __name__ == '__main__'"],
+        activities: [
+          { name: "Build a utils module", desc: "Save converter functions (Week 4) to converters.py; import and use in a new file." },
+          { name: "Module explorer", desc: "Use dir() and help() on the math module; find 3 functions you haven't used." }
+        ],
+        check: "Create a file helpers.py with one function. Import it and call the function from main.py." },
+      { title: "Week 6 project: Expense tracker", type: "project",
+        objectives: ["Save and load expenses from a CSV file", "Handle file and input errors gracefully", "Show total and category summary"],
+        activities: [
+          { name: "Build it", desc: "Add expenses (amount, category, date), save to file, load on startup, show summary." },
+          { name: "Error-proof it", desc: "Add try/except for every file operation and every user input." }
+        ],
+        check: "Close and reopen your app - do your saved expenses still load correctly?" }
+    ]
+  },
+  {
+    week: 7, theme: "Object-oriented programming", color: "badge-adv",
+    days: [
+      { title: "Classes & objects", type: "new",
+        objectives: ["Define a class with __init__", "Create object instances", "Access attributes with dot notation"],
+        activities: [
+          { name: "Dog class", desc: "Define Dog with name and breed. Create 3 dogs; print their attributes." },
+          { name: "Blueprint analogy", desc: "Draw on paper: class = blueprint, objects = houses. Match to code." }
+        ],
+        check: "What is the difference between a class and an object (instance)? Give a real-world example." },
+      { title: "Methods & self", type: "new",
+        objectives: ["Add methods to a class", "Understand self parameter", "Call methods on instances"],
+        activities: [
+          { name: "BankAccount class", desc: "Add deposit(), withdraw(), and get_balance() methods. Test with transactions." },
+          { name: "Method trace", desc: "Given a class with 3 methods, trace by hand what prints when called in order." }
+        ],
+        check: "Why does every method need self as its first parameter? What does self refer to?" },
+      { title: "Inheritance & super()", type: "new",
+        objectives: ["Create a subclass that inherits from a parent", "Override methods in a subclass", "Use super() to extend parent init"],
+        activities: [
+          { name: "Animal hierarchy", desc: "Animal base class; Dog and Cat subclasses override a speak() method." },
+          { name: "Employee → Manager", desc: "Manager inherits Employee but adds team_size and overrides __str__." }
+        ],
+        check: "What does super().__init__() do? Write one example where it is necessary." },
+      { title: "__str__, __repr__ & dunder methods", type: "new",
+        objectives: ["Implement __str__ for readable output", "Understand dunder (magic) methods", "Use __len__ and __add__"],
+        activities: [
+          { name: "Pretty printing", desc: "Add __str__ to BankAccount so print(account) shows a formatted summary." },
+          { name: "Custom list class", desc: "Build a SmartList that overrides __len__ and __add__ from list." }
+        ],
+        check: "What happens when you print an object that has no __str__ method? What do you see?" },
+      { title: "Week 7 project: Library system", type: "project",
+        objectives: ["Design Book and Library classes", "Add, search, borrow, return books", "Use a list of objects as storage"],
+        activities: [
+          { name: "Build it", desc: "Book(title, author, available). Library with add_book, borrow, return, search methods." },
+          { name: "Extend it", desc: "Add Member class that tracks borrowed books. Use inheritance." }
+        ],
+        check: "Borrow a book twice in a row - does your code handle that gracefully?" }
+    ]
+  },
+  {
+    week: 8, theme: "Final projects & review", color: "badge-project",
+    days: [
+      { title: "Review: data structures deep dive", type: "review",
+        objectives: ["Compare lists, dicts, tuples for different use cases", "Practice nested data access", "Solidify comprehension syntax"],
+        activities: [
+          { name: "Data structure tournament", desc: "Solve 5 problems, each requiring a different data structure. Justify your choice." },
+          { name: "Refactor challenge", desc: "Given messy code using only lists, refactor to use dicts where appropriate." }
+        ],
+        check: "When would you choose a tuple over a list? When a dict over a list?" },
+      { title: "Review: OOP & functions", type: "review",
+        objectives: ["Reinforce function decomposition", "Review class design patterns", "Practice reading other people's code"],
+        activities: [
+          { name: "Code reading sprint", desc: "Read a 60-line OOP program; explain each class and method to a partner." },
+          { name: "Design challenge", desc: "Design (on paper) the classes for a simple school management system." }
+        ],
+        check: "Explain polymorphism using the Animal/Dog/Cat example from Week 7." },
+      { title: "Final project workshop day 1", type: "project",
+        objectives: ["Plan project scope and features", "Design data structures and classes", "Begin coding with clean structure"],
+        activities: [
+          { name: "Project pitches", desc: "Students choose from: text-based game, budget app, quiz app, or personal project idea." },
+          { name: "Build session", desc: "40 minutes of focused coding. Teacher circulates and answers design questions." }
+        ],
+        check: "Show your plan: class names, function names, and what data structures you'll use." },
+      { title: "Final project workshop day 2", type: "project",
+        objectives: ["Complete core features", "Add error handling and input validation", "Test with edge cases"],
+        activities: [
+          { name: "Build session", desc: "Complete core functionality. Add at least 2 try/except blocks." },
+          { name: "Peer testing", desc: "Swap projects with a partner; try to break each other's programs." }
+        ],
+        check: "Does your program crash if the user types unexpected input? Fix any crashes found." },
+      { title: "Final presentations & celebration", type: "project",
+        objectives: ["Present a complete working program", "Explain key design decisions", "Reflect on the learning journey"],
+        activities: [
+          { name: "Demos", desc: "Each student presents their project (3–5 min), explains one thing they're proud of." },
+          { name: "Reflection", desc: "Write 3 things learned, 1 thing that was hard, 1 thing to explore next." }
+        ],
+        check: "What Python concept from this course will you use most in the future, and why?" }
+    ]
+  }
+];
+
+function renderFilters() {
+  const div = document.getElementById('filters');
+  const all = document.createElement('button');
+  all.className = 'filter-btn active'; all.textContent = 'All weeks';
+  all.onclick = () => { setActive(all); renderSchedule(-1); };
+  div.appendChild(all);
+  weeks.forEach((w, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn'; btn.textContent = 'Week ' + w.week;
+    btn.onclick = () => { setActive(btn); renderSchedule(i); };
+    div.appendChild(btn);
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('detail-panel').classList.remove('visible');
+}
+
+function renderSchedule(weekIdx) {
+  const sched = document.getElementById('schedule');
+  sched.innerHTML = '';
+  const toRender = weekIdx === -1 ? weeks : [weeks[weekIdx]];
+  toRender.forEach(w => {
+    const block = document.createElement('div');
+    block.className = 'week-block';
+    block.innerHTML = `<div class="week-header"><span>Week ${w.week} - 5 lessons</span><span class="week-theme ${w.color}">${w.theme}</span></div>`;
+    const grid = document.createElement('div');
+    grid.className = 'days-grid';
+    w.days.forEach((d, di) => {
+      const lessonNum = (w.week - 1) * 5 + di + 1;
+      const card = document.createElement('div');
+      card.className = 'day-card';
+      card.id = 'card-' + lessonNum;
+      card.innerHTML = `<div class="day-num">Lesson ${lessonNum}</div><div class="day-title">${d.title}</div><div class="day-type ${d.type === 'project' ? 'badge-project' : d.type === 'review' ? 'badge-review' : 'badge-new'}">${d.type === 'project' ? '🛠 Project' : d.type === 'review' ? '🔄 Review' : '✦ New'}</div>`;
+      card.onclick = () => showDetail(w.week, di, lessonNum, card);
+      grid.appendChild(card);
+    });
+    block.appendChild(grid);
+    sched.appendChild(block);
+  });
+}
+
+function showDetail(weekIdx, dayIdx, lessonNum, card) {
+  const w = weeks[weekIdx - 1];
+  const d = w.days[dayIdx];
+  const panel = document.getElementById('detail-panel');
+  document.querySelectorAll('.day-card').forEach(c => c.classList.remove('expanded'));
+  if (panel.dataset.active === String(lessonNum) && panel.classList.contains('visible')) {
+    panel.classList.remove('visible'); panel.dataset.active = ''; return;
+  }
+  card.classList.add('expanded');
+  panel.dataset.active = String(lessonNum);
+  panel.classList.add('visible');
+  panel.innerHTML = `
+    <button class="close-btn" onclick="document.getElementById('detail-panel').classList.remove('visible');document.querySelectorAll('.day-card').forEach(c=>c.classList.remove('expanded'))">✕</button>
+    <div class="detail-title">Lesson ${lessonNum}: ${d.title}</div>
+    <div class="detail-meta">Week ${weekIdx} · ${w.theme} · 45–60 min</div>
+    <div class="detail-section">
+      <h4><i class="ti ti-target" aria-hidden="true"></i> Learning objectives</h4>
+      <ul>${d.objectives.map(o => `<li>${o}</li>`).join('')}</ul>
+    </div>
+    <div class="detail-section">
+      <h4><i class="ti ti-puzzle" aria-hidden="true"></i> Activities</h4>
+      ${d.activities.map(a => `<div class="activity-card"><strong>${a.name}:</strong> ${a.desc}</div>`).join('')}
+    </div>
+    <div class="detail-section">
+      <h4><i class="ti ti-checkbox" aria-hidden="true"></i> Check for understanding</h4>
+      <div class="check-card">${d.check}</div>
+    </div>
+    <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (' + ${lessonNum} + ').html'">Get full lesson details ↗</button>
+  `;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+renderFilters();
+renderSchedule(-1);
+</script>
+</body>
+</html>

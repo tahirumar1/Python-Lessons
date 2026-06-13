@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="lp">
+<h2 class="sr-only">Lesson 1: What is Python? Setup and First Program — Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 1: What is Python? Setup &amp; first program</p>
+      <p class="lp-hero-sub">Week 1 — Python Foundations · Complete beginners </p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Activities</div><div class="meta-val">2</div></div>
+    <div class="meta-item"><div class="meta-label">Prior knowledge</div><div class="meta-val">None needed</div></div>
+    <div class="meta-item"><div class="meta-label">Resources</div><div class="meta-val">PC + browser</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-target" aria-hidden="true"></i> Learning objectives</div>
+  <ul class="obj-list">
+    <li>Understand what Python is, where it's used, and why it's a great first language</li>
+    <li>Set up a working Python environment (installed or online via replit.com)</li>
+    <li>Write, run, and modify a first program using <code>print()</code></li>
+    <li>Recognise and fix basic syntax errors independently</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-clock" aria-hidden="true"></i> Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-amber">Hook</span><div class="tl-title">Where is Python hiding? (5 min)</div><div class="tl-desc">Open with a quick image slideshow or verbal quiz: "Can you guess which of these uses Python?" — Instagram, NASA, YouTube, Minecraft mods, your school website. Let students shout out guesses. Reveal answers. Goal: make Python feel relevant and already part of their world.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-blue">Teach</span><div class="tl-title">What is Python? (8 min)</div><div class="tl-desc">Explain: Python is a programming language — a set of instructions a computer can follow. It was created by Guido van Rossum in 1991 and named after Monty Python. Cover: it's interpreted (runs line by line), readable (looks like English), free, and used everywhere. Draw the mental model: you write code → Python reads it → computer acts.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:13</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-amber">Setup</span><div class="tl-title">Environment setup (7 min)</div><div class="tl-desc">Walk everyone through opening <strong>replit.com</strong> (no install needed, recommended for Day 1). Create a new Python repl. Point out: the code editor on the left, the run button at the top, and the output console on the right. If students have Python installed locally, show VS Code instead. Confirm everyone sees a blank editor before moving on.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:20</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-blue">Teach</span><div class="tl-title">The print() function — live demo (10 min)</div><div class="tl-desc">Type each example on the projector, run it, discuss the output. Ask students to predict before you run. Introduce the vocabulary: function, argument, string, output, syntax. Show print() with text, numbers, and multiple arguments. Use <strong>think-aloud</strong>: narrate every keystroke and why.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:30</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-green">Activity</span><div class="tl-title">Activity 1 — Hello World &amp; beyond (10 min)</div><div class="tl-desc">Students work independently on their self-intro program. Teacher circulates. See Activity 1 below for full instructions and starter code.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:40</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-green">Activity</span><div class="tl-title">Activity 2 — Explore &amp; break it (10 min)</div><div class="tl-desc">Students deliberately introduce errors and fix them. Builds confidence with error messages. See Activity 2 below.</div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:50</span><div class="tl-dot active"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="tl-phase pill pill-amber">Check</span><div class="tl-title">Exit ticket + wrap-up (5–10 min)</div><div class="tl-desc">Students answer the exit ticket below. Ask 2–3 students to share their intro program. Preview Lesson 2: "Next time we'll store information in variables so our programs can remember things."</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Code: Live Demo -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-code" aria-hidden="true"></i> Live demo — code examples</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 10px;">Type these on the projector one at a time. Let students predict the output before running.</p>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 1 — The classic first line</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">Hello, World!</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Numbers (no quotes needed)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="num">42</span>)
+<span class="fn">print</span>(<span class="num">3.14</span>)
+<span class="fn">print</span>(<span class="num">10</span> + <span class="num">5</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">42<br>3.14<br>15</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — Multiple arguments (comma separates with a space)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="str">"My name is"</span>, <span class="str">"Aisha"</span>)
+<span class="fn">print</span>(<span class="str">"I am"</span>, <span class="num">15</span>, <span class="str">"years old"</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">My name is Aisha<br>I am 15 years old</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — Blank lines with empty print()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+    <pre><span class="fn">print</span>(<span class="str">"=== My Profile ==="</span>)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="str">"Name: Aisha"</span>)
+<span class="fn">print</span>(<span class="str">"Age: 15"</span>)
+<span class="fn">print</span>(<span class="str">"Favourite subject: Maths"</span>)</pre>
+  </div>
+  <div class="output-label">Output</div>
+  <div class="output-block">=== My Profile ===<br><br>Name: Aisha<br>Age: 15<br>Favourite subject: Maths</div>
+
+  <div class="tip-box"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Teaching tip:</strong> After Example 3, ask "What happens if we remove the quotes from Hello, World?" — let a student try it. This naturally leads into Activity 2.</span></div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-puzzle" aria-hidden="true"></i> Activity 1 — Hello World &amp; beyond</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Individual</div>
+    <div class="activity-title">Build your mini self-intro program</div>
+    <div class="activity-desc">Students use print() to create a formatted personal introduction — at least 5 lines, including name, age, country/city, favourite thing, and one fun fact.</div>
+    <ol class="steps-list">
+      <li>Open a new Python file (or replit.com project)</li>
+      <li>Start with a banner line using = or - characters</li>
+      <li>Print your name, age, and location on separate lines</li>
+      <li>Add your favourite hobby or subject</li>
+      <li>End with a fun or silly fact about yourself</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code (give to students who are stuck)</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="cm"># My self-introduction program</span>
+      <span class="cm"># Replace the ??? with your own information!</span>
+
+      <span class="fn">print</span>(<span class="str">"========================"</span>)
+      <span class="fn">print</span>(<span class="str">"  ABOUT ME"</span>)
+      <span class="fn">print</span>(<span class="str">"========================"</span>)
+      <span class="fn">print</span>()
+      <span class="fn">print</span>(<span class="str">"Name    : ???"</span>)
+      <span class="fn">print</span>(<span class="str">"Age     : ???"</span>)
+      <span class="fn">print</span>(<span class="str">"City    : ???"</span>)
+      <span class="fn">print</span>(<span class="str">"Hobby   : ???"</span>)
+      <span class="fn">print</span>(<span class="str">"Fun fact: ???"</span>)
+      <span class="fn">print</span>()
+      <span class="fn">print</span>(<span class="str">"========================"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Completed example output</div>
+    <div class="output-block">========================<br>&nbsp;&nbsp;ABOUT ME<br>========================<br><br>Name    : Aisha Rahman<br>Age     : 15<br>City    : Islamabad<br>Hobby   : Drawing<br>Fun fact: I can solve a Rubik's cube in 2 minutes<br><br>========================</div>
+    <div class="tip-box" style="margin-top:8px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Extension challenge:</strong> Can you add a border that adjusts in width? Can you print the same info in a different visual layout — like a table or a ticket?</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-bug" aria-hidden="true"></i> Activity 2 — Explore &amp; break it</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Pairs</div>
+    <div class="activity-title">Deliberately break the code, then fix it</div>
+    <div class="activity-desc">Students introduce each error listed below, run the code, read the error message, fix it, and write one sentence explaining what the error meant. This builds confidence with error messages — they are helpful, not scary.</div>
+
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Start with this working code:</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — working version</span><button class="copy-btn" onclick="copyCode(this)"><i class="ti ti-copy" aria-hidden="true"></i> Copy</button></div>
+      <pre><span class="fn">print</span>(<span class="str">"Hello, World!"</span>)
+<span class="fn">print</span>(<span class="str">"Python is fun"</span>)
+<span class="fn">print</span>(<span class="num">2024</span>)</pre>
+    </div>
+
+    <div style="font-size:13px;font-weight:500;margin:10px 0 8px;">Now try each of these errors one at a time:</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+
+      <div class="code-block">
+        <div class="code-header"><span>Error 1 — missing closing quote</span><span class="pill pill-amber" style="font-size:10px;">SyntaxError</span></div>
+        <pre><span class="fn">print</span>(<span class="str">"Hello, World!</span>)</pre>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:-4px 0 4px;padding:0 4px;">Error message: <code>SyntaxError: EOL while scanning string literal</code> — Python expects the string to close. Every " must have a matching ".</div>
+
+      <div class="code-block">
+        <div class="code-header"><span>Error 2 — missing parenthesis</span><span class="pill pill-amber" style="font-size:10px;">SyntaxError</span></div>
+        <pre><span class="fn">print</span> <span class="str">"Hello, World!"</span></pre>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:-4px 0 4px;padding:0 4px;">Error message: <code>SyntaxError: Missing parentheses in call to 'print'</code> — Python 3 requires parentheses around print arguments. This was valid in Python 2.</div>
+
+      <div class="code-block">
+        <div class="code-header"><span>Error 3 — wrong capitalisation</span><span class="pill pill-amber" style="font-size:10px;">NameError</span></div>
+        <pre><span class="var">Print</span>(<span class="str">"Hello, World!"</span>)</pre>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:-4px 0 4px;padding:0 4px;">Error message: <code>NameError: name 'Print' is not defined</code> — Python is case-sensitive. <code>print</code> ≠ <code>Print</code> ≠ <code>PRINT</code>.</div>
+
+      <div class="code-block">
+        <div class="code-header"><span>Error 4 — unquoted text</span><span class="pill pill-amber" style="font-size:10px;">NameError</span></div>
+        <pre><span class="fn">print</span>(Hello)</pre>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:-4px 0 4px;padding:0 4px;">Error message: <code>NameError: name 'Hello' is not defined</code> — without quotes, Python thinks <code>Hello</code> is a variable name, not text. Text must be wrapped in quotes.</div>
+
+    </div>
+    <div class="tip-box" style="margin-top:10px;"><i class="ti ti-bulb" aria-hidden="true" style="font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong>Key message for students:</strong> Error messages are Python's way of helping you. Always read the last line of an error — it tells you exactly what went wrong and which line it's on.</span></div>
+  </div>
+</div>
+
+<!-- Check for understanding -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-checkbox" aria-hidden="true"></i> Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What happens if you remove the parentheses from <code>print("Hello")</code>?</div>
+    <div class="check-options" id="opts">
+      <div class="check-opt" onclick="answer(this, false)"><span class="opt-letter">A</span> The program runs fine and prints Hello</div>
+      <div class="check-opt" onclick="answer(this, true)"><span class="opt-letter">B</span> You get a SyntaxError because Python 3 requires parentheses</div>
+      <div class="check-opt" onclick="answer(this, false)"><span class="opt-letter">C</span> The program prints nothing but doesn't crash</div>
+      <div class="check-opt" onclick="answer(this, false)"><span class="opt-letter">D</span> Python automatically adds the parentheses for you</div>
+    </div>
+    <div class="feedback" id="fb">✓ Correct! In Python 3, <code>print</code> is a function and must be called with parentheses. Writing <code>print "Hello"</code> gives a SyntaxError.</div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">Written part (students write in their notebooks): Write one <code>print()</code> statement of your own. Then write what error you would get if you removed the closing quote mark.</div>
+  </div>
+</div>
+
+<!-- Vocabulary -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-book" aria-hidden="true"></i> Key vocabulary for this lesson</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Program</strong>A set of instructions that a computer executes in order.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Function</strong>A named action that does something. <code>print()</code> is a built-in function.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Argument</strong>The value you pass into a function inside the parentheses.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">String</strong>Text wrapped in quotes. e.g. <code>"Hello"</code> or <code>'World'</code>.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Syntax</strong>The rules of how to write valid Python code.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">SyntaxError</strong>Python couldn't understand your code — something was written incorrectly.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-home" aria-hidden="true"></i> Homework / self-study (before lesson 2)</div>
+  <div class="hw-box">
+    <div class="hw-item"><i class="ti ti-pencil hw-icon" aria-hidden="true"></i><span>Extend your self-intro program to at least 10 print() lines — add a favourite movie, a goal, and a short poem or song lyric.</span></div>
+    <div class="hw-item"><i class="ti ti-device-tv hw-icon" aria-hidden="true"></i><span>Watch: "Python in 100 seconds" by Fireship on YouTube (1:40 min) — just to see another take on what Python is.</span></div>
+    <div class="hw-item"><i class="ti ti-list hw-icon" aria-hidden="true"></i><span>Write down 3 things you want to build by the end of this course (a game? a chatbot? a calculator?). Bring the list to Lesson 2.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head"><i class="ti ti-notes" aria-hidden="true"></i> Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Students using smart/curly quotes ("...") copied from a Word document. These cause SyntaxErrors. Always type directly in the code editor.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-alert-triangle" aria-hidden="true" style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Common mistake:</strong> Students who leave a space before <code>print</code> — indentation errors will appear in later lessons. Mention that Python cares deeply about spaces at the start of a line.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-bulb" aria-hidden="true" style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing:</strong> If setup takes longer than 10 minutes (common on day 1), skip Activity 2 and assign it as homework. Activity 1 is the priority — every student must successfully run their first program.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-bulb" aria-hidden="true" style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Differentiation:</strong> Fast finishers can try printing a pattern (triangle, box) using print() loops — but don't introduce loops yet. Just let them explore free-form.</span></div>
+    <div style="display:flex;gap:8px;"><i class="ti ti-heart" aria-hidden="true" style="color:var(--color-text-danger);font-size:16px;flex-shrink:0;margin-top:1px;"></i><span><strong style="color:var(--color-text-primary);font-weight:500;">Culture:</strong> Celebrate the first run loudly. The first "Hello, World!" is a milestone. Ask: "Who ran their first Python program today?" — have everyone raise a hand. It matters.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (2).html'">Next: Lesson 2 — Variables &data types</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+</div>
+
+<script src="scripts.js"></script>
+<script>
+function answer(el, correct) {
+  if (document.querySelector('.check-opt.correct')) return;
+  document.querySelectorAll('.check-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (correct === false && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  if (correct) document.getElementById('fb').style.display = 'block';
+  else {
+    document.getElementById('fb').style.display = 'block';
+    document.getElementById('fb').style.color = 'var(--color-text-secondary)';
+    document.getElementById('fb').textContent = 'Not quite — the correct answer is B. In Python 3, print() is a function and parentheses are required. The green option shows the right answer.';
+  }
+}
+</script>
+</body>
+</html>

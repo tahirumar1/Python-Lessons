@@ -1,0 +1,770 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+<style>
+/* ext cards */
+.ext-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.ext-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.ext-level{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ext-title{font-size:13px;font-weight:500;margin-bottom:4px}
+.ext-desc{font-size:12px;color:var(--color-text-secondary)}
+/* live quiz */
+.quiz-demo{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.qd-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.qd-body{padding:14px}
+.qd-q{font-size:15px;font-weight:500;margin-bottom:10px}
+.qd-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.qd-opt{display:flex;align-items:center;gap:10px;font-size:13px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);cursor:pointer;transition:all .12s}
+.qd-opt:hover{background:var(--color-background-primary)}
+.qd-opt.correct{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success);pointer-events:none}
+.qd-opt.wrong{background:var(--color-background-danger);border-color:var(--color-border-danger);color:var(--color-text-danger);pointer-events:none}
+.qd-opt-letter{width:22px;height:22px;border-radius:50%;background:var(--color-background-primary);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qd-feedback{font-size:13px;min-height:20px;margin-bottom:8px}
+.qd-stats{display:flex;gap:10px;flex-wrap:wrap}
+.qd-stat{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:3px 10px;border-radius:10px;border:0.5px solid var(--color-border-tertiary)}
+.qd-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+/* peer review */
+.peer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.peer-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;background:var(--color-background-primary)}
+.peer-head{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.peer-ta{width:100%;font-size:13px;padding:6px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none}
+/* rubric */
+.rub-table{width:100%;border-collapse:collapse;font-size:13px}
+.rub-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.rub-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.rub-table tr:last-child td{border-bottom:none}
+.pts{font-weight:500;color:var(--color-text-info);font-family:var(--font-mono)}
+/* reflection tool */
+.reflect{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.rf-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.rf-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.rf-q{font-size:13px;font-weight:500;margin-bottom:4px}
+.rf-ta{width:100%;font-size:13px;padding:8px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:none;line-height:1.5}
+/* self-assessment */
+.self-assess{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.sa-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.sa-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.sa-row{display:flex;gap:12px;align-items:center;font-size:13px;flex-wrap:wrap}
+.sa-label{flex:1;min-width:200px}
+.sa-stars{display:flex;gap:4px}
+.sa-star{font-size:20px;cursor:pointer;color:var(--color-border-secondary);transition:color .1s;line-height:1}
+.sa-star.lit{color:#F59E0B}
+.sa-note{font-size:11px;color:var(--color-text-tertiary);min-width:60px}
+/* function plan tool */
+.plan-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.pt-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.pt-body{padding:14px}
+.pt-row{display:grid;grid-template-columns:160px 1fr 100px;gap:8px;align-items:start;margin-bottom:8px;font-size:12px}
+.pt-label{color:var(--color-text-secondary);padding-top:8px}
+.pt-fn{font-family:var(--font-mono);font-size:12.5px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);width:100%}
+.pt-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;text-align:center;margin-top:8px}
+.b-helper{background:var(--color-background-success);color:var(--color-text-success)}
+.b-main{background:var(--color-background-info);color:var(--color-text-info)}
+.b-entry{background:var(--color-background-warning);color:var(--color-text-warning)}
+/* week 5 preview */
+.w5-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.w5-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px;text-align:center;font-size:12px;border:0.5px solid var(--color-border-tertiary)}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 20: Week 4 Project — Quiz Game with Functions</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 20: Week 4 Project — Quiz Game with Functions</p>
+      <p class="lp-hero-sub">Week 4 — Functions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-purple">🛠 Project day</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Type</div><div class="meta-val">Project + demo</div></div>
+    <div class="meta-item"><div class="meta-label">Skills tested</div><div class="meta-val">L16–L19 combined</div></div>
+    <div class="meta-item"><div class="meta-label">Deliverable</div><div class="meta-val">Working .py file</div></div>
+    <div class="meta-item"><div class="meta-label">Structure req.</div><div class="meta-val">≥ 6 functions</div></div>
+  </div>
+</div>
+
+<!-- What this brings together -->
+<div class="sec">
+  <div class="sec-head">What this project brings together</div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:10px">This is the most structurally demanding project of the course. Every concept from Week 4 is applied: <code>def</code> and calling (L16), parameters and return values (L17), scope (L18), and multi-function program structure with call graphs (L19). The quiz game is also a direct test of Week 1–3 foundations — input, conditionals, loops, and lists all appear inside the functions.</p>
+  <div class="success-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🎯</span><span><strong>Project day goal:</strong> Every student leaves with a complete quiz game where every logical piece is a separate function — and they can explain what each one does. Circulate and ask "show me the function that checks the answer" rather than giving code.</span></div>
+</div>
+
+<!-- Objectives -->
+<div class="sec">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Design a program by identifying which logical pieces become functions before writing any code</li>
+    <li>Build at least 6 functions each with a clear single responsibility and docstring</li>
+    <li>Pass data between functions using parameters and return values — no unnecessary globals</li>
+    <li>Use a <code>main()</code> orchestrator that reads like a plain-English description of the program</li>
+    <li>Present code to a partner and explain every function's role and its connections</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="sec">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="tl">
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Launch</span>
+        <div class="tl-title">Week 4 recap + live quiz demo (6 min)</div>
+        <div class="tl-desc">Quick verbal recap: ask students to name one concept from each of Lessons 16–19. Write them on the board. Then play the live quiz demo below on the projector — let a student answer all 5 questions. Don't show the code yet. The goal: students feel the gap between "I can write functions" and "I can build a complete structured app."</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:06</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Plan</span>
+        <div class="tl-title">Students plan functions on paper (6 min)</div>
+        <div class="tl-desc">Before the editor opens: students list every function their quiz needs, name it, write its parameters, and note what it returns. Teacher circulates and approves each student's function list before coding begins. Key question to ask every student: "What does ask_question() return — and who uses that return value?"</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Build</span>
+        <div class="tl-title">Independent build session (27 min)</div>
+        <div class="tl-desc">Students build from scratch using the requirements checklist in Part 2. Teacher circulates silently for the first 5 minutes. Guiding questions only: "Which function displays the question?", "What does check_answer() need to know to do its job?", "Where does the score live — and which function updates it?"</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:39</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Review</span>
+        <div class="tl-title">Peer code swap (8 min)</div>
+        <div class="tl-desc">Pairs swap computers. Each student plays the partner's quiz, then fills in the peer review card in Part 2. Focus: does the code use real functions? Can you find main()? Does every function have a docstring?</div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-l"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-r"><span class="pill pill-purple" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Share</span>
+        <div class="tl-title">Showcase + Week 4 wrap-up (8 min)</div>
+        <div class="tl-desc">3–4 volunteers demo on projector. Teacher asks each: "Show me your check_answer() function — what does it take in and what does it return?" Then reveal the teacher solution (Part 2) and close with the Week 5 preview (Part 3).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Live quiz demo -->
+<div class="sec">
+  <div class="sec-head">Live quiz demo — show on projector before build session</div>
+  <div class="quiz-demo">
+    <div class="qd-head">
+      <span>Python Quiz — 5 questions · show students the target before they build</span>
+      <button class="qd-btn" onclick="startQuiz()">Restart quiz</button>
+    </div>
+    <div class="qd-body">
+      <div id="qd-q" class="qd-q"></div>
+      <div id="qd-opts" class="qd-opts"></div>
+      <div id="qd-feedback" class="qd-feedback"></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <button class="qd-btn" id="qd-next-btn" onclick="nextQuestion()" style="display:none">Next question →</button>
+      </div>
+      <div class="qd-stats">
+        <div class="qd-stat">Question: <span id="qd-qnum">1</span> / 5</div>
+        <div class="qd-stat">Score: <span id="qd-score">0</span></div>
+      </div>
+      <div id="qd-final" style="display:none;margin-top:10px;font-size:15px;font-weight:500;color:var(--color-text-success)"></div>
+    </div>
+  </div>
+  <div class="info"><span style="font-size:16px;flex-shrink:0;margin-top:1px">📌</span><span><strong>Show the demo — not the code yet.</strong> Students experience what they're building first. The teacher solution code is revealed only after peer review in Part 2.</span></div>
+</div>
+
+<!-- Part 1 ends — Part 2 content pastes below -->
+<!-- PART2 START -->
+
+<!-- Project brief + requirements -->
+<div class="sec">
+  <div class="sec-head">Project brief — give this to students at 0:12</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:16px;font-weight:500;margin-bottom:6px">Build your own Quiz Game with Functions</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px">You have 27 minutes. Build a complete, working 5-question trivia quiz. Every logical piece must be its own function. Your <code>main()</code> should read like a plain-English description of the game — delegating all work to helpers. Meet every requirement below.</div>
+
+    <div style="font-size:13px;font-weight:500;margin-bottom:8px">Requirements — tick each one as you complete it:</div>
+    <div class="checklist" id="req-checklist">
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>At least 6 functions, each with a docstring and single responsibility</span><span class="cl-note">Suggested: get_questions(), display_question(), get_answer(), check_answer(), show_result(), main()</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>Questions stored as a list of tuples or list of dicts — NOT hardcoded inside main()</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>display_question() receives the question as a parameter and prints it</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>check_answer() takes the user's answer and correct answer as parameters, returns True/False</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>Score tracked and passed through functions — not as a global variable</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>show_result() receives the final score and total, prints a formatted result</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>main() reads clearly in ~10 lines — delegates all work to helpers</span></div></div>
+      <div class="cl-item" onclick="toggleCL(this)"><div class="cl-box">✓</div><div><span>Three-zone layout: helpers at top, main() in middle, main() call at bottom</span></div></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="prog-lbl" id="req-lbl">Progress: 0 / 8 complete</div>
+      <div class="prog-wrap"><div class="prog-bar" id="req-bar"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Function planning tool -->
+<div class="sec">
+  <div class="sec-head">Function planning tool — fill this out on paper before opening the editor</div>
+  <div class="plan-tool">
+    <div class="pt-head">Map each function: name → what it does → what it returns</div>
+    <div class="pt-body">
+      <div style="display:grid;grid-template-columns:180px 1fr 1fr 80px;gap:8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding:0 2px">
+        <span>Function name</span><span>What it does (one sentence)</span><span>Parameters → Returns</span><span>Zone</span>
+      </div>
+      <div id="plan-rows"></div>
+      <div class="info" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Teacher approval checkpoint:</strong> Before any student opens their editor, ask them to show you this plan. Check: does every function have one job? Does main() only call helpers — not do work itself? Is there at least one function that returns a value?</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Extension challenges -->
+<div class="sec">
+  <div class="sec-head">Extension challenges — for fast finishers</div>
+  <div class="ext-grid">
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-success)">⭐ Level 1</div>
+      <div class="ext-title">Categories &amp; difficulty</div>
+      <div class="ext-desc">Add a <code>category</code> and <code>difficulty</code> field to each question tuple. Write a <code>filter_by_category(questions, cat)</code> function that returns a filtered list using a list comprehension.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-warning)">⭐⭐ Level 2</div>
+      <div class="ext-title">Timed questions</div>
+      <div class="ext-desc">Import the <code>time</code> module. Record <code>time.time()</code> before and after each question. Pass elapsed time to <code>show_result()</code> and display total time taken.</div>
+    </div>
+    <div class="ext-card">
+      <div class="ext-level" style="color:var(--color-text-danger)">⭐⭐⭐ Level 3</div>
+      <div class="ext-title">High score tracker</div>
+      <div class="ext-desc">Add a <code>high_score</code> global variable. Write <code>update_high_score(score)</code> that uses the <code>global</code> keyword correctly. Display the high score after each game and persist across multiple plays.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Teacher solution -->
+<div class="sec">
+  <div class="sec-head">Teacher's complete solution — reveal after peer review only</div>
+  <div class="tip"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Two things to highlight in the reveal:</strong> (1) How score is passed as a return value through functions rather than using a global. (2) How reading main() alone tells you the entire game flow in ~10 lines. Ask: "Who used a different approach? Was it cleaner or messier? Why?"</span></div>
+  <div class="code-block">
+    <div class="ch"><span>quiz_game.py — complete teacher solution</span><button class="cp-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ═══════════════════════════════════════════════════</span>
+<span class="cm">#  QUIZ GAME — Week 4 Project                       </span>
+<span class="cm"># ═══════════════════════════════════════════════════</span>
+
+<span class="cm"># ═══ ZONE ① — Data ══════════════════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">get_questions</span>()<span class="op">:</span>
+    <span class="str">"""Return a list of (question, answer, options) tuples."""</span>
+    <span class="kw">return</span> [
+        (<span class="str">"What keyword defines a function?"</span>,
+         <span class="str">"def"</span>,
+         [<span class="str">"func"</span>, <span class="str">"define"</span>, <span class="str">"def"</span>, <span class="str">"function"</span>]),
+        (<span class="str">"What does a function return with no return statement?"</span>,
+         <span class="str">"None"</span>,
+         [<span class="str">"0"</span>, <span class="str">"False"</span>, <span class="str">"None"</span>, <span class="str">""</span>]),
+        (<span class="str">"What is the output of: len([1, 2, 3])?"</span>,
+         <span class="str">"3"</span>,
+         [<span class="str">"1"</span>, <span class="str">"2"</span>, <span class="str">"3"</span>, <span class="str">"4"</span>]),
+        (<span class="str">"Which loop runs while a condition is True?"</span>,
+         <span class="str">"while"</span>,
+         [<span class="str">"for"</span>, <span class="str">"while"</span>, <span class="str">"loop"</span>, <span class="str">"repeat"</span>]),
+        (<span class="str">"What symbol starts a comment in Python?"</span>,
+         <span class="str">"#"</span>,
+         [<span class="str">"//"</span>, <span class="str">"--"</span>, <span class="str">"#"</span>, <span class="str">"/*"</span>]),
+    ]
+
+<span class="cm"># ═══ ZONE ① — Helper functions ═══════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">display_question</span>(<span class="var">number</span>, <span class="var">question</span>, <span class="var">options</span>)<span class="op">:</span>
+    <span class="str">"""Print a numbered question with lettered options."""</span>
+    <span class="fn">print</span>(<span class="str">f"\n  Q{number}: {question}"</span>)
+    <span class="kw">for</span> <span class="var">i</span>, <span class="var">opt</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">options</span>, <span class="num">1</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"    {i}. {opt}"</span>)
+
+<span class="kw">def</span> <span class="fn">get_answer</span>(<span class="var">num_options</span>)<span class="op">:</span>
+    <span class="str">"""Prompt user for a valid answer (1 to num_options). Returns int."""</span>
+    <span class="kw">while</span> <span class="kw">True</span><span class="op">:</span>
+        <span class="var">raw</span> = <span class="fn">input</span>(<span class="str">f"  Your answer (1-{num_options}): "</span>)<span class="op">.</span><span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>() <span class="kw">and</span> <span class="num">1</span> <span class="op">&lt;=</span> <span class="fn">int</span>(<span class="var">raw</span>) <span class="op">&lt;=</span> <span class="var">num_options</span><span class="op">:</span>
+            <span class="kw">return</span> <span class="fn">int</span>(<span class="var">raw</span>)
+        <span class="fn">print</span>(<span class="str">f"  ✗ Enter a number between 1 and {num_options}."</span>)
+
+<span class="kw">def</span> <span class="fn">check_answer</span>(<span class="var">chosen_option</span>, <span class="var">options</span>, <span class="var">correct_answer</span>)<span class="op">:</span>
+    <span class="str">"""Return True if chosen option matches the correct answer."""</span>
+    <span class="kw">return</span> <span class="var">options</span>[<span class="var">chosen_option</span> <span class="op">-</span> <span class="num">1</span>] <span class="op">==</span> <span class="var">correct_answer</span>
+
+<span class="kw">def</span> <span class="fn">show_feedback</span>(<span class="var">correct</span>, <span class="var">right_answer</span>)<span class="op">:</span>
+    <span class="str">"""Print immediate right/wrong feedback after each question."""</span>
+    <span class="kw">if</span> <span class="var">correct</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  ✓ Correct!"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"  ✗ Wrong. The answer was: {right_answer}"</span>)
+
+<span class="kw">def</span> <span class="fn">show_result</span>(<span class="var">score</span>, <span class="var">total</span>)<span class="op">:</span>
+    <span class="str">"""Print final score and a performance message."""</span>
+    <span class="var">pct</span> = <span class="fn">round</span>(<span class="var">score</span> <span class="op">/</span> <span class="var">total</span> <span class="op">*</span> <span class="num">100</span>)
+    <span class="fn">print</span>(<span class="str">f"\n{'='*35}"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Final score: {score} / {total}  ({pct}%)"</span>)
+    <span class="kw">if</span> <span class="var">pct</span> <span class="op">==</span> <span class="num">100</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  🎉 Perfect score!"</span>)
+    <span class="kw">elif</span> <span class="var">pct</span> <span class="op">&gt;=</span> <span class="num">60</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  👍 Good work! Keep practising."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"  📚 Keep studying — you'll get there!"</span>)
+    <span class="fn">print</span>(<span class="str">f"{'='*35}"</span>)
+
+<span class="cm"># ═══ ZONE ② — main() ════════════════════════════════</span>
+
+<span class="kw">def</span> <span class="fn">main</span>()<span class="op">:</span>
+    <span class="str">"""Run the quiz game."""</span>
+    <span class="var">questions</span> = <span class="fn">get_questions</span>()
+    <span class="var">score</span>     = <span class="num">0</span>
+
+    <span class="fn">print</span>(<span class="str">"=== Python Quiz Game ==="</span>)
+    <span class="fn">print</span>(<span class="str">f"Answer {len(questions)} questions. Good luck!\n"</span>)
+
+    <span class="kw">for</span> <span class="var">i</span>, (<span class="var">q_text</span>, <span class="var">answer</span>, <span class="var">options</span>) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">questions</span>, <span class="num">1</span>)<span class="op">:</span>
+        <span class="fn">display_question</span>(<span class="var">i</span>, <span class="var">q_text</span>, <span class="var">options</span>)
+        <span class="var">chosen</span>  = <span class="fn">get_answer</span>(<span class="fn">len</span>(<span class="var">options</span>))
+        <span class="var">correct</span> = <span class="fn">check_answer</span>(<span class="var">chosen</span>, <span class="var">options</span>, <span class="var">answer</span>)
+        <span class="fn">show_feedback</span>(<span class="var">correct</span>, <span class="var">answer</span>)
+        <span class="kw">if</span> <span class="var">correct</span><span class="op">:</span>
+            <span class="var">score</span> <span class="op">+=</span> <span class="num">1</span>
+
+    <span class="fn">show_result</span>(<span class="var">score</span>, <span class="fn">len</span>(<span class="var">questions</span>))
+
+<span class="cm"># ═══ ZONE ③ — Entry point ════════════════════════════</span>
+
+<span class="fn">main</span>()</pre>
+  </div>
+  <div class="out-lbl">Sample session (partial)</div>
+  <div class="out">=== Python Quiz Game ===<br>Answer 5 questions. Good luck!<br><br>  Q1: What keyword defines a function?<br>    1. func<br>    2. define<br>    3. def<br>    4. function<br>  Your answer (1-4): <span class="in-c">3</span><br>  ✓ Correct!<br><br>  Q2: What does a function return with no return statement?<br>  Your answer (1-4): <span class="in-c">1</span><br>  ✗ Wrong. The answer was: None<br>  ...<br>===================================<br>  Final score: 4 / 5  (80%)<br>  👍 Good work! Keep practising.<br>===================================</div>
+</div>
+
+<!-- Peer review card -->
+<div class="sec">
+  <div class="sec-head">Peer review card</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <span style="font-size:13px;font-weight:500">Peer Review — Week 4 Project</span>
+      <span style="font-size:12px;color:var(--color-text-secondary)">Reviewer: _____________ &nbsp;·&nbsp; Author: _____________</span>
+    </div>
+    <div class="peer-grid">
+      <div class="peer-card">
+        <div class="peer-head">✅ One function that works really well</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Name the function and say why it's well-structured.</div>
+        <textarea class="peer-ta" rows="3" placeholder="e.g. check_answer() is clean — it takes two parameters and returns True/False. No side effects, easy to test..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">🔧 One improvement to make</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Suggest the fix, not just the problem.</div>
+        <textarea class="peer-ta" rows="3" placeholder="e.g. main() is 30 lines and does input validation itself — move that into a get_valid_answer() helper to keep main() short..."></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">❓ One design question</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Ask about a decision you're curious about.</div>
+        <textarea class="peer-ta" rows="3" placeholder="e.g. Why did you store questions as a list of lists instead of tuples? Does it matter?"></textarea>
+      </div>
+      <div class="peer-card">
+        <div class="peer-head">🎯 Requirements check — tick MISSING items</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;margin-top:4px">
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> 6+ functions with docstrings</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Questions not hardcoded in main()</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> check_answer() uses parameters + return</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Score passed via return, not global</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> show_result() formats final score</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> main() reads clearly in ~10 lines</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Three-zone layout followed</label>
+          <label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox"> Program runs without errors</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Grading rubric -->
+<div class="sec">
+  <div class="sec-head">Grading rubric — optional, for formal assessment</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="rub-table">
+      <thead><tr><th>Criterion</th><th>Full marks</th><th>Partial</th><th>Not yet</th><th>Pts</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Function structure</strong> — 6+ functions, each with docstring and single job</td><td>All functions clean, one job each, all docstrings present</td><td>4–5 functions or 1–2 missing docstrings</td><td>Fewer than 4 functions or all logic in main()</td><td class="pts">3</td></tr>
+        <tr><td><strong>Parameters &amp; return</strong> — data passed through functions correctly</td><td>check_answer() and get_answer() use params and return; score passed correctly</td><td>Return used in some functions; global for score</td><td>No meaningful use of parameters or return</td><td class="pts">3</td></tr>
+        <tr><td><strong>main() quality</strong> — orchestrates without doing work itself</td><td>main() reads like plain English; delegates all work; ≤15 lines</td><td>main() delegates most work but contains some direct logic</td><td>main() contains most or all of the program logic</td><td class="pts">2</td></tr>
+        <tr><td><strong>Correctness</strong> — quiz runs, scoring works, feedback shown</td><td>All 5 questions work, score correct, result displays</td><td>Quiz runs but scoring or feedback has bugs</td><td>Program crashes or quiz doesn't complete</td><td class="pts">2</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:8px">Total: 10 points. Consider pass/not-yet for informal cohorts.</p>
+</div>
+
+<!-- PART2 END -->
+<!-- PART3 START -->
+
+<!-- Week 4 concept map -->
+<div class="sec">
+  <div class="sec-head">Week 4 concept map — how the four lessons connect</div>
+  <div class="concept-map">
+    <div class="cm-head">Click any concept node to highlight its connections to this project</div>
+    <div class="cm-body">
+      <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" font-family="var(--font-sans)" font-size="12" style="max-width:560px;width:100%">
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-secondary)"/></marker></defs>
+        <!-- L16 def/calling -->
+        <rect id="n-def" x="10" y="80" width="110" height="40" rx="8" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="1.5" style="cursor:pointer" onclick="highlightNode('def')"/>
+        <text x="65" y="97" text-anchor="middle" fill="var(--color-text-info)" font-weight="600" style="pointer-events:none">L16: def</text>
+        <text x="65" y="112" text-anchor="middle" fill="var(--color-text-info)" font-size="10" style="pointer-events:none">defining &amp; calling</text>
+        <!-- L17 params/return -->
+        <rect id="n-params" x="155" y="30" width="120" height="40" rx="8" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1.5" style="cursor:pointer" onclick="highlightNode('params')"/>
+        <text x="215" y="47" text-anchor="middle" fill="var(--color-text-success)" font-weight="600" style="pointer-events:none">L17: params</text>
+        <text x="215" y="62" text-anchor="middle" fill="var(--color-text-success)" font-size="10" style="pointer-events:none">parameters &amp; return</text>
+        <!-- L18 scope -->
+        <rect id="n-scope" x="155" y="130" width="120" height="40" rx="8" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1.5" style="cursor:pointer" onclick="highlightNode('scope')"/>
+        <text x="215" y="147" text-anchor="middle" fill="var(--color-text-warning)" font-weight="600" style="pointer-events:none">L18: scope</text>
+        <text x="215" y="162" text-anchor="middle" fill="var(--color-text-warning)" font-size="10" style="pointer-events:none">local vs global</text>
+        <!-- L19 structure -->
+        <rect id="n-struct" x="310" y="80" width="120" height="40" rx="8" fill="var(--color-background-secondary)" stroke="var(--color-border-secondary)" stroke-width="1.5" style="cursor:pointer" onclick="highlightNode('struct')"/>
+        <text x="370" y="97" text-anchor="middle" fill="var(--color-text-secondary)" font-weight="600" style="pointer-events:none">L19: structure</text>
+        <text x="370" y="112" text-anchor="middle" fill="var(--color-text-secondary)" font-size="10" style="pointer-events:none">multi-function programs</text>
+        <!-- Quiz game in centre -->
+        <rect id="n-quiz" x="195" y="80" width="110" height="40" rx="8" fill="color-mix(in srgb,var(--color-background-danger) 40%,transparent)" stroke="var(--color-border-danger)" stroke-width="2" style="cursor:pointer" onclick="highlightNode('quiz')"/>
+        <text x="250" y="97" text-anchor="middle" fill="var(--color-text-danger)" font-weight="700" style="pointer-events:none">L20</text>
+        <text x="250" y="112" text-anchor="middle" fill="var(--color-text-danger)" font-size="10" style="pointer-events:none">Quiz Game 🛠</text>
+        <!-- arrows -->
+        <line x1="120" y1="100" x2="195" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="215" y1="70" x2="230" y2="80" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="215" y1="130" x2="235" y2="120" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <line x1="305" y1="100" x2="310" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#ar)"/>
+        <!-- node labels below -->
+        <text x="65" y="135" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10">6 functions</text>
+        <text x="215" y="22" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10">check_answer() returns bool</text>
+        <text x="215" y="182" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10">score as local, not global</text>
+        <text x="370" y="132" text-anchor="middle" fill="var(--color-text-tertiary)" font-size="10">three-zone layout</text>
+        <!-- hover tip -->
+        <text id="cm-tip" x="280" y="200" text-anchor="middle" fill="var(--color-text-secondary)" font-size="11" font-style="italic">Click a node to see how it applies to this project</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Self assessment -->
+<div class="sec">
+  <div class="sec-head">Student self-assessment — rate your confidence on each Week 4 skill</div>
+  <div class="self-assess">
+    <div class="sa-head">Click the stars for each skill — be honest, this is for you</div>
+    <div class="sa-body" id="sa-body"></div>
+  </div>
+</div>
+
+<!-- Written self-reflection -->
+<div class="sec">
+  <div class="sec-head">Written self-reflection — complete in notebooks or below</div>
+  <div class="reflect">
+    <div class="rf-head">Three questions — answer before leaving class</div>
+    <div class="rf-body">
+      <div>
+        <div class="rf-q">① Draw your function call graph — show main() at top and every helper below it with arrows.</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Draw this on paper — a quick sketch is enough.</div>
+      </div>
+      <div>
+        <div class="rf-q">② Where did you use a return value in your quiz? Write the function name and one sentence explaining what it returns and who uses it.</div>
+        <textarea class="rf-ta" rows="2" id="rf-return" placeholder="e.g. check_answer() returns True or False — main() uses it to decide whether to increment the score..."></textarea>
+      </div>
+      <div>
+        <div class="rf-q">③ If you started again, what would you design differently — and why?</div>
+        <textarea class="rf-ta" rows="2" id="rf-redo" placeholder="e.g. I would store questions as dicts instead of tuples so I could access fields by name instead of by index..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="sec">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="ck">
+    <div class="ck-q">In the teacher solution, why is <code>score</code> updated in <code>main()</code> rather than inside <code>check_answer()</code>?</div>
+    <div class="ck-opts">
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">A</span>Because <code>check_answer()</code> can't access score — it is defined in a different scope</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">B</span>Because updating score inside check_answer() would require a global variable, which is slower</div>
+      <div class="ck-opt" onclick="ans(this,true)"><span class="opt-l">C</span>Because <code>check_answer()</code> has a single responsibility — deciding if the answer is right. Updating state belongs in the caller. This keeps each function focused and testable.</div>
+      <div class="ck-opt" onclick="ans(this,false)"><span class="opt-l">D</span>Because <code>check_answer()</code> runs before main() has defined the score variable</div>
+    </div>
+    <div class="fb" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Open your quiz game. Find the function that has the most lines. Could any of those lines be extracted into a smaller helper? Write the new function signature you would create.
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="sec">
+  <div class="sec-head">Week 4 key vocabulary — cumulative review</div>
+  <div class="vg">
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">def / function call</strong>def stores the recipe; calling with () executes it. A function does nothing until called (L16).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Parameter / argument</strong>Parameter is the placeholder in the definition; argument is the actual value at the call site (L17).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">return</strong>Sends a value back to the caller. Without return, a function implicitly returns None (L17).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Local / global scope</strong>Local variables exist only inside their function. Global variables persist for the whole program (L18).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Single responsibility</strong>Each function does exactly one thing. If you can't describe it in one sentence, it does too much (L19).</div>
+    <div class="vc"><strong style="font-weight:500;display:block;margin-bottom:2px">Three-zone layout</strong>Helpers at top → main() in middle → entry call at bottom. The standard structure for Python programs (L19).</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="sec">
+  <div class="sec-head">Homework / self-study (before Week 5 — Dictionaries &amp; Tuples)</div>
+  <div class="hw">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Extend your quiz to 10 questions on any topic you know well. Add a <code>shuffle_questions(questions)</code> function that uses a list slice trick (<code>[::-1]</code> or import random) to randomise order — and call it from main() before the loop.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Refactor your quiz so questions are stored as dictionaries: <code>{"question": "...", "options": [...], "answer": "..."}</code> instead of tuples. How does this change the way check_answer() and display_question() work? Note the difference.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Week 5 preview challenge: Python dictionaries store key-value pairs. Given <code>student = {"name": "Aisha", "score": 92, "grade": "A"}</code>, predict what <code>student["name"]</code> returns. Look up how to add a new key to an existing dictionary. Write your findings.</span></div>
+  </div>
+</div>
+
+<!-- Week 5 preview -->
+<div class="sec">
+  <div class="sec-head">Looking ahead — Week 5: Dictionaries &amp; Tuples</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;background:var(--color-background-primary)">
+    <div style="font-size:15px;font-weight:500;margin-bottom:6px">Week 5: Dictionaries &amp; Tuples</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:12px">
+      Next week introduces Python's two most important data structures beyond lists. Dictionaries store key-value pairs — like a real dictionary where you look up a word (the key) to get its meaning (the value). Tuples are immutable lists — ordered but unchangeable. Both will make the quiz game's data structure cleaner and more powerful.
+    </div>
+    <div class="w5-grid">
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L21</div><div style="color:var(--color-text-secondary)">Dictionaries — create &amp; access</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L22</div><div style="color:var(--color-text-secondary)">Dictionary methods</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L23</div><div style="color:var(--color-text-secondary)">Tuples &amp; when to use them</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px">L24</div><div style="color:var(--color-text-secondary)">Nested data structures</div></div>
+      <div class="w5-card"><div style="font-weight:500;margin-bottom:2px;color:var(--color-text-success)">L25</div><div style="color:var(--color-text-success)">🛠 Contact book app</div></div>
+    </div>
+    <div class="info" style="margin-top:10px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Connection to this project:</strong> The quiz questions students stored as tuples <code>(question, answer, options)</code> are a perfect entry point into dictionaries — Week 5 starts by showing how the same data looks as <code>{"question": ..., "answer": ..., "options": ...}</code> and why that is more readable.</span></div>
+  </div>
+</div>
+
+<!-- Week 4 celebration -->
+<div class="sec">
+  <div class="sec-head">Week 4 complete — what students have achieved</div>
+  <div class="success-box" style="flex-direction:column;align-items:flex-start;gap:8px">
+    <div style="display:flex;gap:8px"><span style="font-size:16px">❤️</span><strong style="font-weight:500">Celebrate this explicitly.</strong></div>
+    <p style="font-size:13px">Twenty lessons ago students typed <code>print("Hello, World!")</code> for the first time. Today they built a complete structured program with six interlocking functions, parameters, return values, proper scope management, and a three-zone layout that professional Python developers use. That is a remarkable journey in 20 days. Say it out loud before previewing Week 5.</p>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="sec">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Most common structural problem:</strong> Students who put question data directly in main() — a long list of tuples right at the top of main(). Redirect immediately: "That data should live in get_questions(). main() should just call that function." The separation of data from logic is a professional pattern worth enforcing here.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Score as global — watch for it:</strong> Students who make score a global and use the global keyword in check_answer() are solving the problem but with bad practice. Accept it as working code, mark it down one point on structure, and say: "This works, but there's a cleaner way — check_answer() returns True/False, and main() decides whether to increment. Try refactoring."</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Off-by-one in option indexing:</strong> Students who store options in a list indexed 0–3 but display them as 1–4, then access options[chosen] instead of options[chosen-1], will get wrong answers. The teacher solution shows the correct pattern. Watch for this in peer review.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Showcase selection:</strong> For the showcase, prioritise students who used an unusual design decision — e.g. a different data structure for questions, or an extra helper function not in the spec. Diversity of solutions teaches everyone more than seeing the same pattern four times.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Week 5 bridge:</strong> After revealing the teacher solution, show this one-liner change — replace the tuple list with a dict list and update display_question() to use <code>q["question"]</code> instead of <code>q[0]</code>. This is the perfect hook for Lesson 21. Students see immediately why dictionaries are more readable than positional tuples.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (21).html'">Next: Lesson 21 — Dictionaries</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+
+<!-- PART3 END -->
+<script src="scripts.js"></script>
+<script>
+// Live quiz
+const questions = [
+  {q:'What keyword starts a function definition in Python?', opts:['func','define','def','function'], ans:2},
+  {q:'What does a function return if it has no return statement?', opts:['0','""','False','None'], ans:3},
+  {q:'What is a parameter?', opts:['A value passed when calling a function','A variable inside the definition that receives an argument','A global variable','A return value'], ans:1},
+  {q:'Which keyword lets a function modify a global variable?', opts:['global','extern','shared','public'], ans:0},
+  {q:'In a well-structured program, what does main() do?', opts:['Performs all calculations directly','Orchestrates the program by calling helper functions','Stores all global variables','Defines all the helper functions'], ans:1},
+];
+let qIdx = 0, score = 0, answered = false;
+
+function startQuiz() {
+  qIdx = 0; score = 0; answered = false;
+  document.getElementById('qd-final').style.display = 'none';
+  document.getElementById('qd-next-btn').style.display = 'none';
+  document.getElementById('qd-score').textContent = '0';
+  document.getElementById('qd-qnum').textContent = '1';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[qIdx];
+  document.getElementById('qd-q').textContent = `Q${qIdx+1}. ${q.q}`;
+  document.getElementById('qd-feedback').textContent = '';
+  answered = false;
+  const optsEl = document.getElementById('qd-opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const d = document.createElement('div');
+    d.className = 'qd-opt';
+    d.innerHTML = `<span class="qd-opt-letter">${'ABCD'[i]}</span> ${opt}`;
+    d.onclick = () => answerQ(i, d, q.ans);
+    optsEl.appendChild(d);
+  });
+}
+
+function answerQ(i, el, correct) {
+  if (answered) return;
+  answered = true;
+  const opts = document.querySelectorAll('.qd-opt');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  if (i === correct) {
+    el.classList.add('correct');
+    score++;
+    document.getElementById('qd-score').textContent = score;
+    document.getElementById('qd-feedback').textContent = '✓ Correct!';
+    document.getElementById('qd-feedback').style.color = 'var(--color-text-success)';
+  } else {
+    el.classList.add('wrong');
+    opts[correct].classList.add('correct');
+    document.getElementById('qd-feedback').textContent = `✗ The answer was ${('ABCD')[correct]}.`;
+    document.getElementById('qd-feedback').style.color = 'var(--color-text-danger)';
+  }
+  if (qIdx < questions.length - 1) {
+    document.getElementById('qd-next-btn').style.display = 'inline-block';
+  } else {
+    const pct = Math.round(score / questions.length * 100);
+    const msg = pct === 100 ? '🎉 Perfect score!' : pct >= 60 ? '👍 Good work!' : '📚 Review time!';
+    document.getElementById('qd-final').textContent = `Quiz complete! ${score}/${questions.length} (${pct}%) — ${msg}`;
+    document.getElementById('qd-final').style.display = 'block';
+  }
+}
+
+function nextQuestion() {
+  qIdx++;
+  document.getElementById('qd-next-btn').style.display = 'none';
+  document.getElementById('qd-qnum').textContent = qIdx + 1;
+  renderQuestion();
+}
+
+startQuiz();
+// Checklist
+function toggleCL(el) {
+  el.classList.toggle('done');
+  const items = document.querySelectorAll('#req-checklist .cl-item');
+  const done = [...items].filter(i => i.classList.contains('done')).length;
+  document.getElementById('req-lbl').textContent = `Progress: ${done} / ${items.length} complete`;
+  document.getElementById('req-bar').style.width = (done / items.length * 100) + '%';
+}
+
+// Function planning tool
+const planFunctions = [
+  { name: 'get_questions()', desc: 'Returns a list of all questions', params: '() → list', zone: 'b-helper' },
+  { name: 'display_question()', desc: 'Prints a question and its options', params: '(n, q, opts) → None', zone: 'b-helper' },
+  { name: 'get_answer()', desc: 'Asks user for valid input, returns it', params: '(num_opts) → int', zone: 'b-helper' },
+  { name: 'check_answer()', desc: 'Returns True if answer is correct', params: '(chosen, opts, ans) → bool', zone: 'b-helper' },
+  { name: 'show_feedback()', desc: 'Prints right/wrong after each question', params: '(correct, ans) → None', zone: 'b-helper' },
+  { name: 'show_result()', desc: 'Prints final score and message', params: '(score, total) → None', zone: 'b-helper' },
+  { name: 'main()', desc: 'Orchestrates the whole game', params: '() → None', zone: 'b-main' },
+  { name: 'main()  ← call', desc: 'One line at the bottom', params: 'entry point', zone: 'b-entry' },
+];
+
+function buildPlanTool() {
+  const container = document.getElementById('plan-rows');
+  planFunctions.forEach(f => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:180px 1fr 1fr 80px;gap:8px;align-items:center;margin-bottom:8px;font-size:12px';
+    row.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-info)">${f.name}</div>
+      <div style="color:var(--color-text-secondary)">${f.desc}</div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)">${f.params}</div>
+      <div><span class="pt-badge ${f.zone}" style="font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block">${f.zone === 'b-helper' ? 'helper' : f.zone === 'b-main' ? 'main()' : 'entry'}</span></div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+buildPlanTool();
+
+// Concept map node highlights
+const nodeDescriptions = {
+  'def':    'L16 applied: every function in the quiz is defined with def and called by name. Without this, no structure is possible.',
+  'params': 'L17 applied: display_question(n, q, opts) takes 3 params. check_answer(chosen, opts, ans) returns True/False. Data flows through parameters, not globals.',
+  'scope':  'L18 applied: score is a local variable in main() — not global. Each helper has its own local scope. check_answer() cannot accidentally modify score.',
+  'struct': 'L19 applied: three-zone layout — get_questions/helpers at top, main() in middle, main() call at bottom. Call graph: main → display_question → get_answer → check_answer → show_feedback → show_result.',
+  'quiz':   'L20: all four concepts combine into one working program. This is the capstone of Week 4.',
+};
+function highlightNode(id) {
+  const tip = document.getElementById('cm-tip');
+  tip.textContent = nodeDescriptions[id] || '';
+  // reset all rects to base fill
+  ['def','params','scope','struct','quiz'].forEach(n => {
+    const el = document.getElementById('n-'+n);
+    if (el) el.style.opacity = n === id ? '1' : '0.45';
+  });
+}
+
+// Self assessment
+const saSkills = [
+  { label: 'I can write a function with parameters and a return value', key: 'params' },
+  { label: 'I can structure a program into helpers + main() + entry call', key: 'struct' },
+  { label: 'I can trace which function calls which (draw a call graph)', key: 'graph' },
+  { label: 'I understand when to use return vs global', key: 'scope' },
+  { label: 'I can read someone else\'s multi-function program and explain it', key: 'read' },
+];
+const saRatings = {};
+function buildSA() {
+  const body = document.getElementById('sa-body');
+  saSkills.forEach(skill => {
+    saRatings[skill.key] = 0;
+    const row = document.createElement('div');
+    row.className = 'sa-row';
+    const label = document.createElement('div');
+    label.className = 'sa-label';
+    label.textContent = skill.label;
+    const stars = document.createElement('div');
+    stars.className = 'sa-stars';
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement('span');
+      star.className = 'sa-star';
+      star.textContent = '★';
+      star.dataset.val = i;
+      star.dataset.key = skill.key;
+      star.onclick = () => {
+        saRatings[skill.key] = i;
+        stars.querySelectorAll('.sa-star').forEach((s, j) => {
+          s.classList.toggle('lit', j < i);
+        });
+        updateSANote(skill.key, i, note);
+      };
+      stars.appendChild(star);
+    }
+    const note = document.createElement('div');
+    note.className = 'sa-note';
+    note.textContent = 'not rated';
+    row.appendChild(label);
+    row.appendChild(stars);
+    row.appendChild(note);
+    body.appendChild(row);
+  });
+}
+function updateSANote(key, val, el) {
+  const labels = ['','needs work','getting there','pretty good','confident','mastered!'];
+  el.textContent = labels[val] || '';
+  el.style.color = val >= 4 ? 'var(--color-text-success)' : val >= 2 ? 'var(--color-text-warning)' : 'var(--color-text-danger)';
+}
+buildSA();
+
+// Exit ticket
+function ans(el, correct) {
+  if (document.querySelector('.ck-opt.correct')) return;
+  document.querySelectorAll('.ck-opt').forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+    else if (!correct && o.onclick && o.onclick.toString().includes('true')) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.style.color = 'var(--color-text-success)';
+    fb.textContent = '✓ Correct! Single responsibility means check_answer() only answers one question: "is this answer correct?" Updating state is a different job that belongs in the caller. This makes check_answer() independently testable — you can call check_answer(3, opts, "def") and know immediately if it works, without worrying about score.';
+  } else {
+    fb.style.color = 'var(--color-text-secondary)';
+    fb.textContent = 'Not quite — the answer is C. Scope is not the reason: check_answer() could use a global. The real reason is design: each function should do one thing. Checking correctness is one job; updating the score is another. Mixing them would make check_answer() harder to test and reuse.';
+  }
+}
+
+</script>
+</body>
+</html>

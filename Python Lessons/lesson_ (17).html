@@ -1,0 +1,600 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+<style>
+/* param anatomy */
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.anatomy-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.anatomy-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.anatomy-code{font-family:var(--font-mono);font-size:13px;line-height:2.2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.anatomy-labels{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* param vs arg table */
+.pva-table{width:100%;border-collapse:collapse;font-size:13px}
+.pva-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.pva-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.pva-table tr:last-child td{border-bottom:none}
+.pva-table td:first-child{font-weight:500}
+/* flow diagram */
+.flow-diagram{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.fd-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.fd-body{padding:14px}
+/* interactive function sandbox */
+.fn-sandbox{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.fs-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fs-body{padding:14px}
+.fs-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.fs-tab{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);cursor:pointer;background:none;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.fs-tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info);font-weight:500}
+.fs-inputs{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.fs-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fs-label{font-size:12px;color:var(--color-text-secondary);min-width:100px}
+.fs-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);flex:1;min-width:100px}
+.fs-btn{padding:6px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.fs-result{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-family:var(--font-mono);font-size:13px;border:0.5px solid var(--color-border-tertiary);min-height:38px;color:var(--color-text-success)}
+/* default params compare */
+.default-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.dc-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.dc-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+/* return value diagram */
+.return-diagram{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.rd-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.rd-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 17: Parameters, arguments &amp; return values</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 17: Parameters, arguments &amp; return values</p>
+      <p class="hero-sub">Week 4 — Functions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">def, calling functions</div></div>
+    <div class="meta-item"><div class="meta-label">New concepts</div><div class="meta-val">parameters · return</div></div>
+    <div class="meta-item"><div class="meta-label">New feature</div><div class="meta-val">Default parameters</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Distinguish between <em>parameters</em> (in the definition) and <em>arguments</em> (in the call)</li>
+    <li>Write functions with one or more parameters and call them with matching arguments</li>
+    <li>Use <code>return</code> to send a value back to the caller and use it in an expression</li>
+    <li>Understand that a function without <code>return</code> implicitly returns <code>None</code></li>
+    <li>Define default parameter values to make arguments optional</li>
+    <li>Build a converter toolkit of reusable functions with inputs and outputs</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The vending machine analogy (4 min)</div>
+        <div class="tl-desc">Say: "Yesterday's functions were like light switches — press once, same thing always happens. But most useful functions are more like a vending machine: you put something in (a coin, a choice), and you get something specific back out. A function that adds two numbers needs to know which two numbers. A function that converts Celsius needs to know the temperature. The input is called a <em>parameter</em>, and the output is called a <em>return value</em>." Draw: <code>input → [function box] → output</code> on the board.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Parameters and arguments (8 min)</div>
+        <div class="tl-desc">Show the anatomy panel and parameter/argument table. Type Examples 1–2 on the projector. Before each call, ask: "What value is being passed? What will the parameter hold inside the function?" Trace the value flowing from the call into the function. Emphasise the naming distinction: parameter is the placeholder in the definition; argument is the actual value passed at call time.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:12</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">return values (8 min)</div>
+        <div class="tl-desc">Show Examples 3–4. Key insight: without <code>return</code>, the function prints but gives nothing back — the caller can't use the result in a calculation. With <code>return</code>, the function hands a value back to whoever called it. Show the <code>None</code> trap live: store the result of a <code>print</code>-only function, then print it — <code>None</code> appears. Connect to the Lesson 13 <code>sort()</code> = None surprise.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:20</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Default parameters (5 min)</div>
+        <div class="tl-desc">Show Example 5. The key rule: defaults make arguments optional — if the caller doesn't pass a value, the default is used. Defaults must come after non-default parameters. Show the <code>SyntaxError</code> when they're in the wrong order.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Converter toolkit (12 min)</div>
+        <div class="tl-desc">Students write 4 converter functions with parameters and return values — celsius to fahrenheit, kg to pounds, km to miles, and a currency converter with a default rate.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Discount calculator (10 min)</div>
+        <div class="tl-desc">Students build a <code>calculate_price(price, discount=10)</code> function with a default parameter, then use return values in further calculations. Connects to real-world e-commerce logic.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Function sandbox + exit ticket (8–10 min)</div>
+        <div class="tl-desc">Students use the interactive function sandbox to test their own converter calls live. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Anatomy -->
+<div class="section">
+  <div class="sec-head">Anatomy — parameters in the definition, arguments in the call</div>
+  <div class="anatomy">
+    <div class="anatomy-head">Parameters are placeholders. Arguments are the actual values. The mapping happens at call time.</div>
+    <div class="anatomy-body">
+      <div class="anatomy-code"><span style="color:#7F848E;font-style:italic"># DEFINITION — parameter is placeholder</span>
+<span style="color:#C678DD">def</span> <span style="color:#61AFEF">greet</span>(<span style="color:#E5C07B">name</span>)<span style="color:#ABB2BF">:</span>
+    <span style="color:#61AFEF">print</span>(<span style="color:#98C379">f"Hello, <span style="color:#E5C07B">{name}</span>!"</span>)
+
+<span style="color:#7F848E;font-style:italic"># CALLS — argument is the real value</span>
+<span style="color:#61AFEF">greet</span>(<span style="color:#98C379">"Aisha"</span>)   <span style="color:#7F848E;font-style:italic"># name = "Aisha"</span>
+<span style="color:#61AFEF">greet</span>(<span style="color:#98C379">"Omar"</span>)    <span style="color:#7F848E;font-style:italic"># name = "Omar"</span>
+<span style="color:#61AFEF">greet</span>(<span style="color:#98C379">"Zara"</span>)    <span style="color:#7F848E;font-style:italic"># name = "Zara"</span></div>
+      <div class="anatomy-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>name</strong> — the parameter. A local variable inside the function. Exists only while the function runs.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>"Aisha"</strong> — the argument. The actual value passed at the call site. Bound to the parameter name.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div>Each call passes a different argument → same function, different behaviour. This is the whole point of parameters.</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div>Number of arguments must match number of parameters (unless defaults are used). Mismatch → <code>TypeError</code>.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Param vs arg table -->
+<div class="section">
+  <div class="sec-head">Parameter vs argument — the distinction that confuses everyone</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="pva-table">
+      <thead><tr><th>Term</th><th>Where it appears</th><th>What it is</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--color-text-info)">Parameter</td><td>Inside the <code>def</code> line</td><td>A placeholder variable — gets its value when the function is called</td><td><code>def greet(name):</code> — <code>name</code> is the parameter</td></tr>
+        <tr><td style="color:var(--color-text-success)">Argument</td><td>Inside the function call <code>()</code></td><td>The actual value passed in — fills the parameter's placeholder</td><td><code>greet("Aisha")</code> — <code>"Aisha"</code> is the argument</td></tr>
+        <tr><td style="color:var(--color-text-warning)">Default parameter</td><td>Inside the <code>def</code> line with <code>=</code></td><td>A parameter with a fallback value — used when no argument is passed</td><td><code>def greet(name="friend"):</code></td></tr>
+        <tr><td style="color:var(--color-text-danger)">Return value</td><td>After <code>return</code> in the function body</td><td>The value the function hands back to whoever called it</td><td><code>return celsius * 9/5 + 32</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>In everyday speech, most people say "parameter" and "argument" interchangeably</strong> — and that is fine. The distinction matters for precision: parameter is in the definition, argument is in the call. Don't spend more than 2 minutes on the naming; spend the time on how they work.</span></div>
+</div>
+
+<!-- return value diagram -->
+<div class="section">
+  <div class="sec-head">Return values — the function sends something back</div>
+  <div class="return-diagram">
+    <div class="rd-head">print-only function vs return function — a crucial difference</div>
+    <div class="rd-body">
+      <div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-warning)">✗ print only — result disappears</div>
+        <div class="code-block" style="margin:0">
+          <pre style="font-size:12px;padding:10px"><span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">a</span> <span class="op">+</span> <span class="var">b</span>)   <span class="cm"># shows it</span>
+
+<span class="var">result</span> = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="fn">print</span>(<span class="var">result</span>)      <span class="cm"># None!</span>
+<span class="fn">print</span>(<span class="var">result</span> <span class="op">*</span> <span class="num">2</span>) <span class="cm"># TypeError!</span></pre>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-warning);margin-top:6px">The value is printed inside the function, then lost. The caller can't use it.</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-success)">✓ with return — caller receives the value</div>
+        <div class="code-block" style="margin:0">
+          <pre style="font-size:12px;padding:10px"><span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="kw">return</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>   <span class="cm"># hands it back</span>
+
+<span class="var">result</span> = <span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>)
+<span class="fn">print</span>(<span class="var">result</span>)      <span class="cm"># 7</span>
+<span class="fn">print</span>(<span class="var">result</span> <span class="op">*</span> <span class="num">2</span>) <span class="cm"># 14 ✓</span></pre>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-success);margin-top:6px">The value is returned to the caller. It can be stored, printed, or used in further calculations.</div>
+      </div>
+    </div>
+  </div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>A function without return implicitly returns None.</strong> Every Python function returns something. If you don't write a <code>return</code> statement, it returns <code>None</code>. Students who store the result of a <code>print</code>-only function are always surprised to find <code>None</code>. Show this live — it's the most common function mistake after Lesson 16.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Single parameter</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">greet</span>(<span class="var">name</span>)<span class="op">:</span>
+    <span class="str">"""Print a personalised greeting."""</span>
+    <span class="fn">print</span>(<span class="str">f"Hello, <span class="var">{name}</span>! Welcome to Python class."</span>)
+
+<span class="fn">greet</span>(<span class="str">"Aisha"</span>)
+<span class="fn">greet</span>(<span class="str">"Omar"</span>)
+<span class="fn">greet</span>(<span class="str">"Zara"</span>)
+
+<span class="cm"># What happens with the wrong number of arguments?</span>
+<span class="fn">greet</span>()       <span class="cm"># TypeError: missing 1 required argument</span>
+<span class="fn">greet</span>(<span class="str">"A"</span>, <span class="str">"B"</span>) <span class="cm"># TypeError: takes 1, given 2</span></pre>
+  </div>
+  <div class="out-lbl">Output (first three calls)</div>
+  <div class="out">Hello, Aisha! Welcome to Python class.<br>Hello, Omar! Welcome to Python class.<br>Hello, Zara! Welcome to Python class.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — Multiple parameters</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">describe_pet</span>(<span class="var">name</span>, <span class="var">animal</span>, <span class="var">age</span>)<span class="op">:</span>
+    <span class="str">"""Describe a pet with name, type and age."""</span>
+    <span class="fn">print</span>(<span class="str">f"{name} is a {age}-year-old {animal}."</span>)
+
+<span class="fn">describe_pet</span>(<span class="str">"Fluffy"</span>, <span class="str">"cat"</span>, <span class="num">3</span>)
+<span class="fn">describe_pet</span>(<span class="str">"Rex"</span>, <span class="str">"dog"</span>, <span class="num">7</span>)
+<span class="fn">describe_pet</span>(<span class="str">"Tweety"</span>, <span class="str">"bird"</span>, <span class="num">2</span>)
+
+<span class="cm"># Keyword arguments — order doesn't matter!</span>
+<span class="fn">describe_pet</span>(<span class="var">age</span>=<span class="num">5</span>, <span class="var">name</span>=<span class="str">"Goldie"</span>, <span class="var">animal</span>=<span class="str">"fish"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Fluffy is a 3-year-old cat.<br>Rex is a 7-year-old dog.<br>Tweety is a 2-year-old bird.<br>Goldie is a 5-year-old fish.</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Keyword arguments bonus:</strong> The last call uses keyword arguments — you name each argument explicitly so order doesn't matter. This is very readable and common in real Python code. Students don't need to master it today, but seeing it removes confusion when they encounter it.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — return values</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">celsius_to_fahrenheit</span>(<span class="var">c</span>)<span class="op">:</span>
+    <span class="str">"""Convert Celsius to Fahrenheit."""</span>
+    <span class="kw">return</span> <span class="var">c</span> <span class="op">*</span> <span class="num">9</span> <span class="op">/</span> <span class="num">5</span> <span class="op">+</span> <span class="num">32</span>
+
+<span class="cm"># Store and use the return value</span>
+<span class="var">boiling</span> = <span class="fn">celsius_to_fahrenheit</span>(<span class="num">100</span>)
+<span class="var">body</span>    = <span class="fn">celsius_to_fahrenheit</span>(<span class="num">37</span>)
+<span class="var">freezing</span> = <span class="fn">celsius_to_fahrenheit</span>(<span class="num">0</span>)
+
+<span class="fn">print</span>(<span class="str">f"Boiling : {boiling}°F"</span>)
+<span class="fn">print</span>(<span class="str">f"Body    : {body:.1f}°F"</span>)
+<span class="fn">print</span>(<span class="str">f"Freezing: {freezing}°F"</span>)
+
+<span class="cm"># Use return value directly in expressions</span>
+<span class="fn">print</span>(<span class="fn">celsius_to_fahrenheit</span>(<span class="num">20</span>) <span class="op">&gt;</span> <span class="num">68</span>)   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="fn">round</span>(<span class="fn">celsius_to_fahrenheit</span>(<span class="num">37</span>), <span class="num">1</span>))   <span class="cm"># 98.6</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">Boiling : 212.0°F<br>Body    : 98.6°F<br>Freezing: 32.0°F<br>True<br>98.6</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — None trap: print vs return</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — the trap and the fix</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># ✗ print only — result is lost</span>
+<span class="kw">def</span> <span class="fn">add_bad</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">a</span> <span class="op">+</span> <span class="var">b</span>)
+
+<span class="var">x</span> = <span class="fn">add_bad</span>(<span class="num">3</span>, <span class="num">4</span>)  <span class="cm"># prints 7, but x = None</span>
+<span class="fn">print</span>(<span class="var">x</span>)            <span class="cm"># None</span>
+
+<span class="cm"># ✓ return — result is usable</span>
+<span class="kw">def</span> <span class="fn">add_good</span>(<span class="var">a</span>, <span class="var">b</span>)<span class="op">:</span>
+    <span class="kw">return</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
+
+<span class="var">x</span> = <span class="fn">add_good</span>(<span class="num">3</span>, <span class="num">4</span>)  <span class="cm"># x = 7</span>
+<span class="fn">print</span>(<span class="var">x</span>)             <span class="cm"># 7</span>
+<span class="fn">print</span>(<span class="var">x</span> <span class="op">*</span> <span class="num">2</span>)         <span class="cm"># 14</span>
+
+<span class="cm"># Rule: print to display · return to compute</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">7<br>None<br>7<br>14</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 5 — Default parameters</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="kw">def</span> <span class="fn">calculate_price</span>(<span class="var">price</span>, <span class="var">discount</span>=<span class="num">10</span>)<span class="op">:</span>
+    <span class="str">"""Return price after discount. Default discount is 10%."""</span>
+    <span class="kw">return</span> <span class="var">price</span> <span class="op">*</span> (<span class="num">1</span> <span class="op">-</span> <span class="var">discount</span> <span class="op">/</span> <span class="num">100</span>)
+
+<span class="cm"># Using default discount (10%)</span>
+<span class="fn">print</span>(<span class="fn">calculate_price</span>(<span class="num">500</span>))         <span class="cm"># 450.0</span>
+
+<span class="cm"># Overriding the default</span>
+<span class="fn">print</span>(<span class="fn">calculate_price</span>(<span class="num">500</span>, <span class="num">20</span>))     <span class="cm"># 400.0</span>
+<span class="fn">print</span>(<span class="fn">calculate_price</span>(<span class="num">500</span>, <span class="num">0</span>))      <span class="cm"># 500.0 — no discount</span>
+
+<span class="cm"># ✗ Wrong order — defaults must come LAST</span>
+<span class="kw">def</span> <span class="fn">bad_func</span>(<span class="var">discount</span>=<span class="num">10</span>, <span class="var">price</span>)<span class="op">:</span>  <span class="cm"># SyntaxError!</span>
+    <span class="kw">pass</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">450.0<br>400.0<br>500.0</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Default parameter rule:</strong> Parameters without defaults must come first. Python needs to know which argument fills which parameter in positional calls. If a required parameter came after an optional one, Python couldn't figure out which was which. Run the <code>bad_func</code> example live to show the SyntaxError.</span></div>
+</div>
+
+<!-- Interactive function sandbox -->
+<div class="section">
+  <div class="sec-head">Interactive function sandbox — call converter functions live</div>
+  <div class="fn-sandbox">
+    <div class="fs-head"><span>Test your converter functions — type values and see results instantly</span></div>
+    <div class="fs-body">
+      <div class="fs-tabs" id="fs-tabs"></div>
+      <div class="fs-inputs" id="fs-inputs"></div>
+      <button class="fs-btn" onclick="runSandbox()">Calculate →</button>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin:8px 0 4px;font-weight:500">Result:</div>
+      <div class="fs-result" id="fs-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Converter toolkit</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 12 minutes · Individual</div>
+    <div class="activity-title">Write 4 converter functions — each takes a parameter and returns a value</div>
+    <div class="activity-desc">Students build a set of standalone converter functions. Each one must have a parameter, a docstring, a return statement, and be called at least twice with different arguments. The results must be used — not just printed inside the function.</div>
+    <ol class="steps-list">
+      <li>Write <code>celsius_to_fahrenheit(c)</code> — formula: <code>c * 9/5 + 32</code></li>
+      <li>Write <code>kg_to_pounds(kg)</code> — formula: <code>kg * 2.205</code></li>
+      <li>Write <code>km_to_miles(km)</code> — formula: <code>km * 0.621371</code></li>
+      <li>Write <code>convert_currency(amount, rate=220)</code> with a default rate (PKR per USD)</li>
+      <li>Call each function at least twice; store return values and print them with f-strings and <code>:.2f</code></li>
+      <li>Extension: write a <code>convert_all(value)</code> function that calls all four and prints a summary</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">celsius_to_fahrenheit</span>(<span class="var">c</span>)<span class="op">:</span>
+    <span class="str">"""Convert Celsius to Fahrenheit. Returns float."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">kg_to_pounds</span>(<span class="var">kg</span>)<span class="op">:</span>
+    <span class="str">"""Convert kilograms to pounds. Returns float."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">km_to_miles</span>(<span class="var">km</span>)<span class="op">:</span>
+    <span class="str">"""Convert kilometres to miles. Returns float."""</span>
+    <span class="kw">return</span> ???
+
+<span class="kw">def</span> <span class="fn">convert_currency</span>(<span class="var">amount</span>, <span class="var">rate</span>=<span class="num">220</span>)<span class="op">:</span>
+    <span class="str">"""Convert USD to local currency at given rate."""</span>
+    <span class="kw">return</span> ???
+
+<span class="cm"># --- Test all converters ---</span>
+<span class="fn">print</span>(<span class="str">f"37°C = {celsius_to_fahrenheit(37):.1f}°F"</span>)
+<span class="fn">print</span>(<span class="str">f"70 kg = {kg_to_pounds(70):.2f} lbs"</span>)
+<span class="fn">print</span>(<span class="str">f"100 km = {km_to_miles(100):.2f} miles"</span>)
+<span class="fn">print</span>(<span class="str">f"$50 = Rs {convert_currency(50):,.0f}"</span>)
+<span class="fn">print</span>(<span class="str">f"$50 at rate 230 = Rs {convert_currency(50, 230):,.0f}"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Expected output</div>
+    <div class="out">37°C = 98.6°F<br>70 kg = 154.35 lbs<br>100 km = 62.14 miles<br>$50 = Rs 11,000<br>$50 at rate 230 = Rs 11,500</div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Discount calculator</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="activity-title">Build calculate_price() with a default parameter, then chain return values</div>
+    <div class="activity-desc">Students write a price calculator with a default discount, then use its return value as the input to a tax calculator. This chaining of return values — using the output of one function as the argument to another — is a key programming pattern.</div>
+    <ol class="steps-list">
+      <li>Write <code>calculate_price(price, discount=10)</code> — returns price after discount</li>
+      <li>Write <code>add_tax(price, tax_rate=17)</code> — returns price with tax added</li>
+      <li>Call <code>calculate_price(1000)</code> and store the result</li>
+      <li>Pass that result into <code>add_tax()</code> — chain the two functions</li>
+      <li>Print the original, discounted, and final prices using f-strings</li>
+      <li>Extension: write a <code>final_price(original, discount=10, tax=17)</code> that calls both functions internally</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">def</span> <span class="fn">calculate_price</span>(<span class="var">price</span>, <span class="var">discount</span>=<span class="num">10</span>)<span class="op">:</span>
+    <span class="str">"""Return price after discount percentage."""</span>
+    <span class="kw">return</span> <span class="var">price</span> <span class="op">*</span> (<span class="num">1</span> <span class="op">-</span> <span class="var">discount</span> <span class="op">/</span> <span class="num">100</span>)
+
+<span class="kw">def</span> <span class="fn">add_tax</span>(<span class="var">price</span>, <span class="var">tax_rate</span>=<span class="num">17</span>)<span class="op">:</span>
+    <span class="str">"""Return price with tax added."""</span>
+    <span class="kw">return</span> ???
+
+<span class="cm"># Chain: apply discount then tax</span>
+<span class="var">original</span>    = <span class="num">1000</span>
+<span class="var">discounted</span>  = <span class="fn">calculate_price</span>(<span class="var">original</span>)         <span class="cm"># 10% off</span>
+<span class="var">final</span>       = <span class="fn">add_tax</span>(<span class="var">discounted</span>)               <span class="cm"># 17% tax</span>
+
+<span class="fn">print</span>(<span class="str">f"Original price : Rs {original:,.2f}"</span>)
+<span class="fn">print</span>(<span class="str">f"After 10% off  : Rs {discounted:,.2f}"</span>)
+<span class="fn">print</span>(<span class="str">f"After 17% tax  : Rs {final:,.2f}"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Expected output</div>
+    <div class="out">Original price : Rs 1,000.00<br>After 10% off  : Rs 900.00<br>After 17% tax  : Rs 1,053.00</div>
+    <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Chaining functions:</strong> <code>add_tax(calculate_price(1000))</code> — the return value of <code>calculate_price</code> is passed directly as the argument to <code>add_tax</code>. This one-liner is equivalent to the two-step version. Show both — students who spot it feel clever.</span></div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">What does this program print?<br><code style="font-size:13px">def double(n): return n * 2<br>x = double(5)<br>print(double(x))</code></div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span><code>10</code> — double(5) is called once giving 10</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span><code>5</code> — x stores the argument, not the return value</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span><code>20</code> — double(5) returns 10, stored in x; double(10) returns 20</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span><code>None</code> — double() doesn't have a print statement</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: Write a function <code>is_even(n)</code> that returns <code>True</code> if n is even and <code>False</code> otherwise. Then write a second function <code>describe_number(n)</code> that calls <code>is_even(n)</code> and prints either "n is even" or "n is odd". Call <code>describe_number</code> with three different arguments.
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Parameter</strong>A variable in the function definition that acts as a placeholder for the value that will be passed in.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Argument</strong>The actual value passed to a function when it is called. Fills the corresponding parameter.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">return</strong>Sends a value from inside the function back to the caller. Immediately exits the function.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Default parameter</strong>A parameter with a fallback value (<code>discount=10</code>). Used when the caller doesn't provide an argument. Must come after non-default parameters.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">None</strong>The value Python returns when no return statement is present. Not 0, not "", not False — it means "no value".</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Keyword argument</strong>Passing an argument by parameter name: <code>greet(name="Aisha")</code>. Makes the call self-documenting and order-independent.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 18)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a function <code>bmi(weight_kg, height_m)</code> that calculates and returns BMI (<code>weight / height²</code>). Then write <code>bmi_category(bmi)</code> that takes the BMI value and returns "Underweight", "Normal", "Overweight", or "Obese" using if/elif. Call both and print a formatted report.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Write <code>power(base, exponent=2)</code> that returns base raised to exponent. Test: <code>power(3)</code> should give 9, <code>power(3,3)</code> should give 27, <code>power(2,10)</code> should give 1024.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: if a function has both a <code>print</code> statement and a <code>return</code> statement, in what order do they run? What if <code>return</code> comes before <code>print</code>? Test it and write your findings.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">The None trap — demonstrate it live:</strong> Run <code>x = print("hello")</code> and then <code>print(x)</code>. Students see <code>hello</code> followed by <code>None</code>. Then run <code>x = add_bad(3, 4)</code> where <code>add_bad</code> only prints. Same result. The lesson: <code>print</code> displays, <code>return</code> gives back. You need return to use the value elsewhere.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — return inside a loop:</strong> Students who write a loop inside a function and put <code>return</code> inside the loop exit after the first iteration. The return should usually come after the loop. This comes up naturally in Activity 2 extension — watch for it.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake — default parameters in wrong order:</strong> <code>def f(discount=10, price):</code> causes a SyntaxError. Show it live. The rule is: required parameters first, defaults last. Python can't resolve which value goes where otherwise.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">print vs return — a mantra to repeat:</strong> "print to display, return to compute." A function that prints is like a one-way door — the value goes out but nothing comes back. A function that returns is like a two-way exchange. Write it on the board and leave it there.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Lesson 18 preview:</strong> Point at the parameter <code>name</code> in <code>greet(name)</code> and say: "This variable only exists while <code>greet</code> is running. After the function returns, it's gone. Tomorrow we learn about variable scope — why that matters and how to work with it."</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (18).html'">Next: Lesson 18 — Variable scope</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Sandbox
+const sandboxFns = [
+  {
+    name:'celsius → °F', label:'celsius_to_fahrenheit',
+    params:[{label:'Celsius (°C)',id:'c',placeholder:'e.g. 37',type:'number'}],
+    fn: vals => {
+      const c = parseFloat(vals.c);
+      if(isNaN(c)) return 'Enter a valid number';
+      const f = c * 9/5 + 32;
+      return `celsius_to_fahrenheit(${c}) → ${f.toFixed(2)}°F`;
+    }
+  },
+  {
+    name:'kg → lbs', label:'kg_to_pounds',
+    params:[{label:'Weight (kg)',id:'kg',placeholder:'e.g. 70',type:'number'}],
+    fn: vals => {
+      const kg = parseFloat(vals.kg);
+      if(isNaN(kg)) return 'Enter a valid number';
+      return `kg_to_pounds(${kg}) → ${(kg*2.205).toFixed(2)} lbs`;
+    }
+  },
+  {
+    name:'km → miles', label:'km_to_miles',
+    params:[{label:'Distance (km)',id:'km',placeholder:'e.g. 100',type:'number'}],
+    fn: vals => {
+      const km = parseFloat(vals.km);
+      if(isNaN(km)) return 'Enter a valid number';
+      return `km_to_miles(${km}) → ${(km*0.621371).toFixed(2)} miles`;
+    }
+  },
+  {
+    name:'discount', label:'calculate_price',
+    params:[
+      {label:'Price (Rs)',id:'price',placeholder:'e.g. 1000',type:'number'},
+      {label:'Discount % (default 10)',id:'disc',placeholder:'10',type:'number'}
+    ],
+    fn: vals => {
+      const p = parseFloat(vals.price);
+      const d = vals.disc===''?10:parseFloat(vals.disc);
+      if(isNaN(p)) return 'Enter a valid price';
+      const result = p * (1 - d/100);
+      return `calculate_price(${p}, ${d}) → Rs ${result.toFixed(2)}`;
+    }
+  },
+  {
+    name:'currency', label:'convert_currency',
+    params:[
+      {label:'Amount (USD)',id:'amt',placeholder:'e.g. 50',type:'number'},
+      {label:'Rate (default 220)',id:'rate',placeholder:'220',type:'number'}
+    ],
+    fn: vals => {
+      const a = parseFloat(vals.amt);
+      const r = vals.rate===''?220:parseFloat(vals.rate);
+      if(isNaN(a)) return 'Enter a valid amount';
+      return `convert_currency(${a}, ${r}) → Rs ${(a*r).toLocaleString()}`;
+    }
+  }
+];
+let currentTab = 0;
+function buildSandbox(){
+  const tabs = document.getElementById('fs-tabs');
+  sandboxFns.forEach((f,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'fs-tab'+(i===0?' active':'');
+    btn.textContent = f.name;
+    btn.onclick = ()=>{
+      currentTab=i;
+      document.querySelectorAll('.fs-tab').forEach((b,j)=>b.classList.toggle('active',j===i));
+      buildInputs();
+      document.getElementById('fs-result').textContent='';
+    };
+    tabs.appendChild(btn);
+  });
+  buildInputs();
+}
+function buildInputs(){
+  const inp = document.getElementById('fs-inputs');
+  inp.innerHTML='';
+  sandboxFns[currentTab].params.forEach(p=>{
+    const row = document.createElement('div');
+    row.className='fs-row';
+    row.innerHTML=`<span class="fs-label">${p.label}</span><input class="fs-input" id="sb-${p.id}" type="${p.type||'text'}" placeholder="${p.placeholder}" onkeydown="if(event.key==='Enter')runSandbox()">`;
+    inp.appendChild(row);
+  });
+}
+function runSandbox(){
+  const fn = sandboxFns[currentTab];
+  const vals={};
+  fn.params.forEach(p=>{ vals[p.id] = document.getElementById('sb-'+p.id).value.trim(); });
+  document.getElementById('fs-result').textContent = fn.fn(vals);
+}
+buildSandbox();
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! Step through it: double(5) returns 10, which is stored in x. Then double(x) = double(10) returns 20, which is printed. The key: return values can be stored in variables and used as arguments to other function calls.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. double(5) returns 5*2=10, stored in x. Then double(x) = double(10) returns 10*2=20, and print(20) outputs 20. Tracing return values through multiple calls is an essential skill.';
+  }
+}
+
+</script>
+</body>
+</html>

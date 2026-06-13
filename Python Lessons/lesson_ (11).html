@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* for vs while compare */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.cmp-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.cmp-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.cmp-while .cmp-head{background:var(--color-background-warning);color:var(--color-text-warning)}
+.cmp-for .cmp-head{background:var(--color-background-info);color:var(--color-text-info)}
+.cmp-body{padding:10px 12px;font-size:12px;color:var(--color-text-secondary)}
+/* range explorer */
+.range-explorer{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.re-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.re-body{padding:14px}
+.re-controls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.re-field{display:flex;flex-direction:column;gap:4px}
+.re-label{font-size:12px;color:var(--color-text-secondary)}
+.re-input{font-size:14px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);text-align:center}
+.re-preview{font-size:12px;color:var(--color-text-secondary);margin-bottom:8px;font-family:var(--font-mono)}
+.re-nums{display:flex;flex-wrap:wrap;gap:6px;min-height:36px}
+.re-num{padding:4px 10px;border-radius:20px;font-family:var(--font-mono);font-size:13px;font-weight:500;transition:all .15s}
+.re-num.active{background:var(--color-background-info);color:var(--color-text-info);border:0.5px solid var(--color-border-info)}
+.re-num.inactive{background:var(--color-background-secondary);color:var(--color-text-tertiary);border:0.5px solid var(--color-border-tertiary)}
+.re-count{font-size:12px;color:var(--color-text-secondary);margin-top:8px}
+/* fizzbuzz playground */
+.fizz-playground{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.fp-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fp-body{padding:14px}
+.fp-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.fp-label{font-size:12px;color:var(--color-text-secondary)}
+.fp-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-mono);width:70px}
+.fp-btn{padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-size:12px;cursor:pointer;font-family:var(--font-sans)}
+.fp-output{display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
+.fp-cell{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;font-family:var(--font-mono)}
+.fp-fizzbuzz{background:var(--color-background-danger);color:var(--color-text-danger)}
+.fp-fizz{background:var(--color-background-info);color:var(--color-text-info)}
+.fp-buzz{background:var(--color-background-success);color:var(--color-text-success)}
+.fp-num{background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+/* for anatomy */
+.anatomy{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.anatomy-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary)}
+.anatomy-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.anatomy-code{font-family:var(--font-mono);font-size:13px;line-height:2.2;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;border:0.5px solid var(--color-border-tertiary)}
+.anatomy-labels{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.a-label{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+.a-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+/* range table */
+.range-table{width:100%;border-collapse:collapse;font-size:13px}
+.range-table th{padding:8px 12px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);text-align:left}
+.range-table td{padding:9px 12px;border-bottom:0.5px solid var(--color-border-tertiary);font-family:var(--font-mono);font-size:12px;vertical-align:top}
+.range-table td:last-child{font-family:var(--font-sans);font-size:12px;color:var(--color-text-secondary)}
+.range-table tr:last-child td{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="lp">
+<h2>Lesson 11: for loops &amp; range() - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 11: for loops &amp; range()</p>
+      <p class="hero-sub">Week 3 — Loops &amp; Lists · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">while loops</div></div>
+    <div class="meta-item"><div class="meta-label">New keywords</div><div class="meta-val">for · in · range()</div></div>
+    <div class="meta-item"><div class="meta-label">Key concept</div><div class="meta-val">Iteration variable</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Explain the difference between <code>for</code> and <code>while</code> and choose the right one for a task</li>
+    <li>Write a <code>for</code> loop using <code>range()</code> with one, two, and three arguments</li>
+    <li>Use the loop variable (<code>i</code>, <code>n</code>, etc.) inside the loop body</li>
+    <li>Apply <code>break</code> and <code>continue</code> inside <code>for</code> loops</li>
+    <li>Build a multiplication table and solve FizzBuzz using <code>for</code> and <code>range()</code></li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The register analogy (4 min)</div>
+        <div class="tl-desc">Say: "Imagine a teacher calling the register — they go through a list of names one by one, in order, stopping at the end. They don't check a condition each time — they just move to the next name. That's a <code>for</code> loop. A <code>while</code> loop is more like a security guard checking IDs — they stop people until a condition is met, not because they've worked through a fixed list." Write on the board: <strong>for = known count · while = unknown count</strong>. This one rule covers 90% of which loop to use.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:04</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">for loop anatomy + range(n) — live demo (10 min)</div>
+        <div class="tl-desc">Type Examples 1–2. Walk through the anatomy panel below before running — point to the loop variable, the iterable, the colon, and the indented body. Show that <code>range(5)</code> produces 0, 1, 2, 3, 4 — NOT 1 to 5. This off-by-one surprise needs to land clearly before students use range all week.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:14</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">range(start, stop, step) — all three arguments (8 min)</div>
+        <div class="tl-desc">Use the interactive range explorer below. Show each variant from the reference table. Key insight: <code>stop</code> is always excluded. Run the negative step example — counting backwards — and ask students to predict the output before running. This is a common interview question they'll thank you for later.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:22</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">for vs while — when to use which (5 min)</div>
+        <div class="tl-desc">Show the comparison panel. Run the same countdown in both styles side by side. Ask: "Which is cleaner for a fixed count?" (for). "Which do we need for the guessing game?" (while — we don't know how many guesses). Seal the decision rule from the hook.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:27</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Multiplication table (10 min)</div>
+        <div class="tl-desc">Students use a for loop to print a formatted multiplication table for any user-supplied number. Uses range(), f-strings, and input together.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:37</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — FizzBuzz (10 min)</div>
+        <div class="tl-desc">The classic programming challenge: print numbers 1–30, replacing multiples of 3 with "Fizz", multiples of 5 with "Buzz", and multiples of both with "FizzBuzz". Uses % from Lesson 4 inside a for loop — a satisfying cross-week connection.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:47</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Range explorer + FizzBuzz playground + exit ticket (8–10 min)</div>
+        <div class="tl-desc">Students test range() calls in the interactive explorer, run their FizzBuzz against the live playground to verify, then complete the exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- For loop anatomy -->
+<div class="section">
+  <div class="sec-head">Anatomy of a for loop — display on projector</div>
+  <div class="anatomy">
+    <div class="anatomy-head">Every for loop has four components — unlike while, there is no separate update step</div>
+    <div class="anatomy-body">
+      <div class="anatomy-code"><span style="color:#C678DD">for</span> <span style="color:#E5C07B">i</span> <span style="color:#C678DD">in</span> <span style="color:#61AFEF">range</span>(<span style="color:#D19A66">1</span>, <span style="color:#D19A66">6</span>)<span style="color:#ABB2BF">:</span>
+    <span style="color:#61AFEF">print</span>(<span style="color:#98C379">f"Number: </span><span style="color:#E5C07B">{i}</span><span style="color:#98C379">"</span>)
+<span style="color:#7F848E;font-style:italic"># runs 5 times: i = 1,2,3,4,5</span></div>
+      <div class="anatomy-labels">
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-info)"></div><div><strong>for</strong> — the keyword that starts the loop</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-success)"></div><div><strong>i</strong> — the loop variable; takes each value from the sequence in turn</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-warning)"></div><div><strong>in range(1, 6)</strong> — the iterable; produces the sequence of values to loop over</div></div>
+        <div class="a-label"><div class="a-dot" style="background:var(--color-text-danger)"></div><div><strong>indented body</strong> — runs once per value; no manual update needed — range handles it</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="danger-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🚨</span><span><strong>range(5) produces 0, 1, 2, 3, 4 — NOT 1, 2, 3, 4, 5.</strong> The stop value is always excluded. Students expect 1–5 and get 0–4. Say this three times, write it on the board, and show it live. Every single student will hit this off-by-one surprise at least once this week.</span></div>
+</div>
+
+<!-- range() reference table -->
+<div class="section">
+  <div class="sec-head">range() reference — all three forms</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden">
+    <table class="range-table">
+      <thead><tr><th>Call</th><th>Produces</th><th>Count</th><th>Use when…</th></tr></thead>
+      <tbody>
+        <tr><td>range(5)</td><td>0, 1, 2, 3, 4</td><td>5 values</td><td>You want to repeat exactly N times (starts at 0)</td></tr>
+        <tr><td>range(1, 6)</td><td>1, 2, 3, 4, 5</td><td>5 values</td><td>You need a specific start (e.g. 1-indexed)</td></tr>
+        <tr><td>range(0, 10, 2)</td><td>0, 2, 4, 6, 8</td><td>5 values</td><td>You need every Nth value (even/odd/multiples)</td></tr>
+        <tr><td>range(10, 0, -1)</td><td>10, 9, 8, … 1</td><td>10 values</td><td>Counting down — step must be negative</td></tr>
+        <tr><td>range(1, 11, 3)</td><td>1, 4, 7, 10</td><td>4 values</td><td>Start 1, step 3, stop before 11</td></tr>
+        <tr><td>range(5, 5)</td><td>(empty)</td><td>0 values</td><td>Start == stop → no iterations</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Mental model for range(start, stop, step):</strong> Start at <code>start</code>. Keep going while the value is on the correct side of <code>stop</code>. Jump by <code>step</code> each time. Never include <code>stop</code> itself. This single rule explains every range() call.</span></div>
+</div>
+
+<!-- Range explorer -->
+<div class="section">
+  <div class="sec-head">Interactive range explorer — try any range() call</div>
+  <div class="range-explorer">
+    <div class="re-head"><span>Adjust start, stop, step — see exactly which numbers are produced</span></div>
+    <div class="re-body">
+      <div class="re-controls">
+        <div class="re-field"><span class="re-label">start</span><input class="re-input" id="re-start" type="number" value="1" oninput="updateRange()"></div>
+        <div class="re-field"><span class="re-label">stop</span><input class="re-input" id="re-stop" type="number" value="11" oninput="updateRange()"></div>
+        <div class="re-field"><span class="re-label">step</span><input class="re-input" id="re-step" type="number" value="1" oninput="updateRange()"></div>
+      </div>
+      <div class="re-preview" id="re-preview"></div>
+      <div class="re-nums" id="re-nums"></div>
+      <div class="re-count" id="re-count"></div>
+    </div>
+  </div>
+</div>
+
+<!-- for vs while -->
+<div class="section">
+  <div class="sec-head">for vs while — the decision rule</div>
+  <div class="compare-grid">
+    <div class="cmp-col cmp-while">
+      <div class="cmp-head">while — use when count is unknown</div>
+      <div class="cmp-body">
+        <div class="code-block" style="margin:0;border:none">
+          <pre style="font-size:12px;padding:10px"><span class="var">n</span> = <span class="num">5</span>
+<span class="kw">while</span> <span class="var">n</span> <span class="op">&gt;</span> <span class="num">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">n</span>)
+    <span class="var">n</span> <span class="op">-=</span> <span class="num">1</span>
+<span class="fn">print</span>(<span class="str">"Done"</span>)</pre>
+        </div>
+        <div style="margin-top:8px;font-size:12px">Use while for: guessing games, "keep asking until valid", "run until user quits"</div>
+      </div>
+    </div>
+    <div class="cmp-col cmp-for">
+      <div class="cmp-head">for — use when count is known</div>
+      <div class="cmp-body">
+        <div class="code-block" style="margin:0;border:none">
+          <pre style="font-size:12px;padding:10px"><span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>, <span class="num">0</span>, <span class="op">-</span><span class="num">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">n</span>)
+<span class="fn">print</span>(<span class="str">"Done"</span>)
+
+
+
+</pre>
+        </div>
+        <div style="margin-top:8px;font-size:12px">Use for for: tables, fixed repetitions, iterating over lists (Week 3 L12+), known sequences</div>
+      </div>
+    </div>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Write this on the board and leave it there all week:</strong> "for = I know how many times. while = I'll know when to stop."</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px">Example 1 — Basic for loop with range()</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># range(5) → 0, 1, 2, 3, 4</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Iteration {i}"</span>)
+
+<span class="fn">print</span>(<span class="str">"---"</span>)
+
+<span class="cm"># range(1, 6) → 1, 2, 3, 4, 5</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"Number: {i}"</span>)</pre>
+  </div>
+  <div class="out-lbl">Output — ask students to predict before running</div>
+  <div class="out">Iteration 0<br>Iteration 1<br>Iteration 2<br>Iteration 3<br>Iteration 4<br>---<br>Number: 1<br>Number: 2<br>Number: 3<br>Number: 4<br>Number: 5</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 2 — range() with step and accumulator</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># Count down from 10</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>, <span class="num">0</span>, <span class="op">-</span><span class="num">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"  {i}..."</span>)
+<span class="fn">print</span>(<span class="str">"Blast off! 🚀"</span>)
+
+<span class="fn">print</span>(<span class="str">"---"</span>)
+
+<span class="cm"># Sum 1 to 100 using a for loop</span>
+<span class="var">total</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>)<span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">n</span>
+<span class="fn">print</span>(<span class="str">f"Sum of 1 to 100 = {total}"</span>)   <span class="cm"># 5050</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">  10...  9...  8...  7...  6...  5...  4...  3...  2...  1...<br>Blast off! 🚀<br>---<br>Sum of 1 to 100 = 5050</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>The sum of 1 to 100 = 5050 moment:</strong> Tell the story of Gauss solving this as a child using a formula. Then show Python computing it in two lines. Students should feel the power of loops — this calculation would take several minutes by hand and two seconds to write in Python.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 3 — Nested for loops (multiplication table preview)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># 3×3 mini multiplication table</span>
+<span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>)<span class="op">:</span>
+    <span class="kw">for</span> <span class="var">col</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"{row} × {col} = {row * col}"</span>)
+    <span class="fn">print</span>()   <span class="cm"># blank line after each row</span></pre>
+  </div>
+  <div class="out-lbl">Output</div>
+  <div class="out">1 × 1 = 1 &nbsp; 1 × 2 = 2 &nbsp; 1 × 3 = 3<br><br>2 × 1 = 2 &nbsp; 2 × 2 = 4 &nbsp; 2 × 3 = 6<br><br>3 × 1 = 3 &nbsp; 3 × 2 = 6 &nbsp; 3 × 3 = 9</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Nested loops — trace before running.</strong> Draw the two loops as concentric circles on the board: the outer loop moves the row, and for every row, the inner loop runs completely. Students need to see that the inner loop runs 3 full times for every single step of the outer loop.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px">Example 4 — break and continue in a for loop</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="cm"># break: stop when we hit 5</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">==</span> <span class="num">5</span><span class="op">:</span>
+        <span class="kw">break</span>
+    <span class="fn">print</span>(<span class="var">i</span>)           <span class="cm"># prints 1 2 3 4</span>
+
+<span class="cm"># continue: skip multiples of 3</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">i</span> <span class="op">%</span> <span class="num">3</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="kw">continue</span>
+    <span class="fn">print</span>(<span class="var">i</span>)           <span class="cm"># prints 1 2 4 5 7 8 10</span></pre>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Multiplication table</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 10 minutes · Individual</div>
+    <div class="activity-title">Print a complete multiplication table for any number the user enters</div>
+    <div class="activity-desc">Students write a program that asks for a number, then uses a for loop with range() to print all 12 rows of its multiplication table — neatly formatted with f-strings. Connects input(), int(), range(), and f-strings from the past two weeks.</div>
+    <ol class="steps-list">
+      <li>Ask for a number using <code>input()</code> and convert to <code>int</code></li>
+      <li>Print a table header using the number in an f-string</li>
+      <li>Write a for loop over <code>range(1, 13)</code> — 1 through 12</li>
+      <li>Inside the loop: print the multiplication line using an f-string, e.g. <code>7 × 3 = 21</code></li>
+      <li>Extension: ask for a second number and print an N×M table using nested loops</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">num</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter a number: "</span>))
+
+<span class="fn">print</span>(<span class="str">f"\nMultiplication table for {num}"</span>)
+<span class="fn">print</span>(<span class="str">"=" * 25</span>)
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(???)<span class="op">:</span>     <span class="cm"># what range gives 1–12?</span>
+    <span class="fn">print</span>(<span class="str">f"  {num} × {???} = {???}"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">Example output (num = 7)</div>
+    <div class="out"><span class="in-line">Enter a number: 7</span><br><br>Multiplication table for 7<br>=========================<br>  7 × 1  =  7<br>  7 × 2  = 14<br>  7 × 3  = 21<br>  7 × 4  = 28<br>  7 × 5  = 35<br>  7 × 6  = 42<br>  7 × 7  = 49<br>  7 × 8  = 56<br>  7 × 9  = 63<br>  7 × 10 = 70<br>  7 × 11 = 77<br>  7 × 12 = 84</div>
+    <div class="tip-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">💡</span><span><strong>Formatting tip for fast finishers:</strong> Show how <code>f"{i:2d}"</code> right-aligns a number in a 2-character column — so the equals signs all line up. This is a great real use of format specifiers from Lesson 4.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — FizzBuzz</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="activity-title">The classic programming challenge — using % from Lesson 4 inside a for loop</div>
+    <div class="activity-desc">FizzBuzz is the most famous beginner programming exercise in the world. Students print numbers 1–30, but replace multiples of 3 with "Fizz", multiples of 5 with "Buzz", and multiples of both with "FizzBuzz". The key insight is checking the combined condition first.</div>
+    <ol class="steps-list">
+      <li>Write a for loop over <code>range(1, 31)</code></li>
+      <li>Check divisibility with <code>%</code>: <code>n % 3 == 0</code> and <code>n % 5 == 0</code></li>
+      <li>Use <code>if/elif/else</code> — <strong>check FizzBuzz first</strong>, then Fizz, then Buzz, then the number</li>
+      <li>Extension: generalise to any two user-supplied divisors and any range</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">31</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="num">3</span> <span class="op">==</span> <span class="num">0</span> <span class="kw">and</span> <span class="var">n</span> <span class="op">%</span> <span class="num">5</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>  <span class="cm"># ← check this FIRST</span>
+        <span class="fn">print</span>(<span class="str">"FizzBuzz"</span>)
+    <span class="kw">elif</span> <span class="var">n</span> <span class="op">%</span> <span class="num">3</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"???"</span>)
+    <span class="kw">elif</span> ???<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Buzz"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="var">n</span>)</pre>
+    </div>
+    <div class="info-box" style="margin-top:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px">🔗</span><span><strong>Why FizzBuzz first?</strong> If you check <code>n % 3 == 0</code> first, then 15 prints "Fizz" and never reaches "FizzBuzz". The FizzBuzz condition must come before either individual condition — this is Lesson 6's ordering lesson applied to modulo. Make this connection explicit.</span></div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px">First 15 lines of expected output</div>
+    <div class="out">1  2  Fizz  4  Buzz  Fizz  7  8  Fizz  Buzz  11  Fizz  13  14  FizzBuzz  ...</div>
+  </div>
+</div>
+
+<!-- FizzBuzz playground -->
+<div class="section">
+  <div class="sec-head">Live FizzBuzz playground — verify your output</div>
+  <div class="fizz-playground">
+    <div class="fp-head">
+      <span>Adjust the range and divisors — check your program's output matches</span>
+    </div>
+    <div class="fp-body">
+      <div class="fp-controls">
+        <span class="fp-label">From</span>
+        <input class="fp-input" id="fp-from" type="number" value="1" min="1" max="50">
+        <span class="fp-label">to</span>
+        <input class="fp-input" id="fp-to" type="number" value="30" min="2" max="100">
+        <span class="fp-label">Fizz =</span>
+        <input class="fp-input" id="fp-fizz" type="number" value="3" min="2" max="20">
+        <span class="fp-label">Buzz =</span>
+        <input class="fp-input" id="fp-buzz" type="number" value="5" min="2" max="20">
+        <button class="fp-btn" onclick="runFizzbuzz()">Run</button>
+      </div>
+      <div class="fp-output" id="fp-output"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">How many times does this loop run, and what does it print on the last iteration?<br><code style="font-size:13px">for i in range(2, 10, 3): print(i)</code></div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>8 times — last value is 9</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span>4 times — last value is 9</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span>3 times — values are 2, 5, 8 — last value is 8</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>3 times — values are 2, 5, 8, but 9 is also printed since it's &lt; 10</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic">
+      Written part: write the range() call that produces each sequence:<br>
+      (1) 0, 1, 2, 3, 4 &nbsp; (2) 5, 10, 15, 20 &nbsp; (3) 10, 8, 6, 4, 2 &nbsp; (4) 1, 1, 1, 1, 1 (impossible with range — explain why)
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">for loop</strong>A loop that iterates over a sequence of values a fixed, known number of times.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">range()</strong>A built-in function that generates a sequence of integers. Takes 1–3 arguments: stop, or start+stop, or start+stop+step.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Loop variable</strong>The variable that takes each value from the sequence in turn (e.g. <code>i</code> in <code>for i in range(10)</code>).</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Iterable</strong>Any object Python can loop over. <code>range()</code> is one; strings and lists (next lesson) are others.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Nested loop</strong>A loop inside another loop. The inner loop completes fully for every single step of the outer loop.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px">Accumulator pattern</strong>Initialise a variable (e.g. <code>total = 0</code>) before the loop; update it each iteration. Same pattern works in both for and while loops.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 12)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">✏️</span><span>Write a program that prints a right-angled triangle of stars. Ask the user for the height (e.g. 5), then print row 1 with 1 star, row 2 with 2 stars, up to row N with N stars. Use a for loop and string repetition (<code>"*" * i</code>).</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🔢</span><span>Use a for loop and an accumulator to compute the factorial of a number the user enters (e.g. 5! = 5 × 4 × 3 × 2 × 1 = 120). Think carefully about what to initialise the accumulator to.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)">🤔</span><span>Predict and verify: what does <code>for i in range(5, 1, -1)</code> produce? What about <code>range(5, 5)</code>? What about <code>range(5, 1, 1)</code>? Test all three and write an explanation for each result.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary)">
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger)">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500">Off-by-one — the biggest for loop mistake:</strong> <code>range(5)</code> gives 0–4, not 1–5. Students who want 1–10 write <code>range(10)</code> and get 0–9. Show the interactive explorer on the projector and let them see numbers appear and disappear as they adjust start/stop. Visual feedback is faster than any explanation.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common mistake in FizzBuzz:</strong> Checking <code>n % 3 == 0</code> before the FizzBuzz condition — 15 then prints "Fizz" instead of "FizzBuzz". This is a deliberate trap. Let students discover it themselves during Activity 2 rather than pre-warning them — the discovery is the lesson.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning)">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500">Common confusion — modifying the loop variable:</strong> Students who write <code>i += 1</code> inside a for loop think they're skipping ahead. They're not — range() replaces the value of <code>i</code> at the start of each iteration regardless. Use continue to skip, not manual increments.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Connecting to lists (Lesson 12):</strong> After the range explorer, say: "range() produces numbers. But for loops can iterate over anything with multiple values — including lists, which we meet tomorrow." This plants the seed and makes Lesson 12's hook land harder.</span></div>
+    <div style="display:flex;gap:8px"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info)">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500">Pacing:</strong> Activity 1 (multiplication table) is quick for most students — 6–8 minutes. Activity 2 (FizzBuzz) is where students slow down and think. Budget the full 10 minutes for FizzBuzz and let the FizzBuzz playground be available for self-checking throughout.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (12).html'">Next: Lesson 12 - Lists</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Range explorer
+function updateRange(){
+  const start = parseInt(document.getElementById('re-start').value)||0;
+  const stop  = parseInt(document.getElementById('re-stop').value)||10;
+  const step  = parseInt(document.getElementById('re-step').value)||1;
+  const prev  = document.getElementById('re-preview');
+  const nums  = document.getElementById('re-nums');
+  const count = document.getElementById('re-count');
+  if(!step||step===0){prev.textContent='range(): step cannot be 0';nums.innerHTML='';count.textContent='';return;}
+  prev.textContent=`range(${start}, ${stop}, ${step})  →`;
+  nums.innerHTML='';
+  const values=[];
+  if(step>0){for(let i=start;i<stop;i+=step)values.push(i);}
+  else{for(let i=start;i>stop;i+=step)values.push(i);}
+  if(values.length===0){
+    const d=document.createElement('span');
+    d.style.cssText='font-size:13px;color:var(--color-text-tertiary);font-style:italic';
+    d.textContent='(empty — no values produced)';
+    nums.appendChild(d);
+  }
+  const show=values.slice(0,40);
+  show.forEach(v=>{
+    const span=document.createElement('span');
+    span.className='re-num active';
+    span.textContent=v;
+    nums.appendChild(span);
+  });
+  if(values.length>40){
+    const span=document.createElement('span');
+    span.className='re-num inactive';
+    span.textContent=`+${values.length-40} more`;
+    nums.appendChild(span);
+  }
+  count.textContent=`${values.length} value${values.length!==1?'s':''} produced`;
+}
+
+// FizzBuzz playground
+function runFizzbuzz(){
+  const from=parseInt(document.getElementById('fp-from').value)||1;
+  const to=parseInt(document.getElementById('fp-to').value)||30;
+  const fizzN=parseInt(document.getElementById('fp-fizz').value)||3;
+  const buzzN=parseInt(document.getElementById('fp-buzz').value)||5;
+  const out=document.getElementById('fp-output');
+  out.innerHTML='';
+  for(let n=from;n<=Math.min(to,100);n++){
+    const span=document.createElement('span');
+    const fb=n%fizzN===0&&n%buzzN===0;
+    const f=n%fizzN===0;
+    const b=n%buzzN===0;
+    span.className='fp-cell '+(fb?'fp-fizzbuzz':f?'fp-fizz':b?'fp-buzz':'fp-num');
+    span.textContent=fb?'FizzBuzz':f?'Fizz':b?'Buzz':n;
+    out.appendChild(span);
+  }
+}
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! range(2, 10, 3) starts at 2, adds 3 each time: 2 → 5 → 8. Next would be 11, which is ≥ 10, so the loop stops. Three iterations total, last value is 8.';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. range(2, 10, 3) produces: 2, 5, 8. Next step would be 11 which exceeds the stop value of 10, so the loop ends. 9 is never produced because the step jumps from 8 to 11.';
+  }
+}
+updateRange();
+runFizzbuzz();
+</script>
+</body>
+</html>

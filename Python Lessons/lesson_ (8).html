@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+<style>
+/* indent visualiser */
+.indent-vis{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0;font-family:var(--font-mono);font-size:12.5px}
+.iv-header{padding:7px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;color:var(--color-text-secondary);font-family:var(--font-sans)}
+.iv-body{padding:0}
+.iv-line{display:flex;align-items:stretch;border-bottom:0.5px solid var(--color-border-tertiary)}
+.iv-line:last-child{border-bottom:none}
+.iv-depth{display:flex;align-items:center}
+.iv-seg{width:24px;height:100%;border-right:2px solid transparent;display:flex;align-items:center;justify-content:center;min-height:32px;flex-shrink:0}
+.iv-seg.d1{border-right-color:var(--color-text-info);background:color-mix(in srgb,var(--color-background-info) 15%,transparent)}
+.iv-seg.d2{border-right-color:var(--color-text-success);background:color-mix(in srgb,var(--color-background-success) 15%,transparent)}
+.iv-seg.d3{border-right-color:var(--color-text-warning);background:color-mix(in srgb,var(--color-background-warning) 15%,transparent)}
+.iv-seg.blank{border-right-color:transparent;background:transparent}
+.iv-code{padding:6px 12px;flex:1;line-height:1.6;white-space:pre}
+.iv-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;font-family:var(--font-sans);margin-left:8px;flex-shrink:0;align-self:center}
+.badge-l0{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.badge-l1{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-l2{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-l3{background:var(--color-background-warning);color:var(--color-text-warning)}
+/* trace tool */
+.trace-tool{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;margin:10px 0}
+.trace-head{padding:8px 14px;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;font-weight:500;color:var(--color-text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.trace-body{padding:14px}
+.trace-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.tr-field{display:flex;flex-direction:column;gap:4px}
+.tr-label{font-size:12px;color:var(--color-text-secondary)}
+.tr-input{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.tr-select{font-size:13px;padding:6px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans)}
+.trace-steps{display:flex;flex-direction:column;gap:6px}
+.trace-step{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;background:var(--color-background-secondary)}
+.trace-step.active{border-color:var(--color-border-info);background:var(--color-background-info)}
+.trace-step.passed{background:var(--color-background-success);border-color:var(--color-border-success)}
+.trace-step.failed{background:var(--color-background-danger);border-color:var(--color-border-danger);opacity:.6}
+/*related to the tracer> step number, expression, results */
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--color-background-primary);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-expr{font-family:var(--font-mono);font-size:12px;flex:1}
+.step-res{font-family:var(--font-mono);font-size:12px;font-weight:500}
+/* refactor compare */
+.refactor{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.ref-col{border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.ref-head{padding:7px 12px;font-size:12px;font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.ref-bad .ref-head{background:var(--color-background-danger);color:var(--color-text-danger)}
+.ref-good .ref-head{background:var(--color-background-success);color:var(--color-text-success)}
+</style>
+</head>
+
+<body>
+<div class="lp">
+<h2>Lesson 8: Nested conditions input validation - Full Lesson Plan</h2>
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="hero-title">Lesson 8: Nested conditions input validation</p>
+      <p class="hero-sub">Week 2 — Making Decisions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lessons</div><div class="meta-val">if/elif, and/or/not</div></div>
+    <div class="meta-item"><div class="meta-label">New concept</div><div class="meta-val">Nested if, validation</div></div>
+    <div class="meta-item"><div class="meta-label">Key skill</div><div class="meta-val">Defensive coding</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Write <code>if</code> blocks nested inside other <code>if</code> blocks and correctly indent each level</li>
+    <li>Trace execution through two levels of nesting and predict which branch runs</li>
+    <li>Validate user input before using it — check for empty strings, out-of-range numbers, and wrong types</li>
+    <li>Know when to use nested <code>if</code> vs a compound condition with <code>and</code> — and choose the cleaner option</li>
+    <li>Build a login simulator and a safe divider that handle bad input gracefully</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The airport security analogy (5 min)</div>
+        <div class="tl-desc">Say: "At an airport, the first check is: do you have a valid ticket? If yes — you proceed to a second check: is your bag under 23 kg? If yes — a third check: does it contain prohibited items? Each check only happens if you passed the previous one. That layered structure — a check inside a check inside a check — is exactly what nested conditions do." Draw three concentric gates on the board. This sets up the mental model before touching code.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Nested if — syntax and indentation levels (8 min)</div>
+        <div class="tl-desc">Type Examples 1–2 on the projector. Use the indentation visualiser below — colour-coded by nesting level. Key rule: every new <code>if</code> adds 4 more spaces. Point at the indentation with your cursor before running each example and ask "which level does this line belong to?" Use the trace tool to walk through each branch step by step.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:13</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Nested if vs and — when to use which (5 min)</div>
+        <div class="tl-desc">Show the refactor comparison panel. Key principle: if both conditions must be true with no separate action for the first condition alone — use <code>and</code>. If the first condition alone needs its own else branch — use nested. This judgment is what separates readable code from spaghetti.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:18</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Input validation — why and how (7 min)</div>
+        <div class="tl-desc">Show Example 3 — a program that crashes on bad input. Then show the validated version. Cover three checks: is the string empty? Is the number in range? Is it the right type (using <code>.isdigit()</code>)? Connect to the real world: "Every form you fill online validates your input before submitting — you're learning to build that."</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Login simulator (15 min)</div>
+        <div class="tl-desc">Students build a username + password checker using nested conditions. Validates both fields and provides specific error messages. Full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:40</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Safe divider (8 min)</div>
+        <div class="tl-desc">Students validate that two numbers are valid before dividing — including a zero denominator check. Uses <code>.isdigit()</code> for the first time.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Trace tool + exit ticket (7–10 min)</div>
+        <div class="tl-desc">Students use the interactive trace tool to walk through the login simulator with different inputs. Then exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Indentation visualiser -->
+<div class="section">
+  <div class="sec-head">Indentation level visualiser — show on projector</div>
+  <div class="indent-vis">
+    <div class="iv-header">Each colour stripe = one nesting level. Code at that indent level belongs to that block.</div>
+    <div class="iv-body" id="iv-body"></div>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Draw this on the board as nested boxes:</strong> Level 0 is the outer box. Level 1 is a box drawn inside it. Level 2 is a box drawn inside that. The indentation in code maps exactly to which box you're inside. Students who struggle with indentation visualise it as boxes, not spaces.</span></div>
+</div>
+
+<!-- Nested vs and refactor -->
+<div class="section">
+  <div class="sec-head">Nested if vs compound and — choose the cleaner one</div>
+  <div class="refactor">
+    <div class="ref-col ref-bad">
+      <div class="ref-head">✗ Unnecessarily nested — use and instead</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="num">18</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">has_id</span> <span class="op">==</span> <span class="str">"yes"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Entry allowed"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Need ID"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Need ID"</span>)</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-danger);">Two identical else branches — repeated code. The outer else and inner else say the same thing.</div>
+    </div>
+    <div class="ref-col ref-good">
+      <div class="ref-head">✓ Better — compound and is cleaner</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="num">18</span> <span class="kw">and</span> <span class="var">has_id</span> <span class="op">==</span> <span class="str">"yes"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Entry allowed"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Need ID"</span>)
+
+
+
+</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success);">One condition, one else. Less code, same logic, far more readable.</div>
+    </div>
+  </div>
+  <div class="refactor" style="margin-top:10px">
+    <div class="ref-col ref-bad">
+      <div class="ref-head">✗ Flat and — can't give separate feedback per field</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">if</span> <span class="var">user</span> <span class="op">==</span> <span class="str">"admin"</span> <span class="kw">and</span> <span class="var">pw</span> <span class="op">==</span> <span class="str">"1234"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Welcome"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Login failed"</span>)
+<span class="cm"># Can't tell user WHICH field was wrong</span>
+
+</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-danger);">The else can't distinguish "wrong username" from "wrong password" — poor UX.</div>
+    </div>
+    <div class="ref-col ref-good">
+      <div class="ref-head">✓ Better — nested gives specific error messages</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0">
+        <pre style="font-size:12px"><span class="kw">if</span> <span class="var">user</span> <span class="op">==</span> <span class="str">"admin"</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">pw</span> <span class="op">==</span> <span class="str">"1234"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Welcome"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Wrong password"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Unknown username"</span>)</pre>
+      </div>
+      <div style="padding:8px 12px;font-size:12px;color:var(--color-text-success);">Specific messages: "wrong password" vs "unknown username". This is when nesting adds value.</div>
+    </div>
+  </div>
+  <div class="info-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🎯</span><span><strong>The decision rule:</strong> Use <code>and</code> when both conditions lead to the same else. Use nested <code>if</code> when each condition needs its own separate response.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — Two-level nesting: ticket and bag check</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">has_ticket</span> = <span class="fn">input</span>(<span class="str">"Do you have a ticket? (yes/no): "</span>)
+
+<span class="kw">if</span> <span class="var">has_ticket</span> <span class="op">==</span> <span class="str">"yes"</span><span class="op">:</span>                   <span class="cm"># Level 1</span>
+    <span class="var">bag_kg</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Bag weight in kg: "</span>))
+    <span class="kw">if</span> <span class="var">bag_kg</span> <span class="op">&lt;=</span> <span class="num">23</span><span class="op">:</span>                       <span class="cm"># Level 2</span>
+        <span class="fn">print</span>(<span class="str">"✓ Bag accepted. Proceed to gate."</span>)
+    <span class="kw">else</span><span class="op">:</span>                                  <span class="cm"># Level 2 else</span>
+        <span class="fn">print</span>(<span class="str">f"✗ Bag too heavy ({bag_kg}kg). Max is 23kg."</span>)
+<span class="kw">else</span><span class="op">:</span>                                      <span class="cm"># Level 1 else</span>
+    <span class="fn">print</span>(<span class="str">"✗ No ticket. Please buy one first."</span>)</pre>
+  </div>
+  <div class="out-lbl">Three possible paths</div>
+  <div class="out"><span class="in-line">ticket=yes, bag=18</span> → ✓ Bag accepted. Proceed to gate.<br><span class="in-line">ticket=yes, bag=27</span> → ✗ Bag too heavy (27.0kg). Max is 23kg.<br><span class="in-line">ticket=no</span>          → ✗ No ticket. Please buy one first.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — Three-level nesting: ATM simulation</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">pin</span>     = <span class="fn">input</span>(<span class="str">"Enter PIN: "</span>)
+<span class="var">balance</span> = <span class="num">5000</span>
+
+<span class="kw">if</span> <span class="var">pin</span> <span class="op">==</span> <span class="str">"1234"</span><span class="op">:</span>                              <span class="cm"># Level 1: PIN check</span>
+    <span class="fn">print</span>(<span class="str">f"Welcome! Balance: Rs {balance}"</span>)
+    <span class="var">amount</span> = <span class="fn">float</span>(<span class="fn">input</span>(<span class="str">"Withdrawal amount: Rs "</span>))
+
+    <span class="kw">if</span> <span class="var">amount</span> <span class="op">&gt;</span> <span class="num">0</span><span class="op">:</span>                              <span class="cm"># Level 2: positive amount</span>
+        <span class="kw">if</span> <span class="var">amount</span> <span class="op">&lt;=</span> <span class="var">balance</span><span class="op">:</span>                   <span class="cm"># Level 3: sufficient funds</span>
+            <span class="var">balance</span> <span class="op">-=</span> <span class="var">amount</span>
+            <span class="fn">print</span>(<span class="str">f"✓ Rs {amount:.0f} dispensed. New balance: Rs {balance}"</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"✗ Insufficient funds."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"✗ Amount must be greater than zero."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"✗ Incorrect PIN. Card retained."</span>)</pre>
+  </div>
+  <div class="out-lbl">Four possible paths</div>
+  <div class="out"><span class="in-line">pin=1234, amount=2000</span> → ✓ Rs 2000 dispensed. New balance: Rs 3000<br><span class="in-line">pin=1234, amount=9000</span> → ✗ Insufficient funds.<br><span class="in-line">pin=1234, amount=-50</span>  → ✗ Amount must be greater than zero.<br><span class="in-line">pin=9999</span>              → ✗ Incorrect PIN. Card retained.</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Three levels is typically the limit.</strong> Beyond three levels of nesting, code becomes very hard to read and debug. If students find themselves at level 4+, it's a sign the logic should be refactored into functions (Week 4 topic — plant the seed now).</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — Input validation: crash vs safe</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — broken: no validation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">score</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter score: "</span>))   <span class="cm"># crashes if user types "abc"</span>
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Pass"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Fail"</span>)</pre>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — safe: validated with .isdigit()</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">raw</span> = <span class="fn">input</span>(<span class="str">"Enter score (0–100): "</span>)
+
+<span class="kw">if</span> <span class="var">raw</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>                     <span class="cm"># check: is it a valid whole number?</span>
+    <span class="var">score</span> = <span class="fn">int</span>(<span class="var">raw</span>)                   <span class="cm"># safe to convert now</span>
+    <span class="kw">if</span> <span class="num">0</span> <span class="op">&lt;=</span> <span class="var">score</span> <span class="op">&lt;=</span> <span class="num">100</span><span class="op">:</span>             <span class="cm"># check: is it in range?</span>
+        <span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"Pass"</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"Fail"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"Score must be between 0 and 100."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Please enter a number, not letters."</span>)</pre>
+  </div>
+  <div class="out-lbl">All four cases handled cleanly</div>
+  <div class="out"><span class="in-line">Input: 75</span>  → Pass<br><span class="in-line">Input: 30</span>  → Fail<br><span class="in-line">Input: 150</span> → Score must be between 0 and 100.<br><span class="in-line">Input: abc</span> → Please enter a number, not letters.</div>
+  <div class="danger-box" style="margin-top:6px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong>Limitation of .isdigit():</strong> It returns False for negative numbers (<code>"-5"</code>) and decimals (<code>"3.14"</code>) because <code>-</code> and <code>.</code> are not digits. For now this is fine — we'll handle decimals and negatives properly with <code>try/except</code> in Week 6.</span></div>
+</div>
+
+<!-- Interactive trace tool -->
+<div class="section">
+  <div class="sec-head">Interactive trace tool — login simulator</div>
+  <div class="trace-tool">
+    <div class="trace-head">
+      <span>Enter values to trace which branches execute in the login program</span>
+    </div>
+    <div class="trace-body">
+      <div class="trace-inputs">
+        <div class="tr-field">
+          <span class="tr-label">Username entered</span>
+          <input class="tr-input" id="tr-user" value="admin" oninput="runTrace()">
+        </div>
+        <div class="tr-field">
+          <span class="tr-label">Password entered</span>
+          <input class="tr-input" id="tr-pw" value="1234" oninput="runTrace()">
+        </div>
+        <div class="tr-field">
+          <span class="tr-label">Correct username</span>
+          <input class="tr-input" id="tr-correct-user" value="admin" oninput="runTrace()">
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px;font-weight:500;">Execution trace (correct password is always "1234"):</div>
+      <div class="trace-steps" id="trace-steps"></div>
+      <div id="trace-output" style="margin-top:10px;font-family:var(--font-mono);font-size:13px;padding:10px 14px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Login simulator</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 15 minutes · Individual</div>
+    <div class="activity-title">Build a username + password checker with nested conditions and specific error messages</div>
+    <div class="activity-desc">Students build a complete two-field login checker. The outer condition checks the username; only if correct does it check the password. Each failure gives a specific, helpful message. Validation ensures neither field is left blank.</div>
+    <ol class="steps-list">
+      <li>Ask for username and password using <code>input()</code></li>
+      <li>First validate: if either field is empty (<code>== ""</code>), print "Fields cannot be blank" and stop</li>
+      <li>If both fields have content, check username with outer <code>if</code> — print "Unknown user" if wrong</li>
+      <li>If username is correct, check password with inner <code>if</code> — print "Wrong password" if wrong</li>
+      <li>If both correct, print a personalised welcome with the username in an f-string</li>
+      <li>Extension: add an account_locked variable — if True, reject login before checking anything else</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="cm"># Login Simulator</span>
+<span class="var">CORRECT_USER</span> = <span class="str">"admin"</span>      <span class="cm"># store expected credentials</span>
+<span class="var">CORRECT_PASS</span> = <span class="str">"python123"</span>
+
+<span class="fn">print</span>(<span class="str">"=== Login ==="</span>)
+<span class="var">username</span> = <span class="fn">input</span>(<span class="str">"Username: "</span>)
+<span class="var">password</span> = <span class="fn">input</span>(<span class="str">"Password: "</span>)
+
+<span class="cm"># Step 1: validate — neither field blank</span>
+<span class="kw">if</span> <span class="var">username</span> <span class="op">==</span> <span class="str">""</span> <span class="kw">or</span> <span class="var">password</span> <span class="op">==</span> <span class="str">""</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"✗ Fields cannot be blank."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="cm"># Step 2: check username</span>
+    <span class="kw">if</span> <span class="var">username</span> <span class="op">==</span> <span class="var">CORRECT_USER</span><span class="op">:</span>
+        <span class="cm"># Step 3: check password (only reached if username correct)</span>
+        <span class="kw">if</span> <span class="var">password</span> <span class="op">==</span> ???<span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">f"✓ Welcome, <span class="var">{???}</span>!"</span>)
+        <span class="kw">else</span><span class="op">:</span>
+            <span class="fn">print</span>(<span class="str">"✗ <span class="var">{???}</span>"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"✗ <span class="var">{???}</span>"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">All five cases to test</div>
+    <div class="out"><span class="in-line">user="", pass=""</span>         → ✗ Fields cannot be blank.<br><span class="in-line">user="admin", pass=""</span>    → ✗ Fields cannot be blank.<br><span class="in-line">user="hacker", pass=any</span>  → ✗ Unknown username.<br><span class="in-line">user="admin", pass="xyz"</span> → ✗ Wrong password.<br><span class="in-line">user="admin", pass="python123"</span> → ✓ Welcome, admin!</div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Safe divider</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 8 minutes · Individual</div>
+    <div class="activity-title">Validate two numbers before dividing — handle letters and zero denominator</div>
+    <div class="activity-desc">Students build the safest possible version of the division calculator from Lesson 3. Uses <code>.isdigit()</code> to validate before converting, then checks the denominator is not zero before dividing. Connects Lessons 3, 4, and 8.</div>
+    <ol class="steps-list">
+      <li>Read both inputs as raw strings (no <code>int()</code> yet)</li>
+      <li>Use <code>.isdigit()</code> on both — if either fails, print "Please enter whole numbers only"</li>
+      <li>If both are digits, convert to <code>int</code> and check if denominator is zero</li>
+      <li>If denominator is zero, print "Cannot divide by zero"</li>
+      <li>Otherwise, compute and print the result using <code>:.4f</code> formatting</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">raw_a</span> = <span class="fn">input</span>(<span class="str">"Enter numerator: "</span>)
+<span class="var">raw_b</span> = <span class="fn">input</span>(<span class="str">"Enter denominator: "</span>)
+
+<span class="kw">if</span> <span class="var">raw_a</span><span class="op">.</span><span class="fn">isdigit</span>() <span class="kw">and</span> <span class="var">raw_b</span><span class="op">.</span><span class="fn">isdigit</span>()<span class="op">:</span>
+    <span class="var">a</span> = <span class="fn">int</span>(<span class="var">raw_a</span>)
+    <span class="var">b</span> = <span class="fn">int</span>(<span class="var">raw_b</span>)
+    <span class="kw">if</span> <span class="var">b</span> <span class="op">==</span> ???<span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">"✗ Cannot divide by zero."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="str">f"<span class="var">{a}</span> ÷ <span class="var">{b}</span> = <span class="var">{???:.4f}</span>"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"✗ Please enter whole numbers only."</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Test cases</div>
+    <div class="out"><span class="in-line">a=10, b=3</span>   → 10 ÷ 3 = 3.3333<br><span class="in-line">a=10, b=0</span>   → ✗ Cannot divide by zero.<br><span class="in-line">a=abc, b=3</span>  → ✗ Please enter whole numbers only.<br><span class="in-line">a=10, b=xyz</span> → ✗ Please enter whole numbers only.</div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">In the login simulator, why is the password check placed <em>inside</em> the username <code>if</code> block rather than as a separate outer <code>if</code>?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>Because Python requires password checks to always be nested — it's a syntax rule</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">B</span>To save lines of code — nested if is always shorter than two separate ifs</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">C</span>So the password is only checked when the username is correct — checking a password for an unknown user is pointless and gives away information</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>Because two separate ifs would both run, printing two error messages at once</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">Written part — draw the nesting structure for the ATM example (Example 2) as a set of labelled nested boxes. Label each box with: what condition it checks, what it prints if True, and what it prints if False.</div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div class="vocab-grid">
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Nested condition</strong>An <code>if</code> statement written inside the body of another <code>if</code> statement. Each level adds 4 spaces of indentation.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Input validation</strong>Checking that user input is acceptable (correct type, non-empty, in range) before using it in calculations.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">.isdigit()</strong>A string method that returns <code>True</code> if every character in the string is a digit (0–9). Returns <code>False</code> for letters, spaces, or symbols.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Defensive coding</strong>Writing code that anticipates bad input and handles it gracefully instead of crashing.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Nesting level</strong>The depth of an if block. Level 1 = 4 spaces. Level 2 = 8 spaces. Level 3 = 12 spaces.</div>
+    <div class="vocab-card"><strong style="font-weight:500;display:block;margin-bottom:2px;">Guard clause</strong>An early check at the top of a block that stops execution if input is invalid — keeping the main logic clean.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 9)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">✏️</span><span>Build a "parcel shipping" checker: ask for weight (kg) and dimensions (cm). Validate all inputs are positive numbers. Then: if weight &lt;= 5 and all dimensions &lt;= 50cm — "Standard shipping Rs 200". If weight &lt;= 20 — "Heavy shipping Rs 500". Otherwise — "Oversized: contact us."</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">🔍</span><span>Look up: what does <code>"hello123".isdigit()</code> return, and why? What about <code>"123".isdigit()</code>? What about <code>"".isdigit()</code>? Test all three and write your findings.</span></div>
+    <div class="hw-item"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary);">🤔</span><span>Refactor challenge: rewrite the ATM example (Example 2) so that it uses at most 2 levels of nesting — not 3. Is it possible? What trade-offs do you make? Bring your version to Lesson 9 to discuss.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-danger);">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Most common error:</strong> Misaligned indentation in nested blocks — the inner <code>else</code> lining up with the outer <code>if</code>. Python will either crash with <code>IndentationError</code> or silently run the wrong branch. The colour-coded visualiser is the best tool for diagnosing this on the projector.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning);">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common confusion:</strong> Students who aren't sure which <code>else</code> belongs to which <code>if</code>. Teach the rule: an <code>else</code> always belongs to the nearest <code>if</code> at the same indentation level directly above it.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-warning);">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">.isdigit() limitation:</strong> It doesn't handle negative numbers or floats. If a student asks "what about -5?" — great question. Say: "We're handling that in Week 6 with try/except. For now, .isdigit() is our tool for whole positive numbers." Don't go down the rabbit hole today.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info);">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> The refactor comparison panel is worth 5 minutes of class discussion. Students who understand when NOT to nest write far cleaner code going forward. The rule — "use and when both conditions share the same else, use nesting when they need separate responses" — should be written on the board and left there.</span></div>
+    <div style="display:flex;gap:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;color:var(--color-text-info);">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Lesson 9 preview:</strong> Tomorrow is <code>while</code> loops — the last new concept before the Week 2 project. Connect it today: "The safe divider asks once and stops. What if we want to keep asking until the user gives valid input? That's what loops do." This makes Lesson 9's hook land harder.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (9).html'">Next: Lesson 9 - while loops</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button>
+</div>
+<script src="scripts.js"></script>
+<script>
+// Indentation visualiser data
+const ivLines = [
+  {depth:0, code:'raw = input("Enter score: ")', badge:'Level 0', bclass:'badge-l0'},
+  {depth:0, code:'if raw.isdigit():', badge:'Level 0 — if', bclass:'badge-l0'},
+  {depth:1, code:'    score = int(raw)', badge:'Level 1', bclass:'badge-l1'},
+  {depth:1, code:'    if 0 <= score <= 100:', badge:'Level 1 — if', bclass:'badge-l1'},
+  {depth:2, code:'        if score >= 50:', badge:'Level 2 — if', bclass:'badge-l2'},
+  {depth:3, code:'            print("Pass")', badge:'Level 3', bclass:'badge-l3'},
+  {depth:2, code:'        else:', badge:'Level 2 — else', bclass:'badge-l2'},
+  {depth:3, code:'            print("Fail")', badge:'Level 3', bclass:'badge-l3'},
+  {depth:1, code:'    else:', badge:'Level 1 — else', bclass:'badge-l1'},
+  {depth:2, code:'        print("Out of range")', badge:'Level 2', bclass:'badge-l2'},
+  {depth:0, code:'else:', badge:'Level 0 — else', bclass:'badge-l0'},
+  {depth:1, code:'    print("Not a number")', badge:'Level 1', bclass:'badge-l1'},
+];
+const depthClass = ['blank','d1','d2','d3'];
+const ivBody = document.getElementById('iv-body');
+ivLines.forEach(line => {
+  const div = document.createElement('div');
+  div.className = 'iv-line';
+  let segs = '';
+  for(let i=0;i<Math.max(line.depth,0)+1;i++){
+    const cls = i < line.depth ? depthClass[i+1] : (line.depth > 0 ? depthClass[line.depth] : 'blank');
+    segs += `<div class="iv-seg ${i===line.depth&&line.depth>0?depthClass[line.depth]:'blank'}"></div>`;
+  }
+  // build depth indicator
+  let depthHtml = '';
+  for(let i=1;i<=line.depth;i++){
+    depthHtml += `<div class="iv-seg ${depthClass[i]}"></div>`;
+  }
+  div.innerHTML = `<div class="iv-depth">${depthHtml}</div><div class="iv-code"><span style="font-family:var(--font-mono);font-size:12px">${escHtml(line.code)}</span></div><span class="iv-badge ${line.bclass}">${line.badge}</span>`;
+  ivBody.appendChild(div);
+});
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Trace tool
+function runTrace(){
+  const user = document.getElementById('tr-user').value;
+  const pw = document.getElementById('tr-pw').value;
+  const correctUser = document.getElementById('tr-correct-user').value;
+  const correctPw = '1234';
+
+  const isBlank = user===''||pw==='';
+  const userMatch = user===correctUser;
+  const pwMatch = pw===correctPw;
+
+  const steps = [
+    {expr:`username == "" or password == ""`, result: isBlank, label: isBlank?'True → print "Fields cannot be blank"':'False → proceed to username check'},
+    {expr:`username == "${escHtml(correctUser)}"`, result: !isBlank && userMatch, label: isBlank?'skipped (blank fields caught above)': userMatch?'True → check password':'False → print "Unknown username"', skip: isBlank},
+    {expr:`password == "1234"`, result: !isBlank && userMatch && pwMatch, label: isBlank?'skipped':!userMatch?'skipped (wrong username)':pwMatch?'True → print "Welcome!"':'False → print "Wrong password"', skip: isBlank||!userMatch},
+  ];
+
+  const container = document.getElementById('trace-steps');
+  container.innerHTML='';
+  steps.forEach((s,i)=>{
+    const div = document.createElement('div');
+    div.className = 'trace-step ' + (s.skip?'failed':s.result?'passed':'failed');
+    div.innerHTML = `<div class="step-num">${i+1}</div><div class="step-expr">if ${s.expr}</div><div class="step-res" style="color:${s.skip?'var(--color-text-secondary)':s.result?'var(--color-text-success)':'var(--color-text-danger)'}">${s.skip?'skipped':s.result?'True':'False'}</div>`;
+    container.appendChild(div);
+    const note = document.createElement('div');
+    note.style.cssText='font-size:12px;color:var(--color-text-secondary);padding:0 0 4px 36px;font-style:italic';
+    note.textContent = '→ ' + s.label;
+    container.appendChild(note);
+  });
+
+  let output='';
+  if(isBlank) output='✗ Fields cannot be blank.';
+  else if(!userMatch) output='✗ Unknown username.';
+  else if(!pwMatch) output='✗ Wrong password.';
+  else output=`✓ Welcome, ${user}!`;
+
+  const outDiv = document.getElementById('trace-output');
+  outDiv.textContent = 'Output: ' + output;
+  outDiv.style.color = output.startsWith('✓')?'var(--color-text-success)':'var(--color-text-danger)';
+}
+
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){
+    fb.style.color='var(--color-text-success)';
+    fb.textContent='✓ Correct! The password check is nested inside the username check so it only runs when the username is known to be valid. Checking a password for an unknown user wastes effort and could leak information (e.g. "wrong password" tells an attacker the username exists).';
+  } else {
+    fb.style.color='var(--color-text-secondary)';
+    fb.textContent='Not quite — the answer is C. The purpose of nesting here is logical gating: the password check only makes sense after the username is confirmed correct. Two separate ifs would check the password even for unknown users, which is both inefficient and a security concern.';
+  }
+}
+runTrace();
+</script>
+</body>
+</html>

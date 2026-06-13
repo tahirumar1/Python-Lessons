@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link  href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="lp">
+<h2 class="sr-only">Lesson 6: if / elif / else Conditionals — Full Lesson Plan</h2>
+
+<!-- Hero -->
+<div class="lp-hero">
+  <div class="lp-hero-top">
+    <div>
+      <p class="lp-hero-title">Lesson 6: if / elif / else conditionals</p>
+      <p class="lp-hero-sub">Week 2 — Making Decisions · Complete beginners · Ages 13+</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill pill-blue">✦ New concept</span>
+      <span class="pill pill-green">45–60 min</span>
+    </div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">45–60 min</div></div>
+    <div class="meta-item"><div class="meta-label">Prior lesson</div><div class="meta-val">Variables, input()</div></div>
+    <div class="meta-item"><div class="meta-label">New keywords</div><div class="meta-val">if · elif · else</div></div>
+    <div class="meta-item"><div class="meta-label">New concept</div><div class="meta-val">Indentation, bool</div></div>
+  </div>
+</div>
+
+<!-- Objectives -->
+<div class="section">
+  <div class="sec-head">Learning objectives</div>
+  <ul class="obj-list">
+    <li>Understand that programs can take different paths depending on a condition</li>
+    <li>Write <code>if</code>, <code>elif</code>, and <code>else</code> blocks with correct syntax and indentation</li>
+    <li>Use all six comparison operators: <code>==  !=  &lt;  &gt;  &lt;=  &gt;=</code></li>
+    <li>Trace through an if-elif-else chain and predict which branch executes</li>
+    <li>Build a grade classifier and an odd/even checker as complete programs</li>
+  </ul>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="sec-head">Lesson timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:00</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Hook</span>
+        <div class="tl-title">The robot cashier analogy (5 min)</div>
+        <div class="tl-desc">Say: "Imagine a shop cashier who is actually a robot. Every customer who walks up, the robot must decide: do they get a student discount? A senior discount? Or full price? The robot checks a condition — your age — and takes a different action depending on the answer. That is exactly what if-elif-else does." Draw a simple three-path flowchart on the board. Ask: "What would the condition be for each path?" This physical analogy grounds the entire lesson.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:05</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">if and else — live demo (8 min)</div>
+        <div class="tl-desc">Type Examples 1–2 on the projector. Before running each block, point to the condition and ask: "Is this True or False right now?" Trace the indented block with your finger. Introduce the colon and the 4-space indent as non-negotiable syntax rules — Python uses indentation to know what belongs inside the if.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:13</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">elif and chained conditions (7 min)</div>
+        <div class="tl-desc">Show Examples 3–4. Key insight: Python checks conditions top-to-bottom and stops at the first True one. Only one branch ever runs. Ask: "What if two conditions are both True — which one wins?" (The first one.) Show what happens when you reorder the elif blocks — this makes the evaluation order concrete.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:20</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-blue" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Teach</span>
+        <div class="tl-title">Comparison operators (5 min)</div>
+        <div class="tl-desc">Show the operators table. Emphasise <code>==</code> vs <code>=</code> — this is the single most common beginner mistake in all of programming. "One equals sign stores. Two equals signs compares." Spend an extra minute here. Run a few quick comparisons in the live tester below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:25</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 1 — Grade classifier (13 min)</div>
+        <div class="tl-desc">Students build an if-elif-else chain that converts a score to a letter grade. Full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:38</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-green" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Activity</span>
+        <div class="tl-title">Activity 2 — Odd or even checker (10 min)</div>
+        <div class="tl-desc">Students use the modulo operator from Lesson 4 inside a conditional — connecting two weeks of learning. Full details below.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-left"><span class="tl-time">0:48</span><div class="tl-dot on"></div><div class="tl-line"></div></div>
+      <div class="tl-right"><span class="pill pill-amber" style="font-size:12px;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:5px;">Check</span>
+        <div class="tl-title">Live condition tester + exit ticket (7–10 min)</div>
+        <div class="tl-desc">Use the interactive condition tester below. Students test their own expressions before the exit quiz.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THE BIG INDENTATION WARNING -->
+<div class="section">
+  <div class="sec-head">The single most important rule of this lesson</div>
+  <div class="indent-note">
+    <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🚨</span>
+    <span><strong>Indentation is not optional in Python.</strong> The code inside an <code>if</code> block MUST be indented by exactly 4 spaces (or 1 tab — but be consistent). A missing or extra space causes an <code>IndentationError</code> that stops the entire program. This is the #1 source of errors on project day — hammer it today.</span>
+  </div>
+</div>
+
+<!-- Flowchart -->
+<div class="section">
+  <div class="sec-head">Visual: if / elif / else flowchart — display on projector</div>
+  <div class="flow-wrap">
+    <svg class="flow-svg" viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" font-family="var(--font-sans)" font-size="12">
+      <!-- start -->
+      <rect x="185" y="10" width="150" height="34" rx="17" fill="var(--color-background-info)" stroke="var(--color-border-info)" stroke-width="1"/>
+      <text x="260" y="32" text-anchor="middle" fill="var(--color-text-info)" font-weight="500">score = int(input(...))</text>
+      <!-- arrow down -->
+      <line x1="260" y1="44" x2="260" y2="68" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- diamond 1 -->
+      <polygon points="260,68 340,100 260,132 180,100" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1"/>
+      <text x="260" y="97" text-anchor="middle" fill="var(--color-text-warning)" font-weight="500">score &gt;= 90</text>
+      <text x="260" y="111" text-anchor="middle" fill="var(--color-text-warning)">?</text>
+      <!-- True right -->
+      <line x1="340" y1="100" x2="420" y2="100" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="382" y="94" text-anchor="middle" fill="var(--color-text-success)" font-size="11" font-weight="500">True</text>
+      <rect x="420" y="83" width="80" height="34" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1"/>
+      <text x="460" y="105" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">print("A")</text>
+      <!-- False down -->
+      <line x1="260" y1="132" x2="260" y2="158" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="272" y="149" fill="var(--color-text-danger)" font-size="11" font-weight="500">False</text>
+      <!-- diamond 2 -->
+      <polygon points="260,158 340,190 260,222 180,190" fill="var(--color-background-warning)" stroke="var(--color-border-warning)" stroke-width="1"/>
+      <text x="260" y="187" text-anchor="middle" fill="var(--color-text-warning)" font-weight="500">score &gt;= 75</text>
+      <text x="260" y="201" text-anchor="middle" fill="var(--color-text-warning)">?</text>
+      <!-- True right -->
+      <line x1="340" y1="190" x2="420" y2="190" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="382" y="184" text-anchor="middle" fill="var(--color-text-success)" font-size="11" font-weight="500">True</text>
+      <rect x="420" y="173" width="80" height="34" rx="6" fill="var(--color-background-success)" stroke="var(--color-border-success)" stroke-width="1"/>
+      <text x="460" y="195" text-anchor="middle" fill="var(--color-text-success)" font-weight="500">print("B")</text>
+      <!-- False down -->
+      <line x1="260" y1="222" x2="260" y2="248" stroke="var(--color-border-secondary)" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="272" y="239" fill="var(--color-text-danger)" font-size="11" font-weight="500">False</text>
+      <!-- else box -->
+      <rect x="190" y="248" width="140" height="34" rx="6" fill="var(--color-background-secondary)" stroke="var(--color-border-tertiary)" stroke-width="1"/>
+      <text x="260" y="270" text-anchor="middle" fill="var(--color-text-secondary)" font-weight="500">else → print("C or below")</text>
+      <!-- arrowhead def -->
+      <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="var(--color-border-secondary)"/></marker></defs>
+      <!-- labels -->
+      <text x="4" y="105" fill="var(--color-text-secondary)" font-size="11">if</text>
+      <text x="4" y="195" fill="var(--color-text-secondary)" font-size="11">elif</text>
+      <text x="4" y="270" fill="var(--color-text-secondary)" font-size="11">else</text>
+    </svg>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Draw this on the board as you explain it</strong> — not before. Building the flowchart live while talking through each branch makes the evaluation order visible. Students can copy it into their notebooks as a reference.</span></div>
+</div>
+
+<!-- Comparison operators -->
+<div class="section">
+  <div class="sec-head">Comparison operators — display on projector</div>
+  <div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
+    <table class="cmp-table">
+      <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>==</td><td style="font-family:var(--font-sans);">Equal to</td><td>5 == 5</td><td class="result-t">True</td></tr>
+        <tr><td>!=</td><td style="font-family:var(--font-sans);">Not equal to</td><td>5 != 3</td><td class="result-t">True</td></tr>
+        <tr><td>&gt;</td><td style="font-family:var(--font-sans);">Greater than</td><td>7 &gt; 10</td><td class="result-f">False</td></tr>
+        <tr><td>&lt;</td><td style="font-family:var(--font-sans);">Less than</td><td>3 &lt; 8</td><td class="result-t">True</td></tr>
+        <tr><td>&gt;=</td><td style="font-family:var(--font-sans);">Greater than or equal</td><td>5 &gt;= 5</td><td class="result-t">True</td></tr>
+        <tr><td>&lt;=</td><td style="font-family:var(--font-sans);">Less than or equal</td><td>4 &lt;= 3</td><td class="result-f">False</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="info-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">⚡</span><span><strong>= vs == — say this out loud three times:</strong> "One equals sign <em>assigns</em> a value. Two equals signs <em>compares</em> two values." Writing <code>if score = 90</code> causes a SyntaxError. Writing <code>score == 90</code> in an assignment silently gives a wrong result. Both happen constantly.</span></div>
+</div>
+
+<!-- Live demo -->
+<div class="section">
+  <div class="sec-head">Live demo — code examples</div>
+
+  <div style="font-size:13px;font-weight:500;margin:0 0 6px;">Example 1 — Basic if / else</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">temperature</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter temperature in °C: "</span>))
+
+<span class="kw">if</span> <span class="var">temperature</span> <span class="op">&gt;</span> <span class="num">30</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"It's hot! Wear sunscreen."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Not too hot today."</span>)</pre>
+  </div>
+  <div class="output-label">Two possible outputs</div>
+  <div class="output-block"><span class="input-line">Enter temperature in °C: 35</span><br>It's hot! Wear sunscreen.<br><br><span class="input-line">Enter temperature in °C: 22</span><br>Not too hot today.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 2 — if without else (valid!)</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">score</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter your score: "</span>))
+
+<span class="kw">if</span> <span class="var">score</span> <span class="op">==</span> <span class="num">100</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Perfect score! 🎉"</span>)
+
+<span class="fn">print</span>(<span class="str">"Thanks for playing."</span>)   <span class="cm"># always runs — not indented</span></pre>
+  </div>
+  <div class="output-label">Score = 100 vs score = 85</div>
+  <div class="output-block"><span class="input-line">Enter your score: 100</span><br>Perfect score! 🎉<br>Thanks for playing.<br><br><span class="input-line">Enter your score: 85</span><br>Thanks for playing.</div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Point out:</strong> <code>print("Thanks for playing.")</code> is NOT indented — it runs regardless. Ask "what would happen if we indent it?" Students need to internalise that indentation = belongs inside the block.</span></div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 3 — if / elif / else chain</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">score</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter score (0–100): "</span>))
+
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Grade: A — Excellent!"</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Grade: B — Good work."</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">60</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Grade: C — Keep going."</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Grade: D — Needs improvement."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Grade: F — Please see the teacher."</span>)</pre>
+  </div>
+  <div class="output-label">Three sample runs</div>
+  <div class="output-block"><span class="input-line">Enter score: 93</span> → Grade: A — Excellent!<br><span class="input-line">Enter score: 72</span> → Grade: C — Keep going.<br><span class="input-line">Enter score: 41</span> → Grade: F — Please see the teacher.</div>
+
+  <div style="font-size:13px;font-weight:500;margin:12px 0 6px;">Example 4 — Why order matters: broken vs fixed</div>
+  <div class="code-block">
+    <div class="code-header"><span>main.py — BROKEN ordering</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+    <pre><span class="var">score</span> = <span class="num">95</span>
+
+<span class="cm"># ✗ Wrong order — score >= 50 catches everything first!</span>
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"D or above"</span>)       <span class="cm"># 95 hits this and STOPS</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"B or above"</span>)       <span class="cm"># never reached for 95!</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"A"</span>)               <span class="cm"># never reached either!</span>
+
+<span class="cm"># ✓ Correct — always put most specific condition FIRST</span>
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"A"</span>)               <span class="cm"># catches 90+ first</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"B"</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">50</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"D or C"</span>)</pre>
+  </div>
+  <div class="tip-box"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Run the broken version on the projector first.</strong> Let students be confused by the output, then ask "why did it print 'D or above' for 95?" The discovery that order matters sticks much better than being told upfront.</span></div>
+</div>
+
+<!-- Activity 1 -->
+<div class="section">
+  <div class="sec-head">Activity 1 — Grade classifier</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 1 · 13 minutes · Individual</div>
+    <div class="activity-title">Build a complete grade classifier with personalised feedback</div>
+    <div class="activity-desc">Students write an if-elif-else chain that takes a score, assigns a grade, and prints a personalised motivational message. Goes one step further than the demo — adds the student's name and a custom message per grade.</div>
+    <ol class="steps-list">
+      <li>Ask for the student's name and score using <code>input()</code> — convert score to <code>int</code></li>
+      <li>Write an if-elif-else chain for grades A (90+), B (75–89), C (60–74), D (50–59), F (below 50)</li>
+      <li>Each branch prints the grade AND a personalised message using the student's name in an f-string</li>
+      <li>After the chain (unindented), print the score back with <code>:.0f</code> formatting</li>
+      <li>Extension: also print what score is needed to reach the next grade up</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">name</span>  = <span class="fn">input</span>(<span class="str">"Enter student name: "</span>)
+<span class="var">score</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter score (0–100): "</span>))
+
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">90</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{name}</span>, you got an A! Outstanding work."</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="num">75</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{name}</span>, you got a B. ???"</span>)    <span class="cm"># add your message</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> ???<span class="op">:</span>                         <span class="cm"># fill in the threshold</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{???}</span>"</span>)
+<span class="kw">elif</span> ???<span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{???}</span>"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{name}</span>, you got an F. Let's talk after class."</span>)
+
+<span class="fn">print</span>(<span class="str">f"Score recorded: <span class="var">{score}</span>/100"</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example output</div>
+    <div class="output-block"><span class="input-line">Enter student name: Zara</span><br><span class="input-line">Enter score (0–100): 82</span><br>Zara, you got a B. Good work — aim for 90 next time!<br>Score recorded: 82/100</div>
+    <div class="tip-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong>Extension hint:</strong> For "score needed to reach next grade", the logic is <code>75 - score</code> for a B student needing an A, and so on. Students will need a different calculation in each branch — a great problem-solving exercise.</span></div>
+  </div>
+</div>
+
+<!-- Activity 2 -->
+<div class="section">
+  <div class="sec-head">Activity 2 — Odd or even checker</div>
+  <div class="activity-card">
+    <div class="activity-num">Activity 2 · 10 minutes · Individual</div>
+    <div class="activity-title">Connect modulo (Lesson 4) to conditionals — is a number odd, even, or zero?</div>
+    <div class="activity-desc">Students write a program that uses <code>%</code> inside an <code>if</code> condition — connecting arithmetic and conditionals for the first time. The extension adds divisibility checks (multiples of 3, 5, etc.) which previews the logical operators in Lesson 7.</div>
+    <ol class="steps-list">
+      <li>Ask for a whole number using <code>int(input(...))</code></li>
+      <li>Use <code>if number == 0</code> to handle the zero case first</li>
+      <li>Use <code>elif number % 2 == 0</code> to detect even numbers</li>
+      <li>Use <code>else</code> for odd numbers</li>
+      <li>Extension: also check if the number is divisible by 3, 5, and 10 — print all that apply</li>
+    </ol>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;margin-bottom:6px;">Starter code</div>
+    <div class="code-block">
+      <div class="code-header"><span>main.py — starter</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><span class="var">number</span> = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Enter a whole number: "</span>))
+
+<span class="kw">if</span> <span class="var">number</span> <span class="op">==</span> <span class="num">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">"Zero is neither odd nor even."</span>)
+<span class="kw">elif</span> <span class="var">number</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> ???<span class="op">:</span>   <span class="cm"># what remainder means "even"?</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{number}</span> is even."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="str">f"<span class="var">{???}</span> is odd."</span>)</pre>
+    </div>
+    <div style="font-size:13px;font-weight:500;margin:10px 0 6px;">Example outputs</div>
+    <div class="output-block"><span class="input-line">Enter a whole number: 0</span> → Zero is neither odd nor even.<br><span class="input-line">Enter a whole number: 12</span> → 12 is even.<br><span class="input-line">Enter a whole number: 7</span>  → 7 is odd.</div>
+    <div class="info-box" style="margin-top:8px;"><span style="font-size:16px;flex-shrink:0;margin-top:1px;">🔗</span><span><strong>Connection moment:</strong> Before this activity, ask "which operator from Lesson 4 tells us the remainder?" Wait for students to call out <code>%</code>. Then say "today we use it inside a condition." This explicit connection builds cumulative confidence.</span></div>
+  </div>
+</div>
+
+<!-- Interactive condition tester -->
+<div class="section">
+  <div class="sec-head">Live condition tester — try comparisons instantly</div>
+  <div class="tester">
+    <div class="tester-head">Type a value and choose an operator — see True or False live</div>
+    <div class="tester-body">
+      <div class="tester-row">
+        <span class="t-label">Left value</span>
+        <input class="t-input" id="t-left" value="85" oninput="evalCond()" style="max-width:100px;">
+        <select class="t-select" id="t-op" onchange="evalCond()">
+          <option>==</option><option>!=</option>
+          <option selected>&gt;=</option><option>&lt;=</option>
+          <option>&gt;</option><option>&lt;</option>
+        </select>
+        <input class="t-input" id="t-right" value="75" oninput="evalCond()" style="max-width:100px;">
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);">Result of condition:</div>
+      <div class="t-result" id="t-result"></div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px;">Grade this score falls into (A≥90, B≥75, C≥60, D≥50, else F):</div>
+      <div class="t-result" id="t-grade"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Exit ticket -->
+<div class="section">
+  <div class="sec-head">Check for understanding — exit ticket</div>
+  <div class="check-box">
+    <div class="check-q">A student writes <code>if score = 90:</code>. What happens and why?</div>
+    <div class="check-opts">
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">A</span>It works fine — Python treats = and == the same in a condition</div>
+      <div class="check-opt" onclick="answer(this,true)"><span class="opt-letter">B</span>SyntaxError — <code>=</code> is assignment, not comparison. The condition needs <code>==</code></div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">C</span>It runs but always evaluates to True regardless of score's value</div>
+      <div class="check-opt" onclick="answer(this,false)"><span class="opt-letter">D</span>IndentationError — the if block is missing its indented body</div>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--color-text-secondary);font-style:italic;">
+      Written part — trace this code on paper (do NOT run it):<br>
+      <code style="font-size:12px;">x = 15 &nbsp; if x &gt; 10: print("big") &nbsp; elif x &gt; 5: print("medium") &nbsp; else: print("small")</code><br>
+      Which line prints, and why? What would print if x = 7?
+    </div>
+  </div>
+</div>
+
+<!-- Vocab -->
+<div class="section">
+  <div class="sec-head">Key vocabulary for this lesson</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Conditional statement</strong>Code that only runs when a condition is True. The <code>if</code> keyword starts one.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Condition</strong>An expression that evaluates to True or False. Written after <code>if</code> or <code>elif</code>, before the colon.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">elif</strong>Short for "else if". Checked only when all previous conditions were False.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">else</strong>The fallback branch — runs when every <code>if</code> and <code>elif</code> above it was False.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Indentation</strong>The 4 spaces before code inside an if block. Python uses it to define scope — not optional.</div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary);font-size:13px;"><strong style="font-weight:500;display:block;margin-bottom:2px;">Branch</strong>One possible path through a conditional — the code block under a single if, elif, or else.</div>
+  </div>
+</div>
+
+<!-- Homework -->
+<div class="section">
+  <div class="sec-head">Homework / self-study (before Lesson 7)</div>
+  <div class="hw-box">
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">✏️</span><span>Build a "ticket price" program: ask for age, then print the correct price — child under 5 (free), child 5–12 (Rs 200), teen 13–17 (Rs 350), adult 18–59 (Rs 500), senior 60+ (Rs 250). Use 4 elif branches.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🔍</span><span>Trace on paper — no Python: if x = 55, which branch of the grade classifier runs? Now try x = 90. Show every condition that is checked, in order.</span></div>
+    <div class="hw-item"><span style="font-size:16px;color:var(--color-text-secondary);flex-shrink:0;margin-top:1px;">🤔</span><span>Predict: what happens if you write two separate <code>if</code> blocks instead of <code>if / elif</code>? Write a short example and predict whether they behave differently. Test it tomorrow.</span></div>
+  </div>
+</div>
+
+<!-- Teacher notes -->
+<div class="section">
+  <div class="sec-head">Teacher notes</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text-secondary);">
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-danger);font-size:16px;flex-shrink:0;margin-top:1px;">🚨</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Most common error by far:</strong> <code>if score = 90</code> instead of <code>if score == 90</code>. Say it out loud as a class: "double equals to compare". Repeat it every time a student hits this bug. By Week 8, they'll have it permanently.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common error:</strong> Missing colon after the condition — <code>if score &gt;= 90</code> with no <code>:</code>. Causes SyntaxError. Teach the pattern as a unit: <code>if [condition]:</code> — the colon is part of the syntax, always.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-warning);font-size:16px;flex-shrink:0;margin-top:1px;">⚠️</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Common misconception:</strong> Students who write multiple separate <code>if</code> blocks instead of <code>elif</code> — all conditions get checked independently. The homework question #3 addresses this directly. In Lesson 7, this distinction matters even more.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Connecting to prior learning:</strong> Activity 2 deliberately uses <code>%</code> from Lesson 4. Make this connection explicit before students start: "You already know the tool. Today you're using it in a new context." This builds confidence rather than treating each lesson as isolated.</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--color-text-info);font-size:16px;flex-shrink:0;margin-top:1px;">💡</span><span><strong style="color:var(--color-text-primary);font-weight:500;">Pacing note:</strong> Example 4 (broken ordering) is worth the extra 3 minutes even if it pushes the timeline. Students who discover the ordering bug themselves will never make it in their own code. A told rule is forgotten; a discovered rule is remembered.</span></div>
+  </div>
+</div>
+
+<div style="margin-top:1rem;">
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='lesson_ (7).html'">Next: Lesson 7 - Logical operators</button>
+  <button style="margin-top:12px;font-size:13px;" onclick="window.location.href='index.html'">Home Page</button></div>
+
+</div>
+<script src="scripts.js"></script>
+<script>
+function evalCond(){
+  const l=parseFloat(document.getElementById('t-left').value);
+  const r=parseFloat(document.getElementById('t-right').value);
+  const op=document.getElementById('t-op').value;
+  const res=document.getElementById('t-result');
+  const grade=document.getElementById('t-grade');
+  if(isNaN(l)||isNaN(r)){res.textContent='Enter valid numbers';res.style.color='var(--color-text-secondary)';grade.textContent='';return;}
+  let cond=false;
+  if(op=='==')cond=l===r;
+  else if(op=='!=')cond=l!==r;
+  else if(op=='>=')cond=l>=r;
+  else if(op=='<=')cond=l<=r;
+  else if(op=='>')cond=l>r;
+  else if(op=='<')cond=l<r;
+  res.textContent=(cond?'True ✓':'False ✗')+`   (${l} ${op} ${r})`;
+  res.style.color=cond?'var(--color-text-success)':'var(--color-text-danger)';
+  const s=l;
+  let g='';
+  if(s>=90)g='A — Excellent!';
+  else if(s>=75)g='B — Good work.';
+  else if(s>=60)g='C — Keep going.';
+  else if(s>=50)g='D — Needs improvement.';
+  else g='F — Please see the teacher.';
+  grade.textContent=`Score ${s}: Grade ${g}`;
+  grade.style.color='var(--color-text-primary)';
+}
+function answer(el,correct){
+  if(document.querySelector('.check-opt.correct'))return;
+  document.querySelectorAll('.check-opt').forEach(o=>{
+    o.style.pointerEvents='none';
+    if(o===el)o.classList.add(correct?'correct':'wrong');
+    else if(!correct&&o.onclick&&o.onclick.toString().includes('true'))o.classList.add('correct');
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='block';
+  if(correct){fb.style.color='var(--color-text-success)';fb.textContent='✓ Correct! = assigns a value to a variable. == compares two values and returns True or False. Using = inside an if condition is a SyntaxError in Python 3 — Python won\'t let you make this mistake silently.';}
+  else{fb.style.color='var(--color-text-secondary)';fb.textContent='Not quite — the answer is B. In Python, = is the assignment operator and == is the comparison operator. Writing if score = 90 causes a SyntaxError because Python knows you can\'t assign inside a condition.';}
+}
+evalCond();
+</script>
+</body>
+</html>
